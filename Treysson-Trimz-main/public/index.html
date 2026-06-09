@@ -1,0 +1,1314 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Treysson Trimz | Barbershop · Salon · Spa · Nairobi</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,600;0,700;0,900;1,400;1,700&family=Cormorant+Garamond:ital,wght@0,300;0,400;0,500;0,600;1,300;1,400&family=DM+Sans:wght@300;400;500&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --gold: #C9A96E;
+    --gold-light: #E8C98A;
+    --gold-dim: #8C6F44;
+    --black: #0A0806;
+    --near-black: #111009;
+    --dark: #1A1714;
+    --mid: #2A2520;
+    --smoke: #3D3830;
+    --warm-white: #F5F0E8;
+    --cream: #EDE8DF;
+    --muted: #9A9288;
+    --font-display: 'Playfair Display', Georgia, serif;
+    --font-body: 'Cormorant Garamond', Georgia, serif;
+    --font-sans: 'DM Sans', sans-serif;
+    --section-pad: clamp(80px, 12vw, 140px);
+  }
+  *, *::before, *::after { margin: 0; padding: 0; box-sizing: border-box; }
+  html { scroll-behavior: smooth; font-size: 16px; }
+  body {
+    background: var(--black);
+    color: var(--warm-white);
+    font-family: var(--font-body);
+    font-size: 1.125rem;
+    line-height: 1.8;
+    overflow-x: hidden;
+    cursor: default;
+  }
+  ::selection { background: var(--gold); color: var(--black); }
+  img { display: block; width: 100%; height: 100%; object-fit: cover; }
+  a { color: inherit; text-decoration: none; }
+  button { cursor: pointer; font-family: inherit; border: none; background: none; }
+
+  /* SCROLLBAR */
+  ::-webkit-scrollbar { width: 4px; }
+  ::-webkit-scrollbar-track { background: var(--black); }
+  ::-webkit-scrollbar-thumb { background: var(--gold-dim); }
+
+  /* NAV */
+  .nav {
+    position: fixed; top: 0; left: 0; right: 0; z-index: 100;
+    display: flex; align-items: center; justify-content: space-between;
+    padding: 0 clamp(24px, 6vw, 80px);
+    height: 80px;
+    transition: background 0.4s, backdrop-filter 0.4s;
+  }
+  .nav.scrolled {
+    background: rgba(10,8,6,0.96);
+    backdrop-filter: blur(12px);
+    border-bottom: 0.5px solid rgba(201,169,110,0.2);
+  }
+  .nav-logo {
+    display: flex; flex-direction: column; line-height: 1;
+  }
+  .nav-logo-main {
+    font-family: var(--font-display);
+    font-size: 1.5rem; font-weight: 700;
+    letter-spacing: 0.04em;
+    color: var(--warm-white);
+  }
+  .nav-logo-main span { color: var(--gold); }
+  .nav-logo-sub {
+    font-family: var(--font-sans); font-size: 0.6rem;
+    letter-spacing: 0.35em; color: var(--gold); text-transform: uppercase;
+    margin-top: 2px;
+  }
+  .nav-links {
+    display: flex; align-items: center; gap: clamp(20px, 3vw, 40px);
+    list-style: none;
+  }
+  .nav-links a {
+    font-family: var(--font-sans); font-size: 0.72rem;
+    letter-spacing: 0.2em; text-transform: uppercase; color: var(--muted);
+    transition: color 0.3s;
+    position: relative;
+  }
+  .nav-links a::after {
+    content: ''; position: absolute; bottom: -4px; left: 0; right: 0;
+    height: 0.5px; background: var(--gold); transform: scaleX(0);
+    transform-origin: left; transition: transform 0.3s;
+  }
+  .nav-links a:hover { color: var(--warm-white); }
+  .nav-links a:hover::after { transform: scaleX(1); }
+  .nav-cta {
+    font-family: var(--font-sans); font-size: 0.7rem;
+    letter-spacing: 0.18em; text-transform: uppercase;
+    color: var(--black); background: var(--gold);
+    padding: 10px 24px; transition: background 0.3s;
+  }
+  .nav-cta:hover { background: var(--gold-light); }
+  .nav-hamburger { display: none; flex-direction: column; gap: 5px; cursor: pointer; }
+  .nav-hamburger span { display: block; width: 24px; height: 1px; background: var(--warm-white); transition: all 0.3s; }
+
+  /* HERO */
+  .hero {
+    position: relative; min-height: 100vh;
+    display: flex; align-items: center;
+    overflow: hidden;
+  }
+  .hero-bg {
+    position: absolute; inset: 0; z-index: 0;
+    background: linear-gradient(135deg, #0A0806 0%, #1c1208 40%, #0A0806 100%);
+  }
+  .hero-bg::after {
+    content: '';
+    position: absolute; inset: 0;
+    background:
+      radial-gradient(ellipse 60% 80% at 70% 50%, rgba(201,169,110,0.07) 0%, transparent 70%),
+      repeating-linear-gradient(0deg, transparent, transparent 60px, rgba(201,169,110,0.02) 60px, rgba(201,169,110,0.02) 61px),
+      repeating-linear-gradient(90deg, transparent, transparent 60px, rgba(201,169,110,0.02) 60px, rgba(201,169,110,0.02) 61px);
+  }
+  .hero-image-panel {
+    position: absolute; right: 0; top: 0; bottom: 0;
+    width: 50%; z-index: 1;
+    clip-path: polygon(12% 0, 100% 0, 100% 100%, 0% 100%);
+  }
+  .hero-image-panel img {
+    filter: contrast(1.1) brightness(0.75) sepia(0.15);
+  }
+  .hero-image-panel::after {
+    content: '';
+    position: absolute; inset: 0;
+    background: linear-gradient(to right, var(--black) 0%, transparent 50%, rgba(10,8,6,0.3) 100%);
+  }
+  .hero-content {
+    position: relative; z-index: 2;
+    padding: 0 clamp(24px, 6vw, 80px);
+    max-width: 600px;
+    padding-top: 80px;
+  }
+  .hero-eyebrow {
+    font-family: var(--font-sans); font-size: 0.65rem;
+    letter-spacing: 0.45em; text-transform: uppercase;
+    color: var(--gold); margin-bottom: 28px;
+    display: flex; align-items: center; gap: 16px;
+  }
+  .hero-eyebrow::before {
+    content: ''; display: block; width: 40px; height: 0.5px; background: var(--gold);
+  }
+  .hero-h1 {
+    font-family: var(--font-display);
+    font-size: clamp(3rem, 7vw, 5.5rem);
+    font-weight: 700; line-height: 1.05;
+    margin-bottom: 28px;
+  }
+  .hero-h1 em { font-style: italic; color: var(--gold); }
+  .hero-sub {
+    font-family: var(--font-body); font-size: 1.15rem;
+    font-weight: 300; color: rgba(245,240,232,0.7);
+    max-width: 420px; margin-bottom: 52px; line-height: 1.9;
+  }
+  .hero-actions { display: flex; gap: 20px; align-items: center; flex-wrap: wrap; }
+  .btn-primary {
+    font-family: var(--font-sans); font-size: 0.72rem;
+    letter-spacing: 0.2em; text-transform: uppercase;
+    background: var(--gold); color: var(--black);
+    padding: 16px 36px; transition: background 0.3s, transform 0.2s;
+    display: inline-block;
+  }
+  .btn-primary:hover { background: var(--gold-light); transform: translateY(-1px); }
+  .btn-outline {
+    font-family: var(--font-sans); font-size: 0.72rem;
+    letter-spacing: 0.2em; text-transform: uppercase;
+    border: 0.5px solid rgba(201,169,110,0.6); color: var(--gold);
+    padding: 15px 36px; transition: all 0.3s;
+    display: inline-block;
+  }
+  .btn-outline:hover { background: rgba(201,169,110,0.1); border-color: var(--gold); }
+  .hero-scroll {
+    position: absolute; bottom: 40px; left: 50%; transform: translateX(-50%);
+    z-index: 2; display: flex; flex-direction: column; align-items: center; gap: 8px;
+  }
+  .hero-scroll span {
+    font-family: var(--font-sans); font-size: 0.6rem;
+    letter-spacing: 0.35em; text-transform: uppercase; color: var(--gold-dim);
+  }
+  .scroll-line {
+    width: 0.5px; height: 50px; background: linear-gradient(to bottom, var(--gold-dim), transparent);
+    animation: scrollDrop 1.6s ease-in-out infinite;
+  }
+  @keyframes scrollDrop {
+    0%,100%{ transform: scaleY(0); transform-origin: top; }
+    50%{ transform: scaleY(1); transform-origin: top; }
+    51%{ transform-origin: bottom; }
+  }
+  .hero-badges {
+    position: absolute; bottom: 40px; right: clamp(24px,6vw,80px);
+    z-index: 2; display: flex; flex-direction: column; gap: 12px; align-items: flex-end;
+  }
+  .hero-badge {
+    font-family: var(--font-sans); font-size: 0.6rem;
+    letter-spacing: 0.2em; text-transform: uppercase;
+    color: var(--gold); border: 0.5px solid rgba(201,169,110,0.3);
+    padding: 6px 16px; background: rgba(10,8,6,0.7);
+    backdrop-filter: blur(6px);
+  }
+
+  /* DIVIDER */
+  .gold-divider {
+    display: flex; align-items: center; justify-content: center;
+    gap: 20px; padding: 0 clamp(24px,6vw,80px);
+  }
+  .gold-divider::before, .gold-divider::after {
+    content: ''; flex: 1; height: 0.5px; background: linear-gradient(to right, transparent, rgba(201,169,110,0.4));
+  }
+  .gold-divider::after { background: linear-gradient(to left, transparent, rgba(201,169,110,0.4)); }
+  .gold-divider-icon {
+    color: var(--gold); font-size: 1.1rem; letter-spacing: 0.3em;
+  }
+
+  /* ABOUT */
+  .about {
+    padding: var(--section-pad) clamp(24px,6vw,80px);
+    display: grid; grid-template-columns: 1fr 1fr; gap: clamp(40px,8vw,120px);
+    align-items: center;
+  }
+  .about-visuals { position: relative; }
+  .about-img-main {
+    width: 80%; height: 500px; position: relative; z-index: 1;
+    filter: contrast(1.05) brightness(0.85);
+  }
+  .about-img-accent {
+    position: absolute; bottom: -40px; right: 0;
+    width: 55%; height: 300px; z-index: 2;
+    border: 4px solid var(--black);
+    filter: contrast(1.05) brightness(0.8);
+  }
+  .about-label {
+    position: absolute; top: -20px; left: -20px; z-index: 3;
+    background: var(--gold); color: var(--black);
+    font-family: var(--font-sans); font-size: 0.6rem;
+    letter-spacing: 0.3em; text-transform: uppercase;
+    padding: 10px 20px;
+  }
+  .section-eyebrow {
+    font-family: var(--font-sans); font-size: 0.65rem;
+    letter-spacing: 0.4em; text-transform: uppercase;
+    color: var(--gold); margin-bottom: 20px;
+    display: flex; align-items: center; gap: 16px;
+  }
+  .section-eyebrow::before {
+    content: ''; display: block; width: 30px; height: 0.5px; background: var(--gold);
+  }
+  .section-h2 {
+    font-family: var(--font-display);
+    font-size: clamp(2rem, 4vw, 3.2rem);
+    font-weight: 700; line-height: 1.15;
+    margin-bottom: 24px;
+  }
+  .section-h2 em { font-style: italic; color: var(--gold); }
+  .section-body {
+    font-family: var(--font-body); font-size: 1.1rem;
+    color: rgba(245,240,232,0.7); line-height: 1.9; margin-bottom: 36px;
+  }
+  .stats-row { display: flex; gap: 40px; margin-top: 40px; }
+  .stat-item { text-align: center; }
+  .stat-num {
+    font-family: var(--font-display); font-size: 2.8rem; font-weight: 700;
+    color: var(--gold); line-height: 1;
+  }
+  .stat-label {
+    font-family: var(--font-sans); font-size: 0.65rem;
+    letter-spacing: 0.2em; text-transform: uppercase;
+    color: var(--muted); margin-top: 6px;
+  }
+
+  /* SERVICES */
+  .services { padding: var(--section-pad) clamp(24px,6vw,80px); }
+  .section-header {
+    display: flex; align-items: flex-end; justify-content: space-between;
+    margin-bottom: 60px; gap: 24px; flex-wrap: wrap;
+  }
+  .tabs {
+    display: flex; gap: 0; border: 0.5px solid rgba(201,169,110,0.25);
+  }
+  .tab {
+    font-family: var(--font-sans); font-size: 0.65rem;
+    letter-spacing: 0.2em; text-transform: uppercase;
+    color: var(--muted); padding: 12px 24px;
+    transition: all 0.3s; border-right: 0.5px solid rgba(201,169,110,0.25);
+  }
+  .tab:last-child { border-right: none; }
+  .tab.active { background: var(--gold); color: var(--black); }
+  .tab:hover:not(.active) { color: var(--warm-white); background: rgba(201,169,110,0.1); }
+  .services-grid {
+    display: grid; grid-template-columns: repeat(auto-fit, minmax(260px, 1fr)); gap: 1px;
+    background: rgba(201,169,110,0.12);
+  }
+  .service-card {
+    background: var(--near-black); padding: 40px 32px;
+    position: relative; overflow: hidden;
+    transition: background 0.4s;
+  }
+  .service-card:hover { background: var(--dark); }
+  .service-card::before {
+    content: ''; position: absolute; top: 0; left: 0;
+    width: 0; height: 2px; background: var(--gold);
+    transition: width 0.4s;
+  }
+  .service-card:hover::before { width: 100%; }
+  .service-num {
+    font-family: var(--font-display); font-size: 3.5rem; font-weight: 700;
+    color: rgba(201,169,110,0.1); line-height: 1;
+    position: absolute; top: 20px; right: 24px;
+  }
+  .service-icon {
+    width: 44px; height: 44px; border: 0.5px solid rgba(201,169,110,0.3);
+    display: flex; align-items: center; justify-content: center;
+    font-size: 1.2rem; color: var(--gold); margin-bottom: 24px;
+  }
+  .service-name {
+    font-family: var(--font-display); font-size: 1.3rem; font-weight: 600;
+    margin-bottom: 12px;
+  }
+  .service-desc {
+    font-size: 0.95rem; color: rgba(245,240,232,0.55); line-height: 1.7;
+    margin-bottom: 24px;
+  }
+  .service-price {
+    font-family: var(--font-sans); font-size: 0.7rem;
+    letter-spacing: 0.15em; color: var(--gold);
+    display: flex; align-items: center; gap: 8px;
+  }
+  .service-price span { color: var(--muted); }
+
+  /* LOYALTY RIBBON */
+  .loyalty-ribbon {
+    background: var(--gold); color: var(--black);
+    padding: 24px clamp(24px,6vw,80px);
+    display: flex; align-items: center; justify-content: space-between;
+    gap: 24px; flex-wrap: wrap;
+  }
+  .loyalty-text {
+    font-family: var(--font-display); font-size: 1.4rem; font-weight: 600;
+    font-style: italic;
+  }
+  .loyalty-sub {
+    font-family: var(--font-sans); font-size: 0.7rem;
+    letter-spacing: 0.2em; text-transform: uppercase;
+    opacity: 0.7; margin-top: 4px;
+  }
+  .loyalty-cuts {
+    display: flex; gap: 8px; align-items: center;
+  }
+  .cut-dot {
+    width: 12px; height: 12px; border-radius: 50%;
+    background: rgba(0,0,0,0.2); border: 1px solid rgba(0,0,0,0.3);
+  }
+  .cut-dot.filled { background: var(--black); }
+  .cut-dot.free {
+    background: var(--black); position: relative;
+    display: flex; align-items: center; justify-content: center;
+    width: 18px; height: 18px; font-size: 8px; color: var(--gold);
+    font-family: var(--font-sans); font-weight: 700;
+  }
+
+  /* BOOKING */
+  .booking { padding: var(--section-pad) clamp(24px,6vw,80px); }
+  .booking-inner {
+    display: grid; grid-template-columns: 1fr 1.2fr; gap: 60px; align-items: start;
+  }
+  .booking-info { position: sticky; top: 100px; }
+  .booking-tagline {
+    font-family: var(--font-body); font-size: 1rem;
+    color: rgba(245,240,232,0.6); line-height: 1.9;
+    margin-bottom: 40px;
+  }
+  .contact-list { list-style: none; display: flex; flex-direction: column; gap: 16px; }
+  .contact-list li {
+    display: flex; align-items: flex-start; gap: 14px;
+    font-size: 0.95rem; color: rgba(245,240,232,0.7);
+  }
+  .contact-list li .ci {
+    color: var(--gold); font-size: 0.7rem; letter-spacing: 0.15em;
+    text-transform: uppercase; white-space: nowrap; padding-top: 2px;
+    min-width: 60px;
+  }
+  .booking-form {
+    background: var(--near-black); border: 0.5px solid rgba(201,169,110,0.15);
+    padding: 48px 40px;
+  }
+  .form-title {
+    font-family: var(--font-display); font-size: 1.5rem; font-weight: 600;
+    margin-bottom: 8px;
+  }
+  .form-sub {
+    font-family: var(--font-sans); font-size: 0.7rem;
+    letter-spacing: 0.2em; text-transform: uppercase; color: var(--gold);
+    margin-bottom: 36px;
+  }
+  .form-row { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; }
+  .form-group { margin-bottom: 20px; }
+  .form-label {
+    font-family: var(--font-sans); font-size: 0.6rem;
+    letter-spacing: 0.25em; text-transform: uppercase;
+    color: var(--muted); margin-bottom: 8px; display: block;
+  }
+  .form-input, .form-select, .form-textarea {
+    width: 100%; background: rgba(255,255,255,0.04);
+    border: 0.5px solid rgba(201,169,110,0.2); color: var(--warm-white);
+    font-family: var(--font-body); font-size: 1rem;
+    padding: 12px 16px; transition: border-color 0.3s; outline: none;
+    appearance: none;
+  }
+  .form-input:focus, .form-select:focus, .form-textarea:focus {
+    border-color: var(--gold); background: rgba(201,169,110,0.04);
+  }
+  .form-select option { background: var(--dark); }
+  .form-textarea { resize: vertical; min-height: 80px; }
+  .payment-methods {
+    display: grid; grid-template-columns: repeat(3, 1fr); gap: 10px;
+    margin-bottom: 8px;
+  }
+  .pay-opt {
+    border: 0.5px solid rgba(201,169,110,0.2);
+    padding: 10px 8px; text-align: center; cursor: pointer;
+    transition: all 0.3s;
+    font-family: var(--font-sans); font-size: 0.6rem;
+    letter-spacing: 0.12em; text-transform: uppercase; color: var(--muted);
+  }
+  .pay-opt:hover, .pay-opt.active {
+    border-color: var(--gold); color: var(--gold);
+    background: rgba(201,169,110,0.07);
+  }
+  .pay-opt .po-icon { font-size: 1.1rem; margin-bottom: 4px; }
+  .form-submit {
+    width: 100%; background: var(--gold); color: var(--black);
+    font-family: var(--font-sans); font-size: 0.72rem;
+    letter-spacing: 0.25em; text-transform: uppercase;
+    padding: 18px; margin-top: 8px; transition: background 0.3s;
+  }
+  .form-submit:hover { background: var(--gold-light); }
+
+  /* TEAM */
+  .team { padding: var(--section-pad) clamp(24px,6vw,80px); }
+  .team-grid {
+    display: grid; grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+    gap: 2px; background: rgba(201,169,110,0.1); margin-top: 60px;
+  }
+  .team-card {
+    background: var(--near-black); position: relative; overflow: hidden;
+  }
+  .team-img { height: 380px; position: relative; }
+  .team-img img { filter: grayscale(20%) contrast(1.05) brightness(0.8); }
+  .team-overlay {
+    position: absolute; inset: 0;
+    background: linear-gradient(to top, rgba(10,8,6,0.9) 0%, transparent 60%);
+  }
+  .team-info {
+    position: absolute; bottom: 0; left: 0; right: 0;
+    padding: 24px; z-index: 2;
+  }
+  .team-name {
+    font-family: var(--font-display); font-size: 1.2rem; font-weight: 600;
+  }
+  .team-role {
+    font-family: var(--font-sans); font-size: 0.6rem;
+    letter-spacing: 0.2em; text-transform: uppercase;
+    color: var(--gold); margin-top: 4px;
+  }
+  .team-spec {
+    font-size: 0.85rem; color: rgba(245,240,232,0.5);
+    margin-top: 6px;
+  }
+
+  /* TESTIMONIALS */
+  .testimonials {
+    padding: var(--section-pad) clamp(24px,6vw,80px);
+    background: var(--near-black);
+    position: relative; overflow: hidden;
+  }
+  .testimonials::before {
+    content: '\201C'; position: absolute;
+    font-family: var(--font-display); font-size: 30vw; font-weight: 700;
+    color: rgba(201,169,110,0.04); line-height: 1;
+    top: -5vw; left: -2vw;
+  }
+  .testimonials-inner {
+    display: grid; grid-template-columns: 1fr 2fr; gap: 80px; align-items: center;
+  }
+  .test-nav {
+    display: flex; flex-direction: column; gap: 20px;
+  }
+  .test-dot {
+    width: 2px; height: 40px; background: rgba(201,169,110,0.2);
+    cursor: pointer; transition: all 0.3s;
+    position: relative;
+  }
+  .test-dot::after {
+    content: ''; position: absolute; left: -2px; top: 0;
+    width: 6px; height: 0; background: var(--gold); transition: height 0.4s;
+  }
+  .test-dot.active { background: rgba(201,169,110,0.5); }
+  .test-dot.active::after { height: 100%; }
+  .test-content { position: relative; z-index: 1; }
+  .test-text {
+    font-family: var(--font-display); font-size: clamp(1.2rem, 3vw, 2rem);
+    font-style: italic; line-height: 1.6; margin-bottom: 36px;
+    color: rgba(245,240,232,0.9);
+  }
+  .test-author {
+    display: flex; align-items: center; gap: 16px;
+  }
+  .test-avatar {
+    width: 48px; height: 48px; border-radius: 50%;
+    background: var(--gold); display: flex; align-items: center; justify-content: center;
+    font-family: var(--font-sans); font-size: 1rem; font-weight: 500;
+    color: var(--black);
+  }
+  .test-name {
+    font-family: var(--font-sans); font-size: 0.8rem;
+    letter-spacing: 0.1em; text-transform: uppercase;
+  }
+  .test-svc {
+    font-size: 0.85rem; color: var(--gold); margin-top: 2px;
+  }
+
+  /* GALLERY */
+  .gallery { padding: var(--section-pad) clamp(24px,6vw,80px); }
+  .gallery-grid {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    grid-template-rows: 250px 200px;
+    gap: 4px; margin-top: 60px;
+  }
+  .gallery-item {
+    overflow: hidden; position: relative; background: var(--smoke);
+  }
+  .gallery-item:first-child {
+    grid-column: span 2; grid-row: span 2;
+  }
+  .gallery-item img { transition: transform 0.5s; filter: brightness(0.8) contrast(1.05); }
+  .gallery-item:hover img { transform: scale(1.04); }
+  .gallery-overlay {
+    position: absolute; inset: 0;
+    background: rgba(201,169,110,0.0);
+    display: flex; align-items: center; justify-content: center;
+    opacity: 0; transition: opacity 0.3s;
+  }
+  .gallery-item:hover .gallery-overlay {
+    background: rgba(10,8,6,0.4); opacity: 1;
+  }
+  .gallery-overlay span {
+    font-family: var(--font-sans); font-size: 0.65rem;
+    letter-spacing: 0.35em; text-transform: uppercase; color: var(--warm-white);
+  }
+
+  /* PAYMENTS SECTION */
+  .payments-section {
+    padding: 80px clamp(24px,6vw,80px);
+    background: var(--near-black);
+    border-top: 0.5px solid rgba(201,169,110,0.1);
+    border-bottom: 0.5px solid rgba(201,169,110,0.1);
+  }
+  .payments-heading {
+    text-align: center; margin-bottom: 48px;
+  }
+  .pay-grid {
+    display: grid; grid-template-columns: repeat(auto-fit, minmax(160px, 1fr)); gap: 1px;
+    background: rgba(201,169,110,0.1);
+  }
+  .pay-card {
+    background: var(--near-black); padding: 28px 24px;
+    text-align: center; transition: background 0.3s;
+  }
+  .pay-card:hover { background: var(--dark); }
+  .pay-card-icon {
+    font-size: 2rem; margin-bottom: 14px;
+    display: block;
+  }
+  .pay-card-name {
+    font-family: var(--font-sans); font-size: 0.65rem;
+    letter-spacing: 0.2em; text-transform: uppercase; color: var(--gold);
+    margin-bottom: 6px;
+  }
+  .pay-card-desc {
+    font-size: 0.85rem; color: rgba(245,240,232,0.4); line-height: 1.5;
+  }
+
+  /* CTA SECTION */
+  .cta-section {
+    padding: var(--section-pad) clamp(24px,6vw,80px);
+    position: relative; overflow: hidden; text-align: center;
+  }
+  .cta-section::before {
+    content: ''; position: absolute; inset: 0;
+    background:
+      radial-gradient(ellipse 80% 60% at 50% 50%, rgba(201,169,110,0.09) 0%, transparent 70%);
+  }
+  .cta-section .section-h2 { font-size: clamp(2.2rem, 5vw, 4rem); }
+  .cta-section .section-body { max-width: 560px; margin: 0 auto 48px; }
+  .cta-actions { display: flex; gap: 20px; justify-content: center; flex-wrap: wrap; }
+
+  /* HOURS */
+  .hours-section {
+    padding: 60px clamp(24px,6vw,80px);
+    background: var(--near-black);
+    display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+    gap: 2px; border-top: 0.5px solid rgba(201,169,110,0.1);
+  }
+  .hours-card {
+    background: var(--near-black); padding: 32px 28px;
+    border-right: 0.5px solid rgba(201,169,110,0.1);
+  }
+  .hours-card:last-child { border-right: none; }
+  .hours-label {
+    font-family: var(--font-sans); font-size: 0.6rem;
+    letter-spacing: 0.3em; text-transform: uppercase; color: var(--gold);
+    margin-bottom: 12px;
+  }
+  .hours-days { font-family: var(--font-display); font-size: 1.1rem; margin-bottom: 4px; }
+  .hours-time { font-size: 0.95rem; color: rgba(245,240,232,0.5); }
+
+  /* FOOTER */
+  footer {
+    background: var(--black); padding: 60px clamp(24px,6vw,80px) 30px;
+    border-top: 0.5px solid rgba(201,169,110,0.15);
+  }
+  .footer-top {
+    display: grid; grid-template-columns: 2fr 1fr 1fr 1fr; gap: 60px;
+    margin-bottom: 60px;
+  }
+  .footer-brand p {
+    font-size: 0.95rem; color: rgba(245,240,232,0.5); margin-top: 16px;
+    max-width: 280px; line-height: 1.8;
+  }
+  .footer-col-title {
+    font-family: var(--font-sans); font-size: 0.6rem;
+    letter-spacing: 0.3em; text-transform: uppercase; color: var(--gold);
+    margin-bottom: 20px;
+  }
+  .footer-links { list-style: none; display: flex; flex-direction: column; gap: 10px; }
+  .footer-links a {
+    font-size: 0.95rem; color: rgba(245,240,232,0.5); transition: color 0.3s;
+  }
+  .footer-links a:hover { color: var(--warm-white); }
+  .footer-bottom {
+    display: flex; align-items: center; justify-content: space-between;
+    padding-top: 30px; border-top: 0.5px solid rgba(201,169,110,0.1);
+    font-family: var(--font-sans); font-size: 0.65rem;
+    letter-spacing: 0.15em; color: rgba(245,240,232,0.3); flex-wrap: wrap; gap: 12px;
+  }
+  .footer-bottom a { color: var(--gold-dim); transition: color 0.3s; }
+  .footer-bottom a:hover { color: var(--gold); }
+  .social-links { display: flex; gap: 16px; }
+  .social-links a {
+    width: 32px; height: 32px; border: 0.5px solid rgba(201,169,110,0.3);
+    display: flex; align-items: center; justify-content: center;
+    font-size: 0.8rem; color: var(--gold-dim); transition: all 0.3s;
+  }
+  .social-links a:hover { background: var(--gold); color: var(--black); border-color: var(--gold); }
+
+  /* MOBILE NAV */
+  .mobile-menu {
+    display: none; position: fixed; inset: 0; z-index: 99;
+    background: var(--black); flex-direction: column;
+    align-items: center; justify-content: center; gap: 32px;
+  }
+  .mobile-menu.open { display: flex; }
+  .mobile-menu a {
+    font-family: var(--font-display); font-size: 2rem; font-style: italic;
+    color: var(--warm-white); transition: color 0.3s;
+  }
+  .mobile-menu a:hover { color: var(--gold); }
+  .mobile-close {
+    position: absolute; top: 24px; right: 24px;
+    font-size: 1.5rem; color: var(--gold); cursor: pointer;
+  }
+
+  /* SCROLL REVEAL */
+  .reveal {
+    opacity: 0; transform: translateY(28px); transition: opacity 0.7s, transform 0.7s;
+  }
+  .reveal.visible { opacity: 1; transform: none; }
+
+  /* TOAST */
+  .toast {
+    position: fixed; bottom: 32px; right: 32px; z-index: 999;
+    background: var(--gold); color: var(--black);
+    font-family: var(--font-sans); font-size: 0.75rem; letter-spacing: 0.1em;
+    padding: 16px 24px; transform: translateY(100px); opacity: 0;
+    transition: all 0.4s; pointer-events: none;
+  }
+  .toast.show { transform: none; opacity: 1; }
+
+  /* RESPONSIVE */
+  @media (max-width: 1024px) {
+    .about { grid-template-columns: 1fr; }
+    .about-visuals { display: none; }
+    .booking-inner { grid-template-columns: 1fr; }
+    .booking-info { position: static; }
+    .testimonials-inner { grid-template-columns: 1fr; }
+    .test-nav { flex-direction: row; }
+    .test-dot { width: 40px; height: 2px; }
+    .test-dot::after { left: 0; top: -2px; width: 0; height: 6px; }
+    .test-dot.active::after { width: 100%; height: 6px; }
+    .footer-top { grid-template-columns: 1fr 1fr; gap: 36px; }
+    .gallery-grid { grid-template-columns: repeat(2,1fr); grid-template-rows: unset; }
+    .gallery-item:first-child { grid-column: span 1; grid-row: span 1; }
+  }
+  @media (max-width: 768px) {
+    .nav-links, .nav-cta { display: none; }
+    .nav-hamburger { display: flex; }
+    .hero-image-panel { width: 100%; clip-path: none; opacity: 0.25; }
+    .hero-content { max-width: 100%; }
+    .services-grid { grid-template-columns: 1fr 1fr; }
+    .form-row { grid-template-columns: 1fr; }
+    .footer-top { grid-template-columns: 1fr; }
+    .gallery-grid { grid-template-columns: 1fr; }
+    .stats-row { gap: 24px; }
+  }
+  @media (max-width: 480px) {
+    .services-grid { grid-template-columns: 1fr; }
+    .payment-methods { grid-template-columns: 1fr 1fr; }
+    .hero-badges { display: none; }
+  }
+</style>
+</head>
+<body>
+
+<!-- NAV -->
+<nav class="nav" id="nav">
+  <a href="#" class="nav-logo">
+    <span class="nav-logo-main">TREYSSON <span>TRIMZ</span></span>
+    <span class="nav-logo-sub">Barbershop · Salon · Spa</span>
+  </a>
+  <ul class="nav-links">
+    <li><a href="#about">About</a></li>
+    <li><a href="#services">Services</a></li>
+    <li><a href="#team">Our Team</a></li>
+    <li><a href="#gallery">Gallery</a></li>
+    <li><a href="#booking">Contact</a></li>
+  </ul>
+  <a href="#booking" class="nav-cta">Book Now</a>
+  <div class="nav-hamburger" onclick="document.getElementById('mobileMenu').classList.add('open')">
+    <span></span><span></span><span></span>
+  </div>
+</nav>
+
+<!-- MOBILE MENU -->
+<div class="mobile-menu" id="mobileMenu">
+  <span class="mobile-close" onclick="document.getElementById('mobileMenu').classList.remove('open')">✕</span>
+  <a href="#about" onclick="document.getElementById('mobileMenu').classList.remove('open')">About</a>
+  <a href="#services" onclick="document.getElementById('mobileMenu').classList.remove('open')">Services</a>
+  <a href="#team" onclick="document.getElementById('mobileMenu').classList.remove('open')">Our Team</a>
+  <a href="#gallery" onclick="document.getElementById('mobileMenu').classList.remove('open')">Gallery</a>
+  <a href="#booking" onclick="document.getElementById('mobileMenu').classList.remove('open')">Book Now</a>
+</div>
+
+<!-- HERO -->
+<section class="hero">
+  <div class="hero-bg"></div>
+  <div class="hero-image-panel">
+    <img src="https://images.unsplash.com/photo-1621605815971-fbc98d665033?w=900&q=80" alt="Premium barbershop interior">
+  </div>
+  <div class="hero-content">
+    <p class="hero-eyebrow">Est. Nairobi · Premium Grooming</p>
+    <h1 class="hero-h1">
+      Where Craft<br>Meets <em>Precision</em>
+    </h1>
+    <p class="hero-sub">
+      Nairobi's finest destination for barbering, salon treatments, and spa experiences — where every detail is an act of intention.
+    </p>
+    <div class="hero-actions">
+      <a href="#booking" class="btn-primary">Reserve Your Seat</a>
+      <a href="#services" class="btn-outline">Explore Services</a>
+    </div>
+  </div>
+  <div class="hero-badges">
+    <div class="hero-badge">Barbershop</div>
+    <div class="hero-badge">Salon</div>
+    <div class="hero-badge">Spa</div>
+  </div>
+  <div class="hero-scroll">
+    <span>Scroll</span>
+    <div class="scroll-line"></div>
+  </div>
+</section>
+
+<!-- LOYALTY RIBBON -->
+<div class="loyalty-ribbon">
+  <div>
+    <div class="loyalty-text">The Treysson Loyalty Programme</div>
+    <div class="loyalty-sub">7 haircuts — your 8th is on us. Always.</div>
+  </div>
+  <div class="loyalty-cuts">
+    <div class="cut-dot filled"></div>
+    <div class="cut-dot filled"></div>
+    <div class="cut-dot filled"></div>
+    <div class="cut-dot filled"></div>
+    <div class="cut-dot filled"></div>
+    <div class="cut-dot"></div>
+    <div class="cut-dot"></div>
+    <div class="cut-dot free">★</div>
+  </div>
+  <a href="#booking" class="btn-primary" style="background:var(--black);color:var(--gold);">Start Your Journey</a>
+</div>
+
+<!-- ABOUT -->
+<section class="about" id="about">
+  <div class="about-visuals reveal">
+    <div class="about-img-main">
+      <img src="https://images.unsplash.com/photo-1503951914875-452162b0f3f1?w=700&q=80" alt="Barber at work">
+    </div>
+    <div class="about-img-accent">
+      <img src="https://images.unsplash.com/photo-1560066984-138dadb4c035?w=500&q=80" alt="Salon interior">
+    </div>
+    <div class="about-label">Est. Nairobi</div>
+  </div>
+  <div class="reveal">
+    <p class="section-eyebrow">Our Philosophy</p>
+    <h2 class="section-h2">More than a cut — <em>a ritual</em> for the discerning</h2>
+    <p class="section-body">
+      Treysson Trimz was founded on a singular belief: that grooming is not maintenance — it is transformation. Our barbers, stylists, and therapists bring artistry and precision to every chair, every brush, every treatment.
+    </p>
+    <p class="section-body">
+      From precise fades and classic shaves to deep-tissue massages and luxury facials, we are Nairobi's complete grooming destination for those who refuse to compromise.
+    </p>
+    <div class="stats-row">
+      <div class="stat-item">
+        <div class="stat-num">2K+</div>
+        <div class="stat-label">Clients Served</div>
+      </div>
+      <div class="stat-item">
+        <div class="stat-num">8</div>
+        <div class="stat-label">Expert Staff</div>
+      </div>
+      <div class="stat-item">
+        <div class="stat-num">3</div>
+        <div class="stat-label">Divisions</div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- SERVICES -->
+<section class="services" id="services">
+  <div class="section-header">
+    <div>
+      <p class="section-eyebrow">What We Offer</p>
+      <h2 class="section-h2">Services <em>crafted</em><br>for excellence</h2>
+    </div>
+    <div class="tabs">
+      <button class="tab active" onclick="switchTab(this,'barber')">Barbershop</button>
+      <button class="tab" onclick="switchTab(this,'salon')">Salon</button>
+      <button class="tab" onclick="switchTab(this,'spa')">Spa</button>
+    </div>
+  </div>
+  <div class="services-grid" id="servicesGrid">
+    <!-- populated by JS -->
+  </div>
+</section>
+
+<!-- PAYMENTS -->
+<div class="payments-section">
+  <div class="payments-heading reveal">
+    <p class="section-eyebrow" style="justify-content:center">Convenient Payments</p>
+    <h3 class="section-h2" style="font-size:1.6rem">Pay your way</h3>
+  </div>
+  <div class="pay-grid reveal">
+    <div class="pay-card"><span class="pay-card-icon">📱</span><div class="pay-card-name">M-Pesa STK</div><div class="pay-card-desc">Instant push to your phone</div></div>
+    <div class="pay-card"><span class="pay-card-icon">🏦</span><div class="pay-card-name">KCB Paybill</div><div class="pay-card-desc">Bank paybill transfers</div></div>
+    <div class="pay-card"><span class="pay-card-icon">💳</span><div class="pay-card-name">Card Payment</div><div class="pay-card-desc">Visa, Mastercard accepted</div></div>
+    <div class="pay-card"><span class="pay-card-icon">💵</span><div class="pay-card-name">Cash / Manual</div><div class="pay-card-desc">At the counter</div></div>
+    <div class="pay-card"><span class="pay-card-icon">📲</span><div class="pay-card-name">M-Pesa Manual</div><div class="pay-card-desc">Confirm & enter reference</div></div>
+    <div class="pay-card"><span class="pay-card-icon">🔗</span><div class="pay-card-name">Pay Link</div><div class="pay-card-desc">Sent to your phone/email</div></div>
+  </div>
+</div>
+
+<!-- BOOKING -->
+<section class="booking" id="booking">
+  <div class="booking-inner">
+    <div class="booking-info reveal">
+      <p class="section-eyebrow">Reserve a Session</p>
+      <h2 class="section-h2">Book your <em>experience</em></h2>
+      <p class="booking-tagline">
+        Choose your service, your specialist, and your preferred time. Confirmations, reminders, and receipts arrive automatically via email and WhatsApp.
+      </p>
+      <ul class="contact-list">
+        <li><span class="ci">Phone</span> +254 700 000 000</li>
+        <li><span class="ci">WhatsApp</span> +254 700 000 000</li>
+        <li><span class="ci">Email</span> hello@treyssontrimz.co.ke</li>
+        <li><span class="ci">Location</span> Nairobi, Kenya</li>
+        <li><span class="ci">Hours</span> Mon–Sat 8am–8pm · Sun 9am–5pm</li>
+      </ul>
+    </div>
+    <div class="booking-form reveal">
+      <h3 class="form-title">Make a Booking</h3>
+      <p class="form-sub">Confirmation sent to your email &amp; WhatsApp</p>
+      <div class="form-row">
+        <div class="form-group">
+          <label class="form-label">First Name</label>
+          <input class="form-input" type="text" placeholder="John">
+        </div>
+        <div class="form-group">
+          <label class="form-label">Last Name</label>
+          <input class="form-input" type="text" placeholder="Doe">
+        </div>
+      </div>
+      <div class="form-row">
+        <div class="form-group">
+          <label class="form-label">Phone / WhatsApp</label>
+          <input class="form-input" type="tel" placeholder="+254 7XX XXX XXX">
+        </div>
+        <div class="form-group">
+          <label class="form-label">Email Address</label>
+          <input class="form-input" type="email" placeholder="you@email.com">
+        </div>
+      </div>
+      <div class="form-row">
+        <div class="form-group">
+          <label class="form-label">Division</label>
+          <select class="form-select" id="divisionSelect" onchange="updateServices()">
+            <option value="">Select...</option>
+            <option value="barber">Barbershop</option>
+            <option value="salon">Salon</option>
+            <option value="spa">Spa</option>
+          </select>
+        </div>
+        <div class="form-group">
+          <label class="form-label">Service</label>
+          <select class="form-select" id="serviceSelect">
+            <option value="">Choose division first</option>
+          </select>
+        </div>
+      </div>
+      <div class="form-row">
+        <div class="form-group">
+          <label class="form-label">Preferred Date</label>
+          <input class="form-input" type="date">
+        </div>
+        <div class="form-group">
+          <label class="form-label">Preferred Time</label>
+          <select class="form-select">
+            <option>08:00 AM</option><option>09:00 AM</option><option>10:00 AM</option>
+            <option>11:00 AM</option><option>12:00 PM</option><option>01:00 PM</option>
+            <option>02:00 PM</option><option>03:00 PM</option><option>04:00 PM</option>
+            <option>05:00 PM</option><option>06:00 PM</option><option>07:00 PM</option>
+          </select>
+        </div>
+      </div>
+      <div class="form-group">
+        <label class="form-label">Specialist Preference</label>
+        <select class="form-select">
+          <option>No preference — first available</option>
+          <option>Treysson (Senior Barber)</option>
+          <option>Brian (Barber)</option>
+          <option>Amira (Stylist)</option>
+          <option>Grace (Spa Therapist)</option>
+        </select>
+      </div>
+      <div class="form-group">
+        <label class="form-label">Special Notes</label>
+        <textarea class="form-textarea" placeholder="Any special requests or notes..."></textarea>
+      </div>
+      <div class="form-group">
+        <label class="form-label">Payment Method</label>
+        <div class="payment-methods">
+          <div class="pay-opt active" onclick="selectPay(this)"><div class="po-icon">📱</div>M-Pesa STK</div>
+          <div class="pay-opt" onclick="selectPay(this)"><div class="po-icon">🏦</div>KCB Paybill</div>
+          <div class="pay-opt" onclick="selectPay(this)"><div class="po-icon">💳</div>Card</div>
+          <div class="pay-opt" onclick="selectPay(this)"><div class="po-icon">💵</div>Cash</div>
+          <div class="pay-opt" onclick="selectPay(this)"><div class="po-icon">📲</div>Manual Mpesa</div>
+          <div class="pay-opt" onclick="selectPay(this)"><div class="po-icon">🔗</div>Pay Link</div>
+        </div>
+      </div>
+      <button class="form-submit" onclick="submitBooking()">Confirm Booking &amp; Pay</button>
+    </div>
+  </div>
+</section>
+
+<!-- TEAM -->
+<section class="team" id="team">
+  <div class="reveal">
+    <p class="section-eyebrow">The Specialists</p>
+    <h2 class="section-h2">Meet the <em>artists</em><br>behind the chair</h2>
+  </div>
+  <div class="team-grid reveal">
+    <div class="team-card">
+      <div class="team-img">
+        <img src="https://images.unsplash.com/photo-1605497788044-5a32c7078486?w=500&q=80" alt="Treysson">
+        <div class="team-overlay"></div>
+      </div>
+      <div class="team-info">
+        <div class="team-name">Treysson</div>
+        <div class="team-role">Founder · Senior Barber</div>
+        <div class="team-spec">Classic cuts · Fades · Hot shaves</div>
+      </div>
+    </div>
+    <div class="team-card">
+      <div class="team-img">
+        <img src="https://images.unsplash.com/photo-1595476108010-b4d1f102b1b1?w=500&q=80" alt="Brian">
+        <div class="team-overlay"></div>
+      </div>
+      <div class="team-info">
+        <div class="team-name">Brian</div>
+        <div class="team-role">Master Barber</div>
+        <div class="team-spec">Modern fades · Beard sculpting</div>
+      </div>
+    </div>
+    <div class="team-card">
+      <div class="team-img">
+        <img src="https://images.unsplash.com/photo-1522337360788-8b13dee7a37e?w=500&q=80" alt="Amira">
+        <div class="team-overlay"></div>
+      </div>
+      <div class="team-info">
+        <div class="team-name">Amira</div>
+        <div class="team-role">Senior Stylist</div>
+        <div class="team-spec">Colour · Braids · Treatments</div>
+      </div>
+    </div>
+    <div class="team-card">
+      <div class="team-img">
+        <img src="https://images.unsplash.com/photo-1573496359142-b8d87734a5a2?w=500&q=80" alt="Grace">
+        <div class="team-overlay"></div>
+      </div>
+      <div class="team-info">
+        <div class="team-name">Grace</div>
+        <div class="team-role">Spa Therapist</div>
+        <div class="team-spec">Massage · Facials · Body wraps</div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- TESTIMONIALS -->
+<section class="testimonials">
+  <div class="testimonials-inner">
+    <div class="test-nav">
+      <div class="test-dot active" onclick="showTestimonial(0,this)"></div>
+      <div class="test-dot" onclick="showTestimonial(1,this)"></div>
+      <div class="test-dot" onclick="showTestimonial(2,this)"></div>
+    </div>
+    <div class="test-content reveal" id="testimonialContent">
+      <p class="test-text">"Walking into Treysson Trimz is an experience in itself. The precision, the atmosphere, the attention to detail — it's a cut above anything else in Nairobi. I've been coming every two weeks for over a year."</p>
+      <div class="test-author">
+        <div class="test-avatar">MK</div>
+        <div>
+          <div class="test-name">Michael K.</div>
+          <div class="test-svc">Regular Barbershop Client</div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- GALLERY -->
+<section class="gallery" id="gallery">
+  <div class="section-header reveal">
+    <div>
+      <p class="section-eyebrow">The Work</p>
+      <h2 class="section-h2">A <em>glimpse</em> inside</h2>
+    </div>
+    <a href="#booking" class="btn-outline">Book a Visit</a>
+  </div>
+  <div class="gallery-grid reveal">
+    <div class="gallery-item">
+      <img src="https://images.unsplash.com/photo-1599351431613-18ef1fdd27e5?w=800&q=80" alt="Barbershop">
+      <div class="gallery-overlay"><span>The Chair</span></div>
+    </div>
+    <div class="gallery-item">
+      <img src="https://images.unsplash.com/photo-1597734961090-f39fa3e14b7c?w=500&q=80" alt="Beard trim">
+      <div class="gallery-overlay"><span>Beard Work</span></div>
+    </div>
+    <div class="gallery-item">
+      <img src="https://images.unsplash.com/photo-1582095133179-bfd08e2fb6b8?w=500&q=80" alt="Salon">
+      <div class="gallery-overlay"><span>Salon</span></div>
+    </div>
+    <div class="gallery-item">
+      <img src="https://images.unsplash.com/photo-1540555700478-4be289fbecef?w=500&q=80" alt="Spa">
+      <div class="gallery-overlay"><span>Spa</span></div>
+    </div>
+    <div class="gallery-item">
+      <img src="https://images.unsplash.com/photo-1587909209111-5097cf83d078?w=500&q=80" alt="Hair treatment">
+      <div class="gallery-overlay"><span>Treatments</span></div>
+    </div>
+  </div>
+</section>
+
+<!-- CTA -->
+<section class="cta-section">
+  <div class="reveal">
+    <p class="section-eyebrow" style="justify-content:center">Ready?</p>
+    <h2 class="section-h2">Your best look <em>awaits</em></h2>
+    <p class="section-body">
+      Whether it's a sharp fade, a colour refresh, or a full spa day — our team is ready. Book online in seconds.
+    </p>
+    <div class="cta-actions">
+      <a href="#booking" class="btn-primary">Book an Appointment</a>
+      <a href="https://wa.me/254700000000" class="btn-outline">WhatsApp Us</a>
+    </div>
+  </div>
+</section>
+
+<!-- HOURS -->
+<div class="hours-section">
+  <div class="hours-card">
+    <div class="hours-label">Barbershop</div>
+    <div class="hours-days">Monday – Friday</div>
+    <div class="hours-time">8:00 AM – 8:00 PM</div>
+    <div class="hours-days" style="margin-top:10px">Saturday</div>
+    <div class="hours-time">8:00 AM – 6:00 PM</div>
+    <div class="hours-days" style="margin-top:10px">Sunday</div>
+    <div class="hours-time">9:00 AM – 5:00 PM</div>
+  </div>
+  <div class="hours-card">
+    <div class="hours-label">Salon</div>
+    <div class="hours-days">Monday – Saturday</div>
+    <div class="hours-time">8:00 AM – 7:00 PM</div>
+    <div class="hours-days" style="margin-top:10px">Sunday</div>
+    <div class="hours-time">10:00 AM – 4:00 PM</div>
+  </div>
+  <div class="hours-card">
+    <div class="hours-label">Spa</div>
+    <div class="hours-days">Tuesday – Saturday</div>
+    <div class="hours-time">9:00 AM – 7:00 PM</div>
+    <div class="hours-days" style="margin-top:10px">Sunday</div>
+    <div class="hours-time">10:00 AM – 3:00 PM</div>
+    <div class="hours-days" style="margin-top:10px; color:var(--muted)">Monday</div>
+    <div class="hours-time" style="color:rgba(154,146,136,0.5)">Closed</div>
+  </div>
+  <div class="hours-card">
+    <div class="hours-label">Location</div>
+    <div class="hours-days" style="font-size:1rem;margin-bottom:8px">Nairobi, Kenya</div>
+    <div class="hours-time" style="margin-bottom:16px">Find us on Google Maps</div>
+    <div class="hours-label" style="margin-top:16px">Contact</div>
+    <div class="hours-time">+254 700 000 000</div>
+    <div class="hours-time">hello@treyssontrimz.co.ke</div>
+  </div>
+</div>
+
+<!-- FOOTER -->
+<footer>
+  <div class="footer-top">
+    <div class="footer-brand">
+      <div class="nav-logo">
+        <span class="nav-logo-main">TREYSSON <span>TRIMZ</span></span>
+        <span class="nav-logo-sub">Barbershop · Salon · Spa</span>
+      </div>
+      <p>Nairobi's premium destination for precision grooming, expert styling, and restorative spa treatments. Excellence in every detail.</p>
+      <div class="social-links" style="margin-top:20px">
+        <a href="#" aria-label="Instagram">IG</a>
+        <a href="#" aria-label="Facebook">FB</a>
+        <a href="#" aria-label="Twitter">TW</a>
+        <a href="#" aria-label="TikTok">TK</a>
+      </div>
+    </div>
+    <div>
+      <div class="footer-col-title">Services</div>
+      <ul class="footer-links">
+        <li><a href="#services">Haircuts &amp; Fades</a></li>
+        <li><a href="#services">Beard Trim &amp; Shave</a></li>
+        <li><a href="#services">Hair Colouring</a></li>
+        <li><a href="#services">Braids &amp; Weaves</a></li>
+        <li><a href="#services">Massage Therapy</a></li>
+        <li><a href="#services">Facial Treatments</a></li>
+      </ul>
+    </div>
+    <div>
+      <div class="footer-col-title">Quick Links</div>
+      <ul class="footer-links">
+        <li><a href="#about">About Us</a></li>
+        <li><a href="#team">Our Team</a></li>
+        <li><a href="#gallery">Gallery</a></li>
+        <li><a href="#booking">Book Online</a></li>
+        <li><a href="#">Loyalty Programme</a></li>
+        <li><a href="#">Gift Cards</a></li>
+      </ul>
+    </div>
+    <div>
+      <div class="footer-col-title">Policies</div>
+      <ul class="footer-links">
+        <li><a href="#">Cancellation Policy</a></li>
+        <li><a href="#">Privacy Policy</a></li>
+        <li><a href="#">Terms of Service</a></li>
+        <li><a href="#">Refund Policy</a></li>
+      </ul>
+      <div class="footer-col-title" style="margin-top:28px">Staff Portal</div>
+      <ul class="footer-links">
+        <li><a href="/admin">Admin Dashboard →</a></li>
+      </ul>
+    </div>
+  </div>
+  <div class="footer-bottom">
+    <span>© 2025 Treysson Trimz. All rights reserved.</span>
+    <span>Designed &amp; built for the discerning · Nairobi, Kenya</span>
+  </div>
+</footer>
+
+<!-- TOAST -->
+<div class="toast" id="toast">✓ Booking submitted! Check your WhatsApp.</div>
+
+<script>
+// Services Data
+const SERVICES = {
+  barber: [
+    { name: 'Signature Haircut', desc: 'Precision cut tailored to your face shape and personal style, finished with hot towel.', price: 'From KES 800', icon: '✂' },
+    { name: 'Classic Fade', desc: 'Seamless skin-to-length taper — low, mid, or high. The Treysson standard.', price: 'From KES 900', icon: '〰' },
+    { name: 'Beard Sculpt & Trim', desc: 'Defined lines, conditioned beard oil, and a finish that speaks for itself.', price: 'From KES 500', icon: '▲' },
+    { name: 'Hot Towel Shave', desc: 'A meditative experience of heat, lather, and a perfectly smooth finish.', price: 'From KES 700', icon: '◎' },
+    { name: 'Cut + Beard Combo', desc: 'The complete look — fresh cut with a sculpted beard in one session.', price: 'From KES 1,300', icon: '◈' },
+    { name: 'Kids Haircut', desc: 'Gentle, patient, and precise — a cut they\'ll be proud to show off.', price: 'From KES 600', icon: '★' },
+  ],
+  salon: [
+    { name: 'Hair Colour & Highlights', desc: 'Full colour, balayage, ombre, or highlights — vibrant, lasting results.', price: 'From KES 2,500', icon: '◉' },
+    { name: 'Blowout & Styling', desc: 'A professional blowout to achieve volume, smoothness, or defined waves.', price: 'From KES 1,200', icon: '✦' },
+    { name: 'Braids & Weaves', desc: 'Box braids, cornrows, weaves, and protective styles for all hair types.', price: 'From KES 2,000', icon: '∞' },
+    { name: 'Deep Conditioning', desc: 'Restore moisture and strength with a premium treatment ritual.', price: 'From KES 1,500', icon: '◎' },
+    { name: 'Relaxer Treatment', desc: 'Applied with precision and care for a smooth, manageable result.', price: 'From KES 1,800', icon: '◈' },
+    { name: 'Manicure & Pedicure', desc: 'From basic grooming to full nail art — for hands and feet that finish the look.', price: 'From KES 1,000', icon: '◆' },
+  ],
+  spa: [
+    { name: 'Swedish Massage', desc: 'A full-body relaxation massage using long, flowing strokes to release tension.', price: 'From KES 3,500', icon: '☽' },
+    { name: 'Deep Tissue Massage', desc: 'Targeted pressure on deeper muscle layers — for recovery and release.', price: 'From KES 4,000', icon: '▲' },
+    { name: 'Luxury Facial', desc: 'Cleanse, exfoliate, mask, and hydrate with premium skincare formulas.', price: 'From KES 2,500', icon: '◎' },
+    { name: 'Body Wrap', desc: 'Detoxifying wrap with natural minerals to nourish and smooth the skin.', price: 'From KES 3,800', icon: '◉' },
+    { name: 'Couples Package', desc: 'A shared 90-minute ritual for two — the ultimate gift of relaxation.', price: 'From KES 7,000', icon: '∞' },
+    { name: 'Express Refresh', desc: 'A 30-minute targeted treatment — facial, back massage, or foot therapy.', price: 'From KES 1,800', icon: '✦' },
+  ]
+};
+
+const TESTIMONIALS = [
+  { text: '"Walking into Treysson Trimz is an experience in itself. The precision, the atmosphere, the attention to detail — it\'s a cut above anything else in Nairobi. I\'ve been coming every two weeks for over a year."', initials: 'MK', name: 'Michael K.', svc: 'Regular Barbershop Client' },
+  { text: '"Amira transformed my hair. The salon is immaculate, the products are premium, and she actually listened to what I wanted. I left feeling like a completely different person. Highly recommend."', initials: 'NW', name: 'Naomi W.', svc: 'Salon Client — Colour & Styling' },
+  { text: '"The spa experience here rivals anything I\'ve found in Nairobi or beyond. The hot stone massage, the ambience — it\'s a genuine retreat. I come here whenever I need to reset completely."', initials: 'JO', name: 'James O.', svc: 'Spa Client — Deep Tissue Massage' },
+];
+
+let currentTab = 'barber';
+
+function renderServices(type) {
+  const grid = document.getElementById('servicesGrid');
+  grid.innerHTML = SERVICES[type].map((s, i) => `
+    <div class="service-card">
+      <div class="service-num">0${i+1}</div>
+      <div class="service-icon">${s.icon}</div>
+      <div class="service-name">${s.name}</div>
+      <p class="service-desc">${s.desc}</p>
+      <div class="service-price"><strong>${s.price}</strong> <span>· Book to confirm</span></div>
+    </div>
+  `).join('');
+}
+
+function switchTab(el, type) {
+  document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
+  el.classList.add('active');
+  currentTab = type;
+  renderServices(type);
+}
+
+function updateServices() {
+  const div = document.getElementById('divisionSelect').value;
+  const sel = document.getElementById('serviceSelect');
+  if (!div) { sel.innerHTML = '<option>Choose division first</option>'; return; }
+  sel.innerHTML = SERVICES[div].map(s => `<option>${s.name} — ${s.price}</option>`).join('');
+}
+
+function selectPay(el) {
+  document.querySelectorAll('.pay-opt').forEach(p => p.classList.remove('active'));
+  el.classList.add('active');
+}
+
+function showTestimonial(idx, dot) {
+  const t = TESTIMONIALS[idx];
+  document.getElementById('testimonialContent').innerHTML = `
+    <p class="test-text">"${t.text.replace(/^"|"$/g,'')}"</p>
+    <div class="test-author">
+      <div class="test-avatar">${t.initials}</div>
+      <div>
+        <div class="test-name">${t.name}</div>
+        <div class="test-svc">${t.svc}</div>
+      </div>
+    </div>
+  `;
+  document.querySelectorAll('.test-dot').forEach(d => d.classList.remove('active'));
+  dot.classList.add('active');
+}
+
+function submitBooking() {
+  const toast = document.getElementById('toast');
+  toast.classList.add('show');
+  setTimeout(() => toast.classList.remove('show'), 4000);
+}
+
+// Scroll reveal
+const observer = new IntersectionObserver((entries) => {
+  entries.forEach(e => { if (e.isIntersecting) e.target.classList.add('visible'); });
+}, { threshold: 0.12 });
+document.querySelectorAll('.reveal').forEach(el => observer.observe(el));
+
+// Nav scroll
+window.addEventListener('scroll', () => {
+  document.getElementById('nav').classList.toggle('scrolled', window.scrollY > 40);
+});
+
+// Set min date for booking
+const dateInputs = document.querySelectorAll('input[type="date"]');
+const today = new Date().toISOString().split('T')[0];
+dateInputs.forEach(d => d.min = today);
+
+// Init services
+renderServices('barber');
+</script>
+</body>
+</html>

@@ -1,0 +1,752 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Book an Appointment – Treysson Trimz</title>
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    :root {
+      --black:   #0D0D0D;
+      --dark:    #141414;
+      --card:    #1A1A1A;
+      --border:  #2A2A2A;
+      --gold:    #C9A84C;
+      --gold2:   #E8C97A;
+      --white:   #F5F5F0;
+      --muted:   #888;
+      --danger:  #E05252;
+      --success: #4CAF7D;
+      --radius:  12px;
+    }
+
+    body {
+      background: var(--black);
+      color: var(--white);
+      font-family: 'Segoe UI', system-ui, sans-serif;
+      min-height: 100vh;
+    }
+
+    /* ── Header ── */
+    header {
+      background: var(--dark);
+      border-bottom: 1px solid var(--border);
+      padding: 18px 24px;
+      display: flex;
+      align-items: center;
+      gap: 14px;
+    }
+    .logo-main { font-size: 1.3rem; font-weight: 800; letter-spacing: 0.08em; color: var(--white); }
+    .logo-main span { color: var(--gold); }
+    .logo-sub  { font-size: 0.7rem; letter-spacing: 0.2em; color: var(--muted); text-transform: uppercase; }
+
+    /* ── Progress bar ── */
+    .progress-wrap {
+      background: var(--dark);
+      padding: 20px 24px 0;
+      border-bottom: 1px solid var(--border);
+    }
+    .steps {
+      display: flex;
+      max-width: 600px;
+      margin: 0 auto;
+      position: relative;
+    }
+    .steps::before {
+      content: '';
+      position: absolute;
+      top: 16px;
+      left: 16px;
+      right: 16px;
+      height: 2px;
+      background: var(--border);
+      z-index: 0;
+    }
+    .step-item {
+      flex: 1;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 6px;
+      position: relative;
+      z-index: 1;
+    }
+    .step-circle {
+      width: 32px; height: 32px;
+      border-radius: 50%;
+      background: var(--card);
+      border: 2px solid var(--border);
+      display: flex; align-items: center; justify-content: center;
+      font-size: 0.75rem; font-weight: 700;
+      color: var(--muted);
+      transition: all 0.3s;
+    }
+    .step-item.active .step-circle  { background: var(--gold); border-color: var(--gold); color: var(--black); }
+    .step-item.done   .step-circle  { background: var(--success); border-color: var(--success); color: #fff; }
+    .step-label {
+      font-size: 0.65rem;
+      letter-spacing: 0.05em;
+      color: var(--muted);
+      text-transform: uppercase;
+      padding-bottom: 14px;
+    }
+    .step-item.active .step-label { color: var(--gold); }
+    .step-item.done   .step-label { color: var(--success); }
+
+    /* ── Main ── */
+    main {
+      max-width: 640px;
+      margin: 32px auto;
+      padding: 0 16px 60px;
+    }
+
+    .step-panel { display: none; }
+    .step-panel.active { display: block; animation: fadeIn 0.25s ease; }
+    @keyframes fadeIn { from { opacity:0; transform:translateY(8px); } to { opacity:1; transform:translateY(0); } }
+
+    h2 {
+      font-size: 1.4rem;
+      font-weight: 700;
+      margin-bottom: 6px;
+    }
+    h2 span { color: var(--gold); }
+    .step-hint { color: var(--muted); font-size: 0.9rem; margin-bottom: 24px; }
+
+    /* ── Cards grid ── */
+    .cards-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 12px;
+      margin-bottom: 24px;
+    }
+    @media (max-width: 480px) { .cards-grid { grid-template-columns: 1fr; } }
+
+    .sel-card {
+      background: var(--card);
+      border: 2px solid var(--border);
+      border-radius: var(--radius);
+      padding: 16px;
+      cursor: pointer;
+      transition: border-color 0.2s, transform 0.15s;
+    }
+    .sel-card:hover { border-color: var(--gold); transform: translateY(-2px); }
+    .sel-card.selected { border-color: var(--gold); background: #1E1A10; }
+    .sel-card .card-name { font-weight: 700; font-size: 0.95rem; margin-bottom: 4px; }
+    .sel-card .card-meta { font-size: 0.8rem; color: var(--muted); }
+    .sel-card .card-price {
+      margin-top: 10px;
+      font-size: 1rem;
+      font-weight: 800;
+      color: var(--gold);
+    }
+    .sel-card .card-badge {
+      display: inline-block;
+      padding: 2px 8px;
+      border-radius: 20px;
+      font-size: 0.65rem;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+      margin-bottom: 8px;
+    }
+    .badge-haircut   { background:#1a2a1a; color:#4CAF7D; }
+    .badge-beard     { background:#1a1a2a; color:#7D9EFF; }
+    .badge-shave     { background:#2a1a1a; color:#FF9E7D; }
+    .badge-treatment { background:#2a2a1a; color:#FFD07D; }
+    .badge-combo     { background:#2a1a2a; color:#C97DFF; }
+
+    /* ── Barber option ── */
+    .barber-option {
+      display: flex;
+      align-items: center;
+      gap: 14px;
+      background: var(--card);
+      border: 2px solid var(--border);
+      border-radius: var(--radius);
+      padding: 14px 16px;
+      cursor: pointer;
+      transition: border-color 0.2s;
+      margin-bottom: 10px;
+    }
+    .barber-option:hover { border-color: var(--gold); }
+    .barber-option.selected { border-color: var(--gold); background: #1E1A10; }
+    .barber-avatar {
+      width: 46px; height: 46px;
+      border-radius: 50%;
+      background: var(--border);
+      display: flex; align-items: center; justify-content: center;
+      font-weight: 800; font-size: 1.1rem;
+      color: var(--gold);
+      flex-shrink: 0;
+    }
+    .barber-name { font-weight: 700; font-size: 0.95rem; }
+    .barber-spec { font-size: 0.78rem; color: var(--muted); margin-top: 2px; }
+    .any-barber-icon { font-size: 1.4rem; }
+
+    /* ── Date + Time ── */
+    .date-input {
+      width: 100%;
+      background: var(--card);
+      border: 2px solid var(--border);
+      border-radius: var(--radius);
+      color: var(--white);
+      font-size: 1rem;
+      padding: 14px 16px;
+      outline: none;
+      margin-bottom: 20px;
+      transition: border-color 0.2s;
+    }
+    .date-input:focus { border-color: var(--gold); }
+
+    .slots-label { font-size: 0.8rem; color: var(--muted); text-transform: uppercase; letter-spacing: 0.08em; margin-bottom: 12px; }
+    .slots-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(90px, 1fr));
+      gap: 10px;
+      margin-bottom: 24px;
+    }
+    .slot-btn {
+      background: var(--card);
+      border: 2px solid var(--border);
+      border-radius: 8px;
+      color: var(--white);
+      padding: 10px 6px;
+      font-size: 0.85rem;
+      font-weight: 600;
+      cursor: pointer;
+      text-align: center;
+      transition: all 0.2s;
+    }
+    .slot-btn:hover { border-color: var(--gold); color: var(--gold); }
+    .slot-btn.selected { background: var(--gold); border-color: var(--gold); color: var(--black); }
+
+    /* ── Form fields ── */
+    .field { margin-bottom: 16px; }
+    .field label { display: block; font-size: 0.8rem; color: var(--muted); margin-bottom: 6px; letter-spacing: 0.04em; }
+    .field input, .field textarea {
+      width: 100%;
+      background: var(--card);
+      border: 2px solid var(--border);
+      border-radius: var(--radius);
+      color: var(--white);
+      font-size: 0.95rem;
+      padding: 12px 14px;
+      outline: none;
+      font-family: inherit;
+      transition: border-color 0.2s;
+    }
+    .field input:focus, .field textarea:focus { border-color: var(--gold); }
+    .field textarea { resize: vertical; min-height: 80px; }
+
+    /* ── Booking summary ── */
+    .summary-box {
+      background: var(--card);
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      padding: 20px;
+      margin-bottom: 24px;
+    }
+    .summary-row {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 8px 0;
+      border-bottom: 1px solid var(--border);
+      font-size: 0.9rem;
+    }
+    .summary-row:last-child { border-bottom: none; }
+    .summary-row .label { color: var(--muted); }
+    .summary-row .value { font-weight: 600; text-align: right; }
+    .summary-row.total .value { color: var(--gold); font-size: 1.1rem; font-weight: 800; }
+
+    /* ── Buttons ── */
+    .btn-row { display: flex; gap: 12px; margin-top: 8px; }
+    .btn {
+      flex: 1;
+      padding: 14px 20px;
+      border-radius: var(--radius);
+      font-size: 0.95rem;
+      font-weight: 700;
+      cursor: pointer;
+      border: none;
+      transition: opacity 0.2s, transform 0.15s;
+      letter-spacing: 0.03em;
+    }
+    .btn:active { transform: scale(0.98); }
+    .btn-primary { background: var(--gold); color: var(--black); }
+    .btn-primary:hover { background: var(--gold2); }
+    .btn-secondary { background: var(--card); color: var(--white); border: 2px solid var(--border); }
+    .btn-secondary:hover { border-color: var(--gold); }
+    .btn:disabled { opacity: 0.4; cursor: not-allowed; }
+
+    /* ── Confirmation ── */
+    .confirm-wrap { text-align: center; padding: 20px 0; }
+    .confirm-icon { font-size: 3.5rem; margin-bottom: 16px; }
+    .ref-code {
+      display: inline-block;
+      background: var(--card);
+      border: 2px solid var(--gold);
+      border-radius: 8px;
+      padding: 10px 28px;
+      font-size: 1.4rem;
+      font-weight: 800;
+      letter-spacing: 0.1em;
+      color: var(--gold);
+      margin: 16px 0 24px;
+    }
+
+    /* ── Loading / Error ── */
+    .loading { text-align: center; color: var(--muted); padding: 30px; font-size: 0.9rem; }
+    .error-msg {
+      background: #2a1414;
+      border: 1px solid var(--danger);
+      border-radius: 8px;
+      color: var(--danger);
+      padding: 12px 16px;
+      font-size: 0.88rem;
+      margin-bottom: 16px;
+    }
+    .empty-msg { color: var(--muted); font-size: 0.9rem; padding: 20px 0; }
+  </style>
+</head>
+<body>
+
+<header>
+  <div>
+    <div class="logo-main">TREYSSON <span>TRIMZ</span></div>
+    <div class="logo-sub">Staff Portal</div>
+  </div>
+</header>
+
+<div class="progress-wrap">
+  <div class="steps">
+    <div class="step-item active" id="prog-1">
+      <div class="step-circle">1</div>
+      <div class="step-label">Service</div>
+    </div>
+    <div class="step-item" id="prog-2">
+      <div class="step-circle">2</div>
+      <div class="step-label">Barber</div>
+    </div>
+    <div class="step-item" id="prog-3">
+      <div class="step-circle">3</div>
+      <div class="step-label">Date & Time</div>
+    </div>
+    <div class="step-item" id="prog-4">
+      <div class="step-circle">4</div>
+      <div class="step-label">Details</div>
+    </div>
+  </div>
+</div>
+
+<main>
+
+  <!-- STEP 1: Choose Service -->
+  <div class="step-panel active" id="panel-1">
+    <h2>Pick a <span>Service</span></h2>
+    <p class="step-hint">Choose what you'd like done today.</p>
+    <div class="cards-grid" id="services-grid">
+      <div class="loading">Loading services…</div>
+    </div>
+    <div class="btn-row">
+      <button class="btn btn-primary" id="btn-to-2" onclick="goTo(2)" disabled>Next →</button>
+    </div>
+  </div>
+
+  <!-- STEP 2: Choose Barber -->
+  <div class="step-panel" id="panel-2">
+    <h2>Choose a <span>Barber</span></h2>
+    <p class="step-hint">Pick a specific barber or let us assign the first available one.</p>
+    <div id="barbers-list">
+      <div class="loading">Loading barbers…</div>
+    </div>
+    <div class="btn-row">
+      <button class="btn btn-secondary" onclick="goTo(1)">← Back</button>
+      <button class="btn btn-primary" id="btn-to-3" onclick="goTo(3)" disabled>Next →</button>
+    </div>
+  </div>
+
+  <!-- STEP 3: Date & Time -->
+  <div class="step-panel" id="panel-3">
+    <h2>Pick a <span>Date & Time</span></h2>
+    <p class="step-hint">Select an available slot for your appointment.</p>
+    <input type="date" class="date-input" id="date-picker" />
+    <div id="slots-section" style="display:none">
+      <div class="slots-label">Available time slots</div>
+      <div class="slots-grid" id="slots-grid"></div>
+    </div>
+    <div class="btn-row">
+      <button class="btn btn-secondary" onclick="goTo(2)">← Back</button>
+      <button class="btn btn-primary" id="btn-to-4" onclick="goTo(4)" disabled>Next →</button>
+    </div>
+  </div>
+
+  <!-- STEP 4: Customer Details -->
+  <div class="step-panel" id="panel-4">
+    <h2>Your <span>Details</span></h2>
+    <p class="step-hint">Almost done — fill in your info and confirm.</p>
+
+    <div id="error-msg-4" class="error-msg" style="display:none"></div>
+
+    <div class="summary-box" id="booking-summary"></div>
+
+    <div class="field">
+      <label>FULL NAME *</label>
+      <input type="text" id="cust-name" placeholder="e.g. James Kamau" />
+    </div>
+    <div class="field">
+      <label>PHONE NUMBER *</label>
+      <input type="tel" id="cust-phone" placeholder="e.g. 0712 345 678" />
+    </div>
+    <div class="field">
+      <label>EMAIL (optional)</label>
+      <input type="email" id="cust-email" placeholder="e.g. james@email.com" />
+    </div>
+    <div class="field">
+      <label>NOTES (optional)</label>
+      <textarea id="cust-notes" placeholder="Any special requests or preferences…"></textarea>
+    </div>
+
+    <div class="btn-row">
+      <button class="btn btn-secondary" onclick="goTo(3)">← Back</button>
+      <button class="btn btn-primary" id="btn-confirm" onclick="confirmBooking()">Confirm Booking</button>
+    </div>
+  </div>
+
+  <!-- STEP 5: Confirmation -->
+  <div class="step-panel" id="panel-5">
+    <div class="confirm-wrap">
+      <div class="confirm-icon">✅</div>
+      <h2>Booking <span>Confirmed!</span></h2>
+      <p class="step-hint">Your appointment has been booked. Show this code at the barbershop.</p>
+      <div class="ref-code" id="ref-code-display">–</div>
+      <div class="summary-box" id="confirm-summary"></div>
+      <div class="btn-row" style="margin-top:24px">
+        <button class="btn btn-primary" onclick="startOver()">Book Another</button>
+      </div>
+    </div>
+  </div>
+
+</main>
+
+<script>
+  const API = '';  // same origin — change to http://localhost:3000 if serving separately
+
+  const state = {
+    service:   null,
+    barber:    null,  // null = any barber
+    date:      null,
+    slot:      null,
+    currentStep: 1
+  };
+
+  // ── Navigation ──────────────────────────────────────────────────────────────
+  function goTo(step) {
+    if (step === 3 && state.currentStep === 2) loadSlots();
+    if (step === 4) buildSummary();
+
+    document.querySelectorAll('.step-panel').forEach(p => p.classList.remove('active'));
+    document.querySelectorAll('.step-item').forEach(item => {
+      item.classList.remove('active', 'done');
+    });
+
+    for (let i = 1; i < step; i++) {
+      document.getElementById(`prog-${i}`).classList.add('done');
+      document.getElementById(`prog-${i}`).querySelector('.step-circle').textContent = '✓';
+    }
+    if (step <= 4) {
+      document.getElementById(`prog-${step}`).classList.add('active');
+    }
+
+    document.getElementById(`panel-${step}`).classList.add('active');
+    state.currentStep = step;
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+  }
+
+  // ── Step 1: Services ────────────────────────────────────────────────────────
+  async function loadServices() {
+    try {
+      const res  = await fetch(`${API}/api/services`);
+      const json = await res.json();
+      renderServices(json.data);
+    } catch {
+      document.getElementById('services-grid').innerHTML =
+        '<div class="error-msg">Could not load services. Is the server running?</div>';
+    }
+  }
+
+  function renderServices(services) {
+    const grid = document.getElementById('services-grid');
+    if (!services.length) { grid.innerHTML = '<div class="empty-msg">No services available.</div>'; return; }
+
+    grid.innerHTML = services.map(s => `
+      <div class="sel-card" onclick="selectService(${s.id})" id="svc-${s.id}">
+        <div class="card-badge badge-${s.category}">${s.category}</div>
+        <div class="card-name">${s.name}</div>
+        <div class="card-meta">${s.duration} min</div>
+        <div class="card-price">KSh ${Number(s.price).toLocaleString()}</div>
+      </div>
+    `).join('');
+  }
+
+  function selectService(id) {
+    document.querySelectorAll('.sel-card').forEach(c => c.classList.remove('selected'));
+    document.getElementById(`svc-${id}`).classList.add('selected');
+    // store full object from rendered data
+    fetch(`${API}/api/services/${id}`).then(r=>r.json()).then(j=>{
+      state.service = j.data;
+      document.getElementById('btn-to-2').disabled = false;
+    });
+  }
+
+  // ── Step 2: Barbers ─────────────────────────────────────────────────────────
+  async function loadBarbers() {
+    try {
+      const res  = await fetch(`${API}/api/barbers`);
+      const json = await res.json();
+      renderBarbers(json.data);
+    } catch {
+      document.getElementById('barbers-list').innerHTML =
+        '<div class="error-msg">Could not load barbers.</div>';
+    }
+  }
+
+  function renderBarbers(barbers) {
+    const list = document.getElementById('barbers-list');
+    let html = `
+      <div class="barber-option" onclick="selectBarber(null, this)" id="barber-any">
+        <div class="barber-avatar any-barber-icon">✂️</div>
+        <div>
+          <div class="barber-name">Any Available Barber</div>
+          <div class="barber-spec">First available slot</div>
+        </div>
+      </div>`;
+
+    html += barbers.map(b => `
+      <div class="barber-option" onclick="selectBarber(${b.id}, this)" id="barber-${b.id}">
+        <div class="barber-avatar">${b.name[0]}</div>
+        <div>
+          <div class="barber-name">${b.name}</div>
+          <div class="barber-spec">${(b.specialties||[]).join(', ') || 'All services'}</div>
+        </div>
+      </div>`).join('');
+
+    list.innerHTML = html;
+  }
+
+  function selectBarber(id, el) {
+    document.querySelectorAll('.barber-option').forEach(o => o.classList.remove('selected'));
+    el.classList.add('selected');
+    state.barber = id;
+    state.slot = null;
+    document.getElementById('btn-to-3').disabled = false;
+  }
+
+  // ── Step 3: Date & Slots ────────────────────────────────────────────────────
+  function initDatePicker() {
+    const picker = document.getElementById('date-picker');
+    const today  = new Date();
+    const min    = today.toISOString().split('T')[0];
+    const max    = new Date(today.setMonth(today.getMonth()+3)).toISOString().split('T')[0];
+    picker.min = min;
+    picker.max = max;
+    picker.value = '';
+    picker.addEventListener('change', () => {
+      state.date = picker.value;
+      state.slot = null;
+      document.getElementById('btn-to-4').disabled = true;
+      loadSlots();
+    });
+  }
+
+  async function loadSlots() {
+    if (!state.date || !state.service) return;
+    const section = document.getElementById('slots-section');
+    const grid    = document.getElementById('slots-grid');
+    section.style.display = 'block';
+    grid.innerHTML = '<div class="loading">Loading slots…</div>';
+
+    try {
+      let url;
+      if (state.barber) {
+        url = `${API}/api/barbers/${state.barber}/slots?date=${state.date}&duration=${state.service.duration}`;
+      } else {
+        url = `${API}/api/barbers/available/slots?date=${state.date}&duration=${state.service.duration}`;
+      }
+      const res  = await fetch(url);
+      const json = await res.json();
+
+      let slots = [];
+      if (state.barber) {
+        slots = json.data;
+      } else {
+        // Flatten slots from all barbers, deduplicate by time
+        const seen = new Set();
+        (json.data||[]).forEach(entry => {
+          entry.slots.forEach(s => {
+            if (!seen.has(s.start_time)) { seen.add(s.start_time); slots.push(s); }
+          });
+        });
+        slots.sort((a,b) => a.start_time.localeCompare(b.start_time));
+      }
+
+      if (!slots.length) {
+        grid.innerHTML = '<div class="empty-msg">No slots available on this day. Try another date.</div>';
+        return;
+      }
+
+      grid.innerHTML = slots.map(s => `
+        <button class="slot-btn" onclick="selectSlot('${s.start_time}','${s.end_time}',this)">
+          ${formatTime(s.start_time)}
+        </button>`).join('');
+    } catch {
+      grid.innerHTML = '<div class="error-msg">Could not load slots.</div>';
+    }
+  }
+
+  function selectSlot(start, end, el) {
+    document.querySelectorAll('.slot-btn').forEach(b => b.classList.remove('selected'));
+    el.classList.add('selected');
+    state.slot = { start_time: start, end_time: end };
+    document.getElementById('btn-to-4').disabled = false;
+  }
+
+  // ── Step 4: Summary ─────────────────────────────────────────────────────────
+  function buildSummary() {
+    const s = state;
+    const barberName = s.barber
+      ? document.querySelector(`#barber-${s.barber} .barber-name`)?.textContent
+      : 'Any Available Barber';
+
+    document.getElementById('booking-summary').innerHTML = `
+      <div class="summary-row">
+        <span class="label">Service</span>
+        <span class="value">${s.service.name}</span>
+      </div>
+      <div class="summary-row">
+        <span class="label">Duration</span>
+        <span class="value">${s.service.duration} min</span>
+      </div>
+      <div class="summary-row">
+        <span class="label">Barber</span>
+        <span class="value">${barberName}</span>
+      </div>
+      <div class="summary-row">
+        <span class="label">Date</span>
+        <span class="value">${formatDate(s.date)}</span>
+      </div>
+      <div class="summary-row">
+        <span class="label">Time</span>
+        <span class="value">${formatTime(s.slot.start_time)}</span>
+      </div>
+      <div class="summary-row total">
+        <span class="label">Total</span>
+        <span class="value">KSh ${Number(s.service.price).toLocaleString()}</span>
+      </div>`;
+  }
+
+  // ── Step 4: Confirm ─────────────────────────────────────────────────────────
+  async function confirmBooking() {
+    const name  = document.getElementById('cust-name').value.trim();
+    const phone = document.getElementById('cust-phone').value.trim();
+    const email = document.getElementById('cust-email').value.trim();
+    const notes = document.getElementById('cust-notes').value.trim();
+    const errEl = document.getElementById('error-msg-4');
+
+    if (!name || !phone) {
+      errEl.textContent = 'Name and phone number are required.';
+      errEl.style.display = 'block';
+      return;
+    }
+    errEl.style.display = 'none';
+
+    const btn = document.getElementById('btn-confirm');
+    btn.disabled = true;
+    btn.textContent = 'Booking…';
+
+    try {
+      const res = await fetch(`${API}/api/bookings`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          service_id:     state.service.id,
+          barber_id:      state.barber,
+          date:           state.date,
+          start_time:     state.slot.start_time,
+          customer_name:  name,
+          customer_phone: phone,
+          customer_email: email || null,
+          notes:          notes || null
+        })
+      });
+      const json = await res.json();
+
+      if (!json.success) throw new Error(json.message);
+
+      // Show confirmation
+      document.getElementById('ref-code-display').textContent = json.data.reference_code;
+
+      const barberName = state.barber
+        ? document.querySelector(`#barber-${state.barber} .barber-name`)?.textContent
+        : 'Any Available Barber';
+
+      document.getElementById('confirm-summary').innerHTML = `
+        <div class="summary-row"><span class="label">Service</span><span class="value">${state.service.name}</span></div>
+        <div class="summary-row"><span class="label">Barber</span><span class="value">${barberName}</span></div>
+        <div class="summary-row"><span class="label">Date</span><span class="value">${formatDate(state.date)}</span></div>
+        <div class="summary-row"><span class="label">Time</span><span class="value">${formatTime(state.slot.start_time)}</span></div>
+        <div class="summary-row total"><span class="label">Total</span><span class="value">KSh ${Number(state.service.price).toLocaleString()}</span></div>`;
+
+      goTo(5);
+    } catch (err) {
+      errEl.textContent = err.message || 'Booking failed. Please try again.';
+      errEl.style.display = 'block';
+      btn.disabled = false;
+      btn.textContent = 'Confirm Booking';
+    }
+  }
+
+  function startOver() {
+    state.service = null; state.barber = null; state.date = null; state.slot = null;
+    document.querySelectorAll('.sel-card, .barber-option, .slot-btn').forEach(e => e.classList.remove('selected'));
+    document.getElementById('date-picker').value = '';
+    document.getElementById('slots-section').style.display = 'none';
+    document.getElementById('cust-name').value = '';
+    document.getElementById('cust-phone').value = '';
+    document.getElementById('cust-email').value = '';
+    document.getElementById('cust-notes').value = '';
+    document.getElementById('btn-to-2').disabled = true;
+    document.getElementById('btn-to-3').disabled = true;
+    document.getElementById('btn-to-4').disabled = true;
+
+    // Reset progress circles
+    for (let i = 1; i <= 4; i++) {
+      const el = document.getElementById(`prog-${i}`);
+      el.classList.remove('done', 'active');
+      el.querySelector('.step-circle').textContent = i;
+    }
+
+    goTo(1);
+  }
+
+  // ── Helpers ──────────────────────────────────────────────────────────────────
+  function formatTime(t) {
+    const [h,m] = t.split(':').map(Number);
+    const ampm  = h >= 12 ? 'PM' : 'AM';
+    const hour  = h % 12 || 12;
+    return `${hour}:${m.toString().padStart(2,'0')} ${ampm}`;
+  }
+  function formatDate(d) {
+    return new Date(d + 'T00:00:00').toLocaleDateString('en-KE', {
+      weekday: 'long', year: 'numeric', month: 'long', day: 'numeric'
+    });
+  }
+
+  // ── Init ─────────────────────────────────────────────────────────────────────
+  loadServices();
+  loadBarbers();
+  initDatePicker();
+</script>
+</body>
+</html>

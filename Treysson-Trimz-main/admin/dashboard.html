@@ -1,0 +1,784 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Dashboard · Treysson Trimz Admin</title>
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,600;0,700;1,400&family=DM+Sans:wght@300;400;500;600&display=swap" rel="stylesheet">
+<style>
+:root {
+  --gold: #C9A96E;
+  --gold-light: #E8C98A;
+  --gold-dim: #7A6340;
+  --gold-faint: rgba(201,169,110,0.08);
+  --black: #0A0806;
+  --near-black: #111009;
+  --dark: #1A1714;
+  --mid: #242018;
+  --card: #181510;
+  --border: rgba(201,169,110,0.13);
+  --border-hover: rgba(201,169,110,0.28);
+  --warm-white: #F5F0E8;
+  --muted: #7A7468;
+  --muted2: #4E4A44;
+  --success: #4CAF7D;
+  --danger: #E05252;
+  --warning: #E0A050;
+  --info: #5297E0;
+  --font-display: 'Playfair Display', Georgia, serif;
+  --font: 'DM Sans', sans-serif;
+  --sidebar-w: 240px;
+  --topbar-h: 64px;
+}
+*, *::before, *::after { margin: 0; padding: 0; box-sizing: border-box; }
+html { font-size: 15px; }
+body {
+  font-family: var(--font);
+  background: var(--near-black);
+  color: var(--warm-white);
+  min-height: 100vh;
+  display: flex;
+  overflow-x: hidden;
+}
+::-webkit-scrollbar { width: 3px; height: 3px; }
+::-webkit-scrollbar-track { background: transparent; }
+::-webkit-scrollbar-thumb { background: var(--gold-dim); border-radius: 2px; }
+::selection { background: var(--gold); color: var(--black); }
+a { color: inherit; text-decoration: none; }
+button { cursor: pointer; font-family: var(--font); border: none; background: none; color: inherit; }
+
+/* ── SIDEBAR ── */
+.sidebar {
+  width: var(--sidebar-w);
+  min-height: 100vh;
+  background: var(--black);
+  border-right: 0.5px solid var(--border);
+  display: flex;
+  flex-direction: column;
+  position: fixed;
+  top: 0; left: 0; bottom: 0;
+  z-index: 50;
+  transition: transform 0.3s;
+}
+.sidebar-logo { padding: 24px 20px 20px; border-bottom: 0.5px solid var(--border); }
+.sidebar-logo-main { font-family: var(--font-display); font-size: 1.1rem; font-weight: 700; letter-spacing: 0.03em; }
+.sidebar-logo-main span { color: var(--gold); }
+.sidebar-logo-sub { font-size: 0.6rem; letter-spacing: 0.3em; text-transform: uppercase; color: var(--gold); margin-top: 3px; opacity: 0.8; }
+.sidebar-section { padding: 20px 12px 8px; }
+.sidebar-section-label { font-size: 0.55rem; letter-spacing: 0.35em; text-transform: uppercase; color: var(--muted2); padding: 0 8px; margin-bottom: 6px; }
+.nav-item { display: flex; align-items: center; gap: 10px; padding: 9px 12px; border-radius: 6px; font-size: 0.82rem; color: var(--muted); transition: all 0.2s; cursor: pointer; margin-bottom: 2px; }
+.nav-item:hover { background: var(--gold-faint); color: var(--warm-white); }
+.nav-item.active { background: var(--gold-faint); color: var(--gold); border-left: 2px solid var(--gold); }
+.nav-item svg { flex-shrink: 0; opacity: 0.7; }
+.nav-item.active svg { opacity: 1; }
+.nav-badge { margin-left: auto; background: var(--gold); color: var(--black); font-size: 0.6rem; font-weight: 600; padding: 1px 6px; border-radius: 10px; }
+.sidebar-footer { margin-top: auto; padding: 16px 12px; border-top: 0.5px solid var(--border); }
+.staff-pill { display: flex; align-items: center; gap: 10px; padding: 8px 10px; border-radius: 6px; cursor: pointer; transition: background 0.2s; }
+.staff-pill:hover { background: var(--gold-faint); }
+.staff-avatar { width: 30px; height: 30px; border-radius: 50%; background: var(--gold); color: var(--black); font-size: 0.7rem; font-weight: 600; display: flex; align-items: center; justify-content: center; flex-shrink: 0; }
+.staff-name { font-size: 0.8rem; font-weight: 500; }
+.staff-role { font-size: 0.65rem; color: var(--muted); }
+.staff-logout { margin-left: auto; color: var(--muted); font-size: 0.7rem; transition: color 0.2s; }
+.staff-logout:hover { color: var(--danger); }
+
+/* ── MAIN ── */
+.main { margin-left: var(--sidebar-w); flex: 1; display: flex; flex-direction: column; min-height: 100vh; }
+
+/* ── TOPBAR ── */
+.topbar { height: var(--topbar-h); background: var(--black); border-bottom: 0.5px solid var(--border); display: flex; align-items: center; padding: 0 28px; gap: 16px; position: sticky; top: 0; z-index: 40; }
+.topbar-title { font-family: var(--font-display); font-size: 1.2rem; font-weight: 700; font-style: italic; }
+.topbar-breadcrumb { font-size: 0.72rem; color: var(--muted); display: flex; align-items: center; gap: 6px; }
+.topbar-breadcrumb span { color: var(--gold); }
+.topbar-right { margin-left: auto; display: flex; align-items: center; gap: 12px; }
+.topbar-date { font-size: 0.72rem; color: var(--muted); letter-spacing: 0.05em; }
+.topbar-btn { padding: 7px 16px; font-size: 0.7rem; letter-spacing: 0.12em; text-transform: uppercase; border: 0.5px solid var(--border-hover); color: var(--gold); transition: all 0.2s; border-radius: 3px; }
+.topbar-btn:hover { background: var(--gold); color: var(--black); }
+.topbar-btn.primary { background: var(--gold); color: var(--black); border-color: var(--gold); }
+.topbar-btn.primary:hover { background: var(--gold-light); }
+.notification-btn { width: 34px; height: 34px; border-radius: 50%; border: 0.5px solid var(--border); display: flex; align-items: center; justify-content: center; position: relative; transition: all 0.2s; }
+.notification-btn:hover { border-color: var(--gold); }
+.notif-dot { position: absolute; top: 6px; right: 6px; width: 7px; height: 7px; border-radius: 50%; background: var(--gold); border: 1.5px solid var(--black); }
+.sheets-status { display: flex; align-items: center; gap: 6px; font-size: 0.68rem; color: var(--muted); border: 0.5px solid var(--border); padding: 5px 12px; border-radius: 20px; }
+.sheets-dot { width: 6px; height: 6px; border-radius: 50%; background: var(--success); animation: pulse 2s infinite; }
+@keyframes pulse { 0%,100% { opacity: 1; } 50% { opacity: 0.4; } }
+
+/* ── CONTENT ── */
+.content { padding: 28px; flex: 1; }
+
+/* ── PERIOD ── */
+.period-row { display: flex; align-items: center; justify-content: space-between; margin-bottom: 24px; flex-wrap: wrap; gap: 12px; }
+.period-tabs { display: flex; background: var(--card); border: 0.5px solid var(--border); border-radius: 6px; overflow: hidden; }
+.period-tab { font-size: 0.7rem; letter-spacing: 0.12em; text-transform: uppercase; padding: 8px 18px; color: var(--muted); transition: all 0.2s; }
+.period-tab.active { background: var(--gold); color: var(--black); font-weight: 600; }
+.period-tab:hover:not(.active) { color: var(--warm-white); background: var(--gold-faint); }
+.sync-btn { font-size: 0.68rem; letter-spacing: 0.1em; text-transform: uppercase; color: var(--gold); border: 0.5px solid var(--border); padding: 8px 16px; border-radius: 4px; transition: all 0.2s; display: flex; align-items: center; gap: 6px; }
+.sync-btn:hover { background: var(--gold-faint); border-color: var(--gold); }
+
+/* ── KPI CARDS ── */
+.kpi-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 1px; background: var(--border); border: 0.5px solid var(--border); margin-bottom: 24px; }
+.kpi-card { background: var(--card); padding: 22px 24px; transition: background 0.2s; position: relative; overflow: hidden; }
+.kpi-card:hover { background: var(--dark); }
+.kpi-card::before { content: ''; position: absolute; top: 0; left: 0; right: 0; height: 2px; background: transparent; transition: background 0.3s; }
+.kpi-card:hover::before { background: var(--gold); }
+.kpi-label { font-size: 0.62rem; letter-spacing: 0.22em; text-transform: uppercase; color: var(--muted); margin-bottom: 10px; display: flex; align-items: center; gap: 6px; }
+.kpi-value { font-family: var(--font-display); font-size: 2rem; font-weight: 700; line-height: 1; margin-bottom: 8px; }
+.kpi-value.gold { color: var(--gold); }
+.kpi-change { font-size: 0.7rem; display: flex; align-items: center; gap: 4px; }
+.kpi-change.up { color: var(--success); }
+.kpi-change.down { color: var(--danger); }
+.kpi-change.neutral { color: var(--muted); }
+.kpi-sub { font-size: 0.68rem; color: var(--muted); margin-top: 2px; }
+
+/* ── PAYMENT FIGURES (replaces charts) ── */
+.figures-row {
+  display: grid;
+  grid-template-columns: 2fr 1fr;
+  gap: 16px;
+  margin-bottom: 16px;
+}
+.fig-card {
+  background: var(--card);
+  border: 0.5px solid var(--border);
+  border-radius: 4px;
+  padding: 22px 24px;
+}
+.fig-header { display: flex; align-items: center; justify-content: space-between; margin-bottom: 20px; }
+.fig-title { font-family: var(--font-display); font-size: 1rem; font-style: italic; }
+.fig-subtitle { font-size: 0.68rem; color: var(--muted); margin-top: 2px; }
+
+/* Division breakdown — horizontal stat blocks */
+.division-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 1px; background: var(--border); border-radius: 3px; overflow: hidden; }
+.division-block { background: var(--near-black); padding: 16px 18px; }
+.division-block:hover { background: var(--dark); }
+.div-label { font-size: 0.58rem; letter-spacing: 0.22em; text-transform: uppercase; color: var(--muted); margin-bottom: 8px; display: flex; align-items: center; gap: 6px; }
+.div-dot { width: 7px; height: 7px; border-radius: 50%; flex-shrink: 0; }
+.div-amount { font-family: var(--font-display); font-size: 1.5rem; font-weight: 700; line-height: 1; margin-bottom: 4px; }
+.div-meta { font-size: 0.65rem; color: var(--muted); }
+.div-bar { height: 3px; background: rgba(201,169,110,0.1); border-radius: 2px; margin-top: 10px; }
+.div-fill { height: 100%; border-radius: 2px; }
+
+/* Period breakdown table inside revenue card */
+.period-breakdown { margin-top: 18px; border-top: 0.5px solid var(--border); padding-top: 16px; }
+.pb-row { display: flex; align-items: center; justify-content: space-between; padding: 5px 0; font-size: 0.75rem; border-bottom: 0.5px solid rgba(201,169,110,0.04); }
+.pb-row:last-child { border-bottom: none; }
+.pb-day { color: var(--muted); width: 60px; }
+.pb-bar-wrap { flex: 1; margin: 0 12px; height: 4px; background: rgba(201,169,110,0.08); border-radius: 2px; }
+.pb-bar { height: 100%; background: var(--gold); border-radius: 2px; opacity: 0.6; }
+.pb-amount { color: var(--warm-white); font-weight: 500; text-align: right; min-width: 70px; }
+
+/* Payment methods — figure list */
+.pay-list { display: flex; flex-direction: column; gap: 1px; }
+.pay-item { display: flex; align-items: center; gap: 12px; padding: 11px 14px; background: var(--near-black); transition: background 0.15s; }
+.pay-item:first-child { border-radius: 3px 3px 0 0; }
+.pay-item:last-child { border-radius: 0 0 3px 3px; }
+.pay-item:hover { background: var(--dark); }
+.pay-color { width: 3px; height: 30px; border-radius: 2px; flex-shrink: 0; }
+.pay-name { flex: 1; font-size: 0.8rem; font-weight: 500; }
+.pay-pct { font-family: var(--font-display); font-size: 1.3rem; font-weight: 700; color: var(--gold); line-height: 1; }
+.pay-count { font-size: 0.62rem; color: var(--muted); text-align: right; }
+
+/* ── BOTTOM ROW ── */
+.bottom-row { display: grid; grid-template-columns: 1.4fr 1fr 1fr; gap: 16px; margin-bottom: 16px; }
+
+/* ── TABLE CARD ── */
+.table-card { background: var(--card); border: 0.5px solid var(--border); border-radius: 4px; overflow: hidden; }
+.table-header { display: flex; align-items: center; justify-content: space-between; padding: 18px 20px 14px; border-bottom: 0.5px solid var(--border); }
+.table-title { font-family: var(--font-display); font-size: 0.95rem; font-style: italic; }
+.view-all { font-size: 0.62rem; letter-spacing: 0.15em; text-transform: uppercase; color: var(--gold); transition: opacity 0.2s; }
+.view-all:hover { opacity: 0.7; }
+table { width: 100%; border-collapse: collapse; }
+thead th { font-size: 0.58rem; letter-spacing: 0.22em; text-transform: uppercase; color: var(--muted2); padding: 10px 12px; text-align: left; border-bottom: 0.5px solid var(--border); background: rgba(0,0,0,0.2); }
+tbody tr { border-bottom: 0.5px solid rgba(201,169,110,0.06); transition: background 0.15s; }
+tbody tr:last-child { border-bottom: none; }
+tbody tr:hover { background: var(--gold-faint); }
+tbody td { padding: 10px 12px; font-size: 0.78rem; vertical-align: middle; }
+.client-cell { display: flex; align-items: center; gap: 8px; }
+.c-avatar { width: 26px; height: 26px; border-radius: 50%; background: var(--gold-dim); color: var(--black); font-size: 0.6rem; font-weight: 600; display: flex; align-items: center; justify-content: center; flex-shrink: 0; }
+.c-name { font-size: 0.78rem; }
+.c-phone { font-size: 0.65rem; color: var(--muted); }
+.badge { display: inline-flex; align-items: center; font-size: 0.6rem; padding: 3px 8px; border-radius: 20px; font-weight: 500; letter-spacing: 0.05em; }
+.badge-success { background: rgba(76,175,125,0.15); color: var(--success); }
+.badge-warning { background: rgba(224,160,80,0.15); color: var(--warning); }
+.badge-info { background: rgba(82,151,224,0.15); color: var(--info); }
+.badge-danger { background: rgba(224,82,82,0.15); color: var(--danger); }
+.badge-gold { background: rgba(201,169,110,0.15); color: var(--gold); }
+.badge-muted { background: rgba(122,116,104,0.15); color: var(--muted); }
+.amount-cell { font-weight: 500; }
+.amount-cell.gold { color: var(--gold); }
+
+/* ── LIST CARD ── */
+.list-card { background: var(--card); border: 0.5px solid var(--border); border-radius: 4px; overflow: hidden; }
+.list-item { display: flex; align-items: center; gap: 12px; padding: 12px 18px; border-bottom: 0.5px solid rgba(201,169,110,0.06); transition: background 0.15s; }
+.list-item:last-child { border-bottom: none; }
+.list-item:hover { background: var(--gold-faint); }
+.list-rank { font-family: var(--font-display); font-size: 1rem; color: var(--gold-dim); font-weight: 700; min-width: 20px; }
+.list-info { flex: 1; }
+.list-name { font-size: 0.82rem; font-weight: 500; }
+.list-meta { font-size: 0.65rem; color: var(--muted); margin-top: 2px; }
+.list-value { text-align: right; }
+.list-amount { font-size: 0.82rem; font-weight: 500; color: var(--gold); }
+.list-count { font-size: 0.65rem; color: var(--muted); margin-top: 2px; }
+.progress-bar { height: 3px; background: rgba(201,169,110,0.1); border-radius: 2px; margin-top: 6px; }
+.progress-fill { height: 100%; background: var(--gold); border-radius: 2px; }
+
+/* ── LOYALTY ── */
+.loyalty-card { background: var(--card); border: 0.5px solid var(--border); border-radius: 4px; overflow: hidden; }
+.loyalty-header { padding: 18px 18px 14px; border-bottom: 0.5px solid var(--border); display: flex; align-items: center; justify-content: space-between; }
+.loyalty-item { padding: 11px 18px; border-bottom: 0.5px solid rgba(201,169,110,0.06); transition: background 0.15s; }
+.loyalty-item:last-child { border-bottom: none; }
+.loyalty-item:hover { background: var(--gold-faint); }
+.loyalty-top { display: flex; align-items: center; justify-content: space-between; margin-bottom: 6px; }
+.loyalty-client { font-size: 0.8rem; font-weight: 500; }
+.loyalty-cuts-count { font-size: 0.65rem; color: var(--muted); }
+.loyalty-dots { display: flex; gap: 4px; }
+.l-dot { width: 9px; height: 9px; border-radius: 50%; background: rgba(201,169,110,0.15); border: 0.5px solid var(--border); }
+.l-dot.done { background: var(--gold); border-color: var(--gold); }
+.l-dot.free { background: var(--black); border: 1.5px solid var(--gold); position: relative; display: flex; align-items: center; justify-content: center; width: 12px; height: 12px; }
+.l-dot.free::after { content: '★'; font-size: 6px; color: var(--gold); }
+.free-badge { display: inline-flex; align-items: center; gap: 4px; background: rgba(201,169,110,0.15); color: var(--gold); font-size: 0.58rem; padding: 2px 8px; border-radius: 20px; font-weight: 600; letter-spacing: 0.08em; }
+.dispose-btn { font-size: 0.6rem; color: var(--muted); border: 0.5px solid var(--border); padding: 3px 8px; border-radius: 3px; margin-left: 6px; transition: all 0.2s; }
+.dispose-btn:hover { color: var(--gold); border-color: var(--gold); }
+
+/* ── INSIGHTS ── */
+.insights-row { display: grid; grid-template-columns: repeat(3, 1fr); gap: 16px; margin-bottom: 16px; }
+.insight-card { background: var(--card); border: 0.5px solid var(--border); border-radius: 4px; padding: 20px 22px; }
+.insight-title { font-size: 0.62rem; letter-spacing: 0.22em; text-transform: uppercase; color: var(--muted); margin-bottom: 14px; }
+.insight-big { font-family: var(--font-display); font-size: 1.6rem; font-weight: 700; color: var(--gold); line-height: 1; }
+.insight-label { font-size: 0.72rem; color: var(--muted); margin-top: 4px; }
+.insight-row { display: flex; justify-content: space-between; align-items: center; margin-top: 12px; padding-top: 10px; border-top: 0.5px solid var(--border); font-size: 0.72rem; color: rgba(245,240,232,0.6); }
+.insight-row span { color: var(--warm-white); }
+
+/* ── SHEETS CARD ── */
+.sheets-card { background: var(--card); border: 0.5px solid rgba(76,175,125,0.2); border-radius: 4px; padding: 16px 20px; display: flex; align-items: center; gap: 16px; margin-bottom: 16px; }
+.sheets-icon { width: 36px; height: 36px; border-radius: 6px; background: rgba(76,175,125,0.1); color: var(--success); display: flex; align-items: center; justify-content: center; font-size: 1rem; flex-shrink: 0; }
+.sheets-info { flex: 1; }
+.sheets-title { font-size: 0.8rem; font-weight: 500; }
+.sheets-meta { font-size: 0.68rem; color: var(--muted); margin-top: 2px; }
+.sheets-cols { display: flex; gap: 6px; flex-wrap: wrap; margin-top: 8px; }
+.sheets-col-tag { font-size: 0.55rem; letter-spacing: 0.1em; text-transform: uppercase; background: rgba(201,169,110,0.08); color: var(--gold); padding: 2px 7px; border-radius: 3px; }
+
+/* ── MOBILE ── */
+.mobile-toggle { display: none; position: fixed; top: 16px; left: 16px; z-index: 60; width: 36px; height: 36px; background: var(--black); border: 0.5px solid var(--border); border-radius: 6px; flex-direction: column; align-items: center; justify-content: center; gap: 4px; }
+.mobile-toggle span { display: block; width: 16px; height: 1px; background: var(--gold); }
+
+@media (max-width: 1200px) { .kpi-grid { grid-template-columns: repeat(2, 1fr); } .bottom-row { grid-template-columns: 1fr 1fr; } .insights-row { grid-template-columns: 1fr 1fr; } }
+@media (max-width: 900px) { .figures-row { grid-template-columns: 1fr; } .bottom-row { grid-template-columns: 1fr; } .insights-row { grid-template-columns: 1fr 1fr; } .division-grid { grid-template-columns: 1fr; } }
+@media (max-width: 768px) { :root { --sidebar-w: 0px; } .sidebar { transform: translateX(-240px); --sidebar-w: 240px; } .sidebar.open { transform: translateX(0); } .main { margin-left: 0; } .mobile-toggle { display: flex; } .kpi-grid { grid-template-columns: 1fr 1fr; } .content { padding: 16px; } .insights-row { grid-template-columns: 1fr; } }
+</style>
+</head>
+<body>
+
+<!-- SIDEBAR -->
+<aside class="sidebar" id="sidebar">
+  <div class="sidebar-logo">
+    <div class="sidebar-logo-main">TREYSSON <span>TRIMZ</span></div>
+    <div class="sidebar-logo-sub">Admin Portal</div>
+  </div>
+  <div class="sidebar-section">
+    <div class="sidebar-section-label">Main</div>
+    <div class="nav-item active">
+      <svg width="16" height="16" fill="none" stroke="currentColor" stroke-width="1.5" viewBox="0 0 24 24"><rect x="3" y="3" width="7" height="7" rx="1"/><rect x="14" y="3" width="7" height="7" rx="1"/><rect x="3" y="14" width="7" height="7" rx="1"/><rect x="14" y="14" width="7" height="7" rx="1"/></svg>
+      Dashboard
+    </div>
+    <div class="nav-item" onclick="window.location='bookings.html'">
+      <svg width="16" height="16" fill="none" stroke="currentColor" stroke-width="1.5" viewBox="0 0 24 24"><rect x="3" y="4" width="18" height="18" rx="2"/><path d="M16 2v4M8 2v4M3 10h18"/></svg>
+      Bookings <span class="nav-badge">4</span>
+    </div>
+    <div class="nav-item" onclick="window.location='cashier.html'">
+      <svg width="16" height="16" fill="none" stroke="currentColor" stroke-width="1.5" viewBox="0 0 24 24"><rect x="2" y="5" width="20" height="14" rx="2"/><path d="M2 10h20"/></svg>
+      Cashier
+    </div>
+    <div class="nav-item" onclick="window.location='loyalty.html'">
+      <svg width="16" height="16" fill="none" stroke="currentColor" stroke-width="1.5" viewBox="0 0 24 24"><path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/></svg>
+      Loyalty <span class="nav-badge">2</span>
+    </div>
+  </div>
+  <div class="sidebar-section">
+    <div class="sidebar-section-label">Management</div>
+    <div class="nav-item" onclick="window.location='inventory.html'">
+      <svg width="16" height="16" fill="none" stroke="currentColor" stroke-width="1.5" viewBox="0 0 24 24"><path d="M21 16V8a2 2 0 00-1-1.73l-7-4a2 2 0 00-2 0l-7 4A2 2 0 003 8v8a2 2 0 001 1.73l7 4a2 2 0 002 0l7-4A2 2 0 0021 16z"/></svg>
+      Inventory
+    </div>
+    <div class="nav-item" onclick="window.location='staff.html'">
+      <svg width="16" height="16" fill="none" stroke="currentColor" stroke-width="1.5" viewBox="0 0 24 24"><path d="M17 21v-2a4 4 0 00-4-4H5a4 4 0 00-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 00-3-3.87M16 3.13a4 4 0 010 7.75"/></svg>
+      Staff
+    </div>
+    <div class="nav-item">
+      <svg width="16" height="16" fill="none" stroke="currentColor" stroke-width="1.5" viewBox="0 0 24 24"><path d="M14 2H6a2 2 0 00-2 2v16a2 2 0 002 2h12a2 2 0 002-2V8z"/><path d="M14 2v6h6M16 13H8M16 17H8M10 9H8"/></svg>
+      Reports
+    </div>
+    <div class="nav-item">
+      <svg width="16" height="16" fill="none" stroke="currentColor" stroke-width="1.5" viewBox="0 0 24 24"><circle cx="12" cy="12" r="3"/><path d="M19.07 4.93a10 10 0 010 14.14M4.93 4.93a10 10 0 000 14.14"/></svg>
+      Notifications
+    </div>
+  </div>
+  <div class="sidebar-section">
+    <div class="sidebar-section-label">Integrations</div>
+    <div class="nav-item">
+      <svg width="16" height="16" fill="none" stroke="currentColor" stroke-width="1.5" viewBox="0 0 24 24"><path d="M9 11l3 3L22 4"/><path d="M21 12v7a2 2 0 01-2 2H5a2 2 0 01-2-2V5a2 2 0 012-2h11"/></svg>
+      Google Sheets
+    </div>
+    <div class="nav-item">
+      <svg width="16" height="16" fill="none" stroke="currentColor" stroke-width="1.5" viewBox="0 0 24 24"><rect x="2" y="5" width="20" height="14" rx="2"/><path d="M2 10h20"/></svg>
+      M-Pesa / KCB
+    </div>
+    <div class="nav-item">
+      <svg width="16" height="16" fill="none" stroke="currentColor" stroke-width="1.5" viewBox="0 0 24 24"><path d="M21 15a2 2 0 01-2 2H7l-4 4V5a2 2 0 012-2h14a2 2 0 012 2z"/></svg>
+      WhatsApp / SMS
+    </div>
+  </div>
+  <div class="sidebar-footer">
+    <div class="staff-pill">
+      <div class="staff-avatar">TR</div>
+      <div><div class="staff-name">Treysson</div><div class="staff-role">Super Admin</div></div>
+      <span class="staff-logout" title="Logout">⎋</span>
+    </div>
+  </div>
+</aside>
+
+<button class="mobile-toggle" onclick="document.getElementById('sidebar').classList.toggle('open')">
+  <span></span><span></span><span></span>
+</button>
+
+<div class="main">
+  <div class="topbar">
+    <div>
+      <div class="topbar-title">Dashboard</div>
+      <div class="topbar-breadcrumb">Admin <span>›</span> Overview</div>
+    </div>
+    <div class="topbar-right">
+      <div class="sheets-status">
+        <div class="sheets-dot"></div>
+        Sheets synced · 2 min ago
+      </div>
+      <div class="topbar-date" id="topbarDate"></div>
+      <button class="topbar-btn" onclick="syncSheets()">↻ Sync</button>
+      <button class="topbar-btn primary" onclick="window.location='cashier.html'">+ New Sale</button>
+      <button class="notification-btn">
+        <svg width="16" height="16" fill="none" stroke="currentColor" stroke-width="1.5" viewBox="0 0 24 24"><path d="M18 8A6 6 0 006 8c0 7-3 9-3 9h18s-3-2-3-9M13.73 21a2 2 0 01-3.46 0"/></svg>
+        <div class="notif-dot"></div>
+      </button>
+    </div>
+  </div>
+
+  <div class="content">
+
+    <!-- PERIOD -->
+    <div class="period-row">
+      <div class="period-tabs">
+        <button class="period-tab" onclick="setPeriod(this,'week')">Week</button>
+        <button class="period-tab active" onclick="setPeriod(this,'month')">Month</button>
+        <button class="period-tab" onclick="setPeriod(this,'quarter')">Quarter</button>
+        <button class="period-tab" onclick="setPeriod(this,'year')">Year</button>
+      </div>
+      <button class="sync-btn" onclick="syncSheets()">
+        <svg width="13" height="13" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><polyline points="23 4 23 10 17 10"/><polyline points="1 20 1 14 7 14"/><path d="M3.51 9a9 9 0 0114.85-3.36L23 10M1 14l4.64 4.36A9 9 0 0020.49 15"/></svg>
+        Export to Google Sheets
+      </button>
+    </div>
+
+    <!-- KPI CARDS -->
+    <div class="kpi-grid">
+      <div class="kpi-card">
+        <div class="kpi-label">
+          <svg width="13" height="13" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><line x1="12" y1="1" x2="12" y2="23"/><path d="M17 5H9.5a3.5 3.5 0 000 7h5a3.5 3.5 0 010 7H6"/></svg>
+          Total Revenue
+        </div>
+        <div class="kpi-value gold" id="kpiRevenue">KES 0</div>
+        <div class="kpi-change up" id="kpiRevenueChange">
+          <svg width="11" height="11" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24"><polyline points="18 15 12 9 6 15"/></svg>
+          +18.4% vs last month
+        </div>
+      </div>
+      <div class="kpi-card">
+        <div class="kpi-label">
+          <svg width="13" height="13" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><rect x="3" y="4" width="18" height="18" rx="2"/><path d="M16 2v4M8 2v4M3 10h18"/></svg>
+          Bookings
+        </div>
+        <div class="kpi-value" id="kpiBookings">0</div>
+        <div class="kpi-change up">
+          <svg width="11" height="11" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24"><polyline points="18 15 12 9 6 15"/></svg>
+          +12 vs last month
+        </div>
+      </div>
+      <div class="kpi-card">
+        <div class="kpi-label">
+          <svg width="13" height="13" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M17 21v-2a4 4 0 00-4-4H5a4 4 0 00-4 4v2"/><circle cx="9" cy="7" r="4"/></svg>
+          New Clients
+        </div>
+        <div class="kpi-value" id="kpiClients">0</div>
+        <div class="kpi-change up">
+          <svg width="11" height="11" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24"><polyline points="18 15 12 9 6 15"/></svg>
+          +8 this month
+        </div>
+      </div>
+      <div class="kpi-card">
+        <div class="kpi-label">
+          <svg width="13" height="13" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/></svg>
+          Free Cuts Due
+        </div>
+        <div class="kpi-value" style="color:var(--warning)" id="kpiFreeCuts">0</div>
+        <div class="kpi-change neutral">Loyalty milestones</div>
+        <div class="kpi-sub" id="kpiFreeCutsSub"></div>
+      </div>
+    </div>
+
+    <!-- FIGURES ROW (no Chart.js) -->
+    <div class="figures-row">
+
+      <!-- Revenue by Division — figures -->
+      <div class="fig-card">
+        <div class="fig-header">
+          <div>
+            <div class="fig-title">Revenue by Division</div>
+            <div class="fig-subtitle">Barbershop · Salon · Spa — this month</div>
+          </div>
+          <div style="font-family:var(--font-display);font-size:1.4rem;color:var(--gold);font-weight:700" id="revTotal">KES 71.8k</div>
+        </div>
+        <div class="division-grid">
+          <div class="division-block">
+            <div class="div-label"><div class="div-dot" style="background:#C9A96E"></div>Barbershop</div>
+            <div class="div-amount" style="color:#C9A96E" id="divBarber">KES 34.2k</div>
+            <div class="div-meta">52 sessions · Avg KES 657</div>
+            <div class="div-bar"><div class="div-fill" style="width:100%;background:#C9A96E"></div></div>
+          </div>
+          <div class="division-block">
+            <div class="div-label"><div class="div-dot" style="background:#5297E0"></div>Salon</div>
+            <div class="div-amount" style="color:#5297E0" id="divSalon">KES 21.8k</div>
+            <div class="div-meta">18 sessions · Avg KES 1,211</div>
+            <div class="div-bar"><div class="div-fill" style="width:64%;background:#5297E0"></div></div>
+          </div>
+          <div class="division-block">
+            <div class="div-label"><div class="div-dot" style="background:#4CAF7D"></div>Spa</div>
+            <div class="div-amount" style="color:#4CAF7D" id="divSpa">KES 15.8k</div>
+            <div class="div-meta">12 sessions · Avg KES 1,317</div>
+            <div class="div-bar"><div class="div-fill" style="width:46%;background:#4CAF7D"></div></div>
+          </div>
+        </div>
+        <!-- Top 5 days breakdown -->
+        <div class="period-breakdown">
+          <div style="font-size:0.6rem;letter-spacing:0.2em;text-transform:uppercase;color:var(--muted2);margin-bottom:8px">Top Revenue Days</div>
+          <div class="pb-row"><span class="pb-day">Sat 25</span><div class="pb-bar-wrap"><div class="pb-bar" style="width:100%"></div></div><span class="pb-amount">KES 8,400</span></div>
+          <div class="pb-row"><span class="pb-day">Sat 18</span><div class="pb-bar-wrap"><div class="pb-bar" style="width:86%"></div></div><span class="pb-amount">KES 7,200</span></div>
+          <div class="pb-row"><span class="pb-day">Fri 24</span><div class="pb-bar-wrap"><div class="pb-bar" style="width:75%"></div></div><span class="pb-amount">KES 6,300</span></div>
+          <div class="pb-row"><span class="pb-day">Sat 11</span><div class="pb-bar-wrap"><div class="pb-bar" style="width:68%"></div></div><span class="pb-amount">KES 5,700</span></div>
+          <div class="pb-row"><span class="pb-day">Sun 19</span><div class="pb-bar-wrap"><div class="pb-bar" style="width:60%"></div></div><span class="pb-amount">KES 5,040</span></div>
+        </div>
+      </div>
+
+      <!-- Payment Methods — figures -->
+      <div class="fig-card">
+        <div class="fig-header">
+          <div>
+            <div class="fig-title">Payment Methods</div>
+            <div class="fig-subtitle">Revenue split by type</div>
+          </div>
+        </div>
+        <div class="pay-list">
+          <div class="pay-item">
+            <div class="pay-color" style="background:#C9A96E"></div>
+            <div class="pay-name">M-Pesa STK</div>
+            <div style="text-align:right">
+              <div class="pay-pct">42%</div>
+              <div class="pay-count">~77 transactions</div>
+            </div>
+          </div>
+          <div class="pay-item">
+            <div class="pay-color" style="background:#4CAF7D"></div>
+            <div class="pay-name">Cash</div>
+            <div style="text-align:right">
+              <div class="pay-pct">21%</div>
+              <div class="pay-count">~39 transactions</div>
+            </div>
+          </div>
+          <div class="pay-item">
+            <div class="pay-color" style="background:#5297E0"></div>
+            <div class="pay-name">Card</div>
+            <div style="text-align:right">
+              <div class="pay-pct">18%</div>
+              <div class="pay-count">~33 transactions</div>
+            </div>
+          </div>
+          <div class="pay-item">
+            <div class="pay-color" style="background:#E0A050"></div>
+            <div class="pay-name">KCB Paybill</div>
+            <div style="text-align:right">
+              <div class="pay-pct">12%</div>
+              <div class="pay-count">~22 transactions</div>
+            </div>
+          </div>
+          <div class="pay-item">
+            <div class="pay-color" style="background:#7A6340"></div>
+            <div class="pay-name">Manual M-Pesa</div>
+            <div style="text-align:right">
+              <div class="pay-pct">7%</div>
+              <div class="pay-count">~13 transactions</div>
+            </div>
+          </div>
+        </div>
+        <div style="margin-top:14px;padding:12px 14px;background:var(--near-black);border-radius:3px;display:flex;justify-content:space-between;align-items:center">
+          <span style="font-size:0.68rem;color:var(--muted)">Total transactions</span>
+          <span style="font-family:var(--font-display);font-size:1.2rem;color:var(--gold);font-weight:700">184</span>
+        </div>
+      </div>
+    </div>
+
+    <!-- GOOGLE SHEETS STATUS -->
+    <div class="sheets-card">
+      <div class="sheets-icon">📊</div>
+      <div class="sheets-info">
+        <div class="sheets-title">Google Sheets — Auto Sync Active</div>
+        <div class="sheets-meta">Every sale, booking and payment is written automatically in order</div>
+        <div class="sheets-cols">
+          <span class="sheets-col-tag">Date</span><span class="sheets-col-tag">Time</span><span class="sheets-col-tag">Client</span><span class="sheets-col-tag">Phone</span><span class="sheets-col-tag">Service</span><span class="sheets-col-tag">Division</span><span class="sheets-col-tag">Staff</span><span class="sheets-col-tag">Amount (KES)</span><span class="sheets-col-tag">Payment</span><span class="sheets-col-tag">Reference</span><span class="sheets-col-tag">Status</span><span class="sheets-col-tag">Notes</span>
+        </div>
+      </div>
+      <button class="topbar-btn" onclick="syncSheets()">Open Sheet ↗</button>
+    </div>
+
+    <!-- BOTTOM ROW -->
+    <div class="bottom-row">
+      <div class="table-card">
+        <div class="table-header">
+          <div class="table-title">Recent Transactions</div>
+          <a class="view-all" href="cashier.html">View all →</a>
+        </div>
+        <table>
+          <thead>
+            <tr><th>Client</th><th>Service</th><th>Staff</th><th>Amount</th><th>Payment</th><th>Status</th></tr>
+          </thead>
+          <tbody id="transactionsTbody"></tbody>
+        </table>
+      </div>
+      <div class="list-card">
+        <div class="table-header">
+          <div class="table-title">Top Services</div>
+          <a class="view-all">This month</a>
+        </div>
+        <div id="topServicesList"></div>
+      </div>
+      <div class="list-card">
+        <div class="table-header">
+          <div class="table-title">Staff Revenue</div>
+          <a class="view-all">This month</a>
+        </div>
+        <div id="staffList"></div>
+      </div>
+    </div>
+
+    <!-- INSIGHTS ROW -->
+    <div class="insights-row">
+      <div class="insight-card">
+        <div class="insight-title">Busiest Day</div>
+        <div class="insight-big">Saturday</div>
+        <div class="insight-label">Avg 28 clients/day</div>
+        <div class="insight-row">Quietest day <span>Monday</span></div>
+        <div class="insight-row">Peak time <span>10am – 1pm</span></div>
+      </div>
+      <div class="insight-card">
+        <div class="insight-title">Avg Transaction Value</div>
+        <div class="insight-big" id="avgTxValue">KES 665</div>
+        <div class="insight-label">Per completed sale</div>
+        <div class="insight-row">Highest: Spa combo <span>KES 7,000</span></div>
+        <div class="insight-row">Lowest: Kids cut <span>KES 600</span></div>
+      </div>
+      <div class="insight-card">
+        <div class="insight-title">Client Retention</div>
+        <div class="insight-big">74%</div>
+        <div class="insight-label">Return within 30 days</div>
+        <div class="insight-row">Loyalty members <span>68 clients</span></div>
+        <div class="insight-row">Free cuts redeemed <span>11 this month</span></div>
+      </div>
+    </div>
+
+    <!-- LOYALTY CARD -->
+    <div class="loyalty-card">
+      <div class="loyalty-header">
+        <div class="table-title">Loyalty — Clients Near Free Cut</div>
+        <a class="view-all" href="loyalty.html">Manage all →</a>
+      </div>
+      <div id="loyaltyList"></div>
+    </div>
+
+  </div>
+</div>
+
+<script>
+// ── DATA ──
+const TRANSACTIONS = [
+  { client:'James M.', phone:'0712 xxx xxx', service:'Classic Fade', staff:'Treysson', amount:900, pay:'M-Pesa', status:'paid' },
+  { client:'Amina K.', phone:'0723 xxx xxx', service:'Hair Colour', staff:'Amira', amount:3500, pay:'Card', status:'paid' },
+  { client:'Brian O.', phone:'0701 xxx xxx', service:'Hot Shave', staff:'Brian', amount:700, pay:'Cash', status:'paid' },
+  { client:'Sarah W.', phone:'0734 xxx xxx', service:'Swedish Massage', staff:'Grace', amount:3500, pay:'KCB', status:'paid' },
+  { client:'Kevin N.', phone:'0745 xxx xxx', service:'Cut + Beard', staff:'Treysson', amount:1300, pay:'M-Pesa', status:'paid' },
+  { client:'Linda A.', phone:'0756 xxx xxx', service:'Manicure', staff:'Amira', amount:1000, pay:'Cash', status:'pending' },
+  { client:'David C.', phone:'0767 xxx xxx', service:'Deep Tissue', staff:'Grace', amount:4000, pay:'M-Pesa', status:'paid' },
+];
+
+const TOP_SERVICES = [
+  { name:'Classic Fade', division:'Barbershop', revenue:18400, count:23 },
+  { name:'Hair Colour', division:'Salon', revenue:15750, count:6 },
+  { name:'Swedish Massage', division:'Spa', revenue:14000, count:4 },
+  { name:'Cut + Beard Combo', division:'Barbershop', revenue:11700, count:9 },
+  { name:'Deep Tissue', division:'Spa', revenue:12000, count:3 },
+];
+
+const STAFF_PERF = [
+  { name:'Treysson', role:'Senior Barber', revenue:42600, clients:47 },
+  { name:'Amira', role:'Stylist', revenue:31200, clients:22 },
+  { name:'Grace', role:'Spa Therapist', revenue:28500, clients:18 },
+  { name:'Brian', role:'Barber', revenue:19800, clients:28 },
+];
+
+const LOYALTY_CLIENTS = [
+  { name:'Kevin N.', cuts:6, phone:'0745 xxx xxx' },
+  { name:'James M.', cuts:7, phone:'0712 xxx xxx', free:true },
+  { name:'Brian O.', cuts:5, phone:'0701 xxx xxx' },
+  { name:'David C.', cuts:7, phone:'0767 xxx xxx', free:true },
+  { name:'Mark S.', cuts:4, phone:'0789 xxx xxx' },
+];
+
+// ── KPI ANIMATION ──
+function animateCount(el, target, prefix='') {
+  let start = 0;
+  const step = target / 60;
+  const timer = setInterval(() => {
+    start = Math.min(start + step, target);
+    el.textContent = prefix + Math.round(start).toLocaleString();
+    if (start >= target) clearInterval(timer);
+  }, 16);
+}
+
+// ── TRANSACTIONS ──
+function buildTransactions() {
+  const statusMap = { paid: '<span class="badge badge-success">Paid</span>', pending: '<span class="badge badge-warning">Pending</span>' };
+  const payMap = { 'M-Pesa':'<span class="badge badge-gold">M-Pesa</span>', 'Card':'<span class="badge badge-info">Card</span>', 'Cash':'<span class="badge badge-muted">Cash</span>', 'KCB':'<span class="badge badge-info">KCB</span>' };
+  document.getElementById('transactionsTbody').innerHTML = TRANSACTIONS.map(t => `
+    <tr>
+      <td><div class="client-cell">
+        <div class="c-avatar">${t.client.split(' ').map(w=>w[0]).join('')}</div>
+        <div><div class="c-name">${t.client}</div><div class="c-phone">${t.phone}</div></div>
+      </div></td>
+      <td>${t.service}</td><td>${t.staff}</td>
+      <td class="amount-cell gold">KES ${t.amount.toLocaleString()}</td>
+      <td>${payMap[t.pay]||`<span class="badge badge-muted">${t.pay}</span>`}</td>
+      <td>${statusMap[t.status]}</td>
+    </tr>`).join('');
+}
+
+// ── TOP SERVICES ──
+function buildTopServices() {
+  const max = TOP_SERVICES[0].revenue;
+  document.getElementById('topServicesList').innerHTML = TOP_SERVICES.map((s,i) => `
+    <div class="list-item">
+      <div class="list-rank">${i+1}</div>
+      <div class="list-info">
+        <div class="list-name">${s.name}</div>
+        <div class="list-meta">${s.division} · ${s.count} sessions</div>
+        <div class="progress-bar"><div class="progress-fill" style="width:${(s.revenue/max*100).toFixed(0)}%"></div></div>
+      </div>
+      <div class="list-value">
+        <div class="list-amount">KES ${(s.revenue/1000).toFixed(1)}k</div>
+        <div class="list-count">${s.count} sales</div>
+      </div>
+    </div>`).join('');
+}
+
+// ── STAFF ──
+function buildStaff() {
+  const max = STAFF_PERF[0].revenue;
+  document.getElementById('staffList').innerHTML = STAFF_PERF.map((s,i) => `
+    <div class="list-item">
+      <div class="list-rank">${i+1}</div>
+      <div class="list-info">
+        <div class="list-name">${s.name}</div>
+        <div class="list-meta">${s.role} · ${s.clients} clients</div>
+        <div class="progress-bar"><div class="progress-fill" style="width:${(s.revenue/max*100).toFixed(0)}%"></div></div>
+      </div>
+      <div class="list-value">
+        <div class="list-amount">KES ${(s.revenue/1000).toFixed(1)}k</div>
+        <div class="list-count">${s.clients} sessions</div>
+      </div>
+    </div>`).join('');
+}
+
+// ── LOYALTY ──
+function buildLoyalty() {
+  document.getElementById('loyaltyList').innerHTML = LOYALTY_CLIENTS.map(c => `
+    <div class="loyalty-item">
+      <div class="loyalty-top">
+        <div class="client-cell">
+          <div class="c-avatar">${c.name.split(' ').map(w=>w[0]).join('')}</div>
+          <div><div class="loyalty-client">${c.name}</div><div class="loyalty-cuts-count">${c.cuts}/7 cuts · ${c.phone}</div></div>
+        </div>
+        <div style="display:flex;align-items:center;gap:8px">
+          ${c.free ? '<span class="free-badge">★ Free Cut Due</span>' : ''}
+          ${c.free ? `<button class="dispose-btn" onclick="disposeFree(this,'${c.name}')">Mark Redeemed</button>` : ''}
+        </div>
+      </div>
+      <div class="loyalty-dots">
+        ${[...Array(7)].map((_,i) => `<div class="l-dot ${i < c.cuts ? 'done' : ''}"></div>`).join('')}
+        <div class="l-dot free"></div>
+      </div>
+    </div>`).join('');
+  const freeCuts = LOYALTY_CLIENTS.filter(c => c.free).length;
+  document.getElementById('kpiFreeCuts').textContent = freeCuts;
+  document.getElementById('kpiFreeCutsSub').textContent = freeCuts + ' client' + (freeCuts !== 1 ? 's' : '') + ' ready to redeem';
+}
+
+function disposeFree(btn, name) {
+  btn.closest('.loyalty-item').style.cssText = 'opacity:0.4;pointer-events:none';
+  showToast('✓ Free cut for ' + name + ' marked as redeemed');
+}
+
+// ── PERIOD SWITCH ──
+function setPeriod(el, period) {
+  document.querySelectorAll('.period-tab').forEach(t => t.classList.remove('active'));
+  el.classList.add('active');
+  const m = { week:0.28, month:1, quarter:3.1, year:12.4 }[period];
+  animateCount(document.getElementById('kpiRevenue'), Math.round(122400 * m), 'KES ');
+  animateCount(document.getElementById('kpiBookings'), Math.round(184 * m));
+  animateCount(document.getElementById('kpiClients'), Math.round(38 * m));
+}
+
+// ── SYNC ──
+function syncSheets() {
+  const btn = event.currentTarget;
+  const orig = btn.innerHTML;
+  btn.textContent = '↻ Syncing…'; btn.style.opacity = '0.6';
+  setTimeout(() => {
+    btn.innerHTML = orig; btn.style.opacity = '1';
+    showToast('✓ Google Sheets updated — ' + new Date().toLocaleTimeString());
+    document.querySelectorAll('.sheets-dot').forEach(d => {
+      d.style.background = '#C9A96E';
+      setTimeout(() => d.style.background = '#4CAF7D', 1000);
+    });
+  }, 1800);
+}
+
+// ── TOAST ──
+let toastTimer;
+function showToast(msg) {
+  let t = document.getElementById('toast');
+  if (!t) { t = document.createElement('div'); t.id = 'toast'; t.style.cssText = 'position:fixed;bottom:28px;right:28px;z-index:999;background:var(--gold);color:var(--black);font-family:var(--font);font-size:0.75rem;letter-spacing:0.1em;padding:14px 22px;border-radius:3px;transform:translateY(100px);opacity:0;transition:all 0.35s;pointer-events:none;'; document.body.appendChild(t); }
+  t.textContent = msg;
+  requestAnimationFrame(() => { t.style.transform = 'none'; t.style.opacity = '1'; });
+  clearTimeout(toastTimer);
+  toastTimer = setTimeout(() => { t.style.transform = 'translateY(100px)'; t.style.opacity = '0'; }, 3500);
+}
+
+// ── INIT ──
+document.getElementById('topbarDate').textContent = new Date().toLocaleDateString('en-KE', { weekday:'short', day:'numeric', month:'short', year:'numeric' });
+
+// Stagger content builds so nothing blocks
+animateCount(document.getElementById('kpiRevenue'), 122400, 'KES ');
+animateCount(document.getElementById('kpiBookings'), 184);
+animateCount(document.getElementById('kpiClients'), 38);
+
+setTimeout(buildTransactions, 0);
+setTimeout(buildTopServices, 0);
+setTimeout(buildStaff, 0);
+setTimeout(buildLoyalty, 0);
+</script>
+</body>
+</html>

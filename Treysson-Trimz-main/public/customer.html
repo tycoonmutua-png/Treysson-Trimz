@@ -1,0 +1,1143 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>My Account – Treysson Trimz</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com"/>
+  <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;600;700&family=Inter:wght@300;400;500;600&display=swap" rel="stylesheet"/>
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    :root {
+      --bg:        #111110;
+      --surface:   #1C1C1A;
+      --surface2:  #252523;
+      --surface3:  #2E2E2B;
+      --border:    #2E2E2B;
+      --border2:   #3A3A37;
+      --gold:      #C9A84C;
+      --gold-dim:  #A8893A;
+      --gold-glow: rgba(201,168,76,0.12);
+      --text:      #F0EDE8;
+      --text-2:    #9E9B95;
+      --text-3:    #5C5A55;
+      --red:       #D95B5B;
+      --green:     #4CAF7D;
+      --blue:      #5B9BD9;
+      --radius:    10px;
+      --font-display: 'Playfair Display', serif;
+      --font-body:    'Inter', sans-serif;
+    }
+
+    body { background: var(--bg); color: var(--text); font-family: var(--font-body); min-height: 100vh; }
+
+    /* TOPBAR */
+    .topbar {
+      position: sticky; top: 0; z-index: 100;
+      background: rgba(17,17,16,.95);
+      border-bottom: 1px solid var(--border);
+      padding: 0 24px; height: 60px;
+      display: flex; align-items: center; justify-content: space-between;
+    }
+    .topbar-brand { display: flex; align-items: center; gap: 10px; text-decoration: none; }
+    .brand-dot {
+      width: 28px; height: 28px; background: var(--gold); border-radius: 50%;
+      display: grid; place-items: center; font-size: 12px;
+    }
+    .brand-name { font-family: var(--font-display); font-size: 1.05rem; color: var(--text); }
+    .topbar-right { display: flex; align-items: center; gap: 14px; }
+    .topbar-book {
+      font-size: .8rem; color: var(--gold); text-decoration: none;
+      padding: 6px 14px; border: 1px solid var(--gold-dim); border-radius: 20px;
+      transition: background .15s;
+    }
+    .topbar-book:hover { background: var(--gold-glow); }
+    .avatar-btn {
+      width: 34px; height: 34px; border-radius: 50%;
+      background: var(--surface2); border: 1px solid var(--border2);
+      overflow: hidden; cursor: pointer;
+      display: flex; align-items: center; justify-content: center;
+      color: var(--gold); font-size: .8rem; font-weight: 600;
+    }
+    .avatar-btn img { width: 100%; height: 100%; object-fit: cover; }
+
+    /* LAYOUT */
+    .layout {
+      max-width: 1000px; margin: 0 auto; padding: 32px 24px;
+      display: grid; grid-template-columns: 220px 1fr;
+      gap: 24px; align-items: start;
+    }
+    @media (max-width: 720px) {
+      .layout { grid-template-columns: 1fr; }
+      .sidebar { display: none; }
+      .mobile-tabs { display: flex !important; }
+    }
+
+    /* SIDEBAR */
+    .sidebar {
+      background: var(--surface); border: 1px solid var(--border);
+      border-radius: 14px; overflow: hidden;
+      position: sticky; top: 80px;
+    }
+    .sidebar-profile {
+      padding: 20px; border-bottom: 1px solid var(--border); text-align: center;
+    }
+    .sidebar-avatar {
+      width: 62px; height: 62px; border-radius: 50%;
+      background: var(--surface3); border: 2px solid var(--gold-dim);
+      margin: 0 auto 10px; overflow: hidden;
+      display: flex; align-items: center; justify-content: center;
+      font-size: 1.4rem; color: var(--gold); font-weight: 700;
+    }
+    .sidebar-avatar img { width: 100%; height: 100%; object-fit: cover; }
+    .sidebar-name { font-weight: 600; font-size: .95rem; }
+    .sidebar-email { font-size: .75rem; color: var(--text-2); margin-top: 3px; word-break: break-all; }
+    .sidebar-badge {
+      display: inline-block; background: var(--gold-glow);
+      border: 1px solid var(--gold-dim); color: var(--gold);
+      font-size: .68rem; padding: 2px 8px; border-radius: 20px;
+      margin-top: 7px; text-transform: uppercase; letter-spacing: .06em;
+    }
+    .sidebar-nav { padding: 8px; }
+    .nav-item {
+      display: flex; align-items: center; gap: 10px;
+      padding: 10px 12px; border-radius: var(--radius);
+      cursor: pointer; font-size: .85rem; color: var(--text-2);
+      transition: all .15s; border: none; background: none;
+      width: 100%; text-align: left; font-family: var(--font-body);
+    }
+    .nav-item:hover { background: var(--surface2); color: var(--text); }
+    .nav-item.active { background: var(--gold-glow); color: var(--gold); border: 1px solid var(--border); }
+    .nav-icon { font-size: 1rem; width: 20px; text-align: center; }
+    .nav-signout { color: var(--red) !important; margin-top: 4px; }
+    .nav-signout:hover { background: rgba(217,91,91,.08) !important; }
+
+    /* MOBILE TABS */
+    .mobile-tabs {
+      display: none; overflow-x: auto; gap: 8px;
+      padding: 0 0 12px; scrollbar-width: none;
+    }
+    .mobile-tab {
+      flex-shrink: 0; padding: 8px 16px;
+      background: var(--surface); border: 1px solid var(--border);
+      border-radius: 20px; color: var(--text-2);
+      font-size: .8rem; cursor: pointer; font-family: var(--font-body);
+    }
+    .mobile-tab.active { background: var(--gold-glow); border-color: var(--gold-dim); color: var(--gold); }
+
+    /* MAIN */
+    .main { min-width: 0; }
+    .page-section { display: none; }
+    .page-section.active { display: block; }
+
+    .section-header {
+      display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px;
+    }
+    .section-title { font-family: var(--font-display); font-size: 1.35rem; font-weight: 600; }
+    .section-sub { font-size: .8rem; color: var(--text-2); margin-top: 2px; }
+
+    /* STAT CARDS */
+    .stat-row { display: grid; grid-template-columns: repeat(3,1fr); gap: 12px; margin-bottom: 24px; }
+    .stat-card {
+      background: var(--surface); border: 1px solid var(--border);
+      border-radius: 12px; padding: 16px;
+    }
+    .stat-num { font-family: var(--font-display); font-size: 1.8rem; font-weight: 700; color: var(--gold); }
+    .stat-label { font-size: .75rem; color: var(--text-2); margin-top: 2px; }
+
+    /* FILTER PILLS */
+    .booking-filters { display: flex; gap: 8px; margin-bottom: 16px; overflow-x: auto; scrollbar-width: none; }
+    .filter-pill {
+      flex-shrink: 0; padding: 6px 14px; border-radius: 20px;
+      background: var(--surface); border: 1px solid var(--border);
+      color: var(--text-2); font-size: .78rem; cursor: pointer;
+      font-family: var(--font-body); transition: all .15s;
+    }
+    .filter-pill:hover { border-color: var(--gold-dim); color: var(--text); }
+    .filter-pill.active { background: var(--gold-glow); border-color: var(--gold-dim); color: var(--gold); }
+
+    /* BOOKING CARDS */
+    .booking-list { display: flex; flex-direction: column; gap: 12px; }
+    .booking-card {
+      background: var(--surface); border: 1px solid var(--border);
+      border-radius: 12px; overflow: hidden; transition: border-color .15s;
+    }
+    .booking-card:hover { border-color: var(--border2); }
+    .booking-card-inner {
+      padding: 16px; display: grid;
+      grid-template-columns: 48px 1fr auto; gap: 14px; align-items: start;
+    }
+    .booking-barber-avatar {
+      width: 48px; height: 48px; border-radius: 50%;
+      background: var(--surface3); overflow: hidden;
+      border: 1px solid var(--border2);
+      display: flex; align-items: center; justify-content: center;
+      font-weight: 700; color: var(--gold); font-size: .9rem;
+    }
+    .booking-barber-avatar img { width: 100%; height: 100%; object-fit: cover; }
+    .booking-service { font-weight: 600; font-size: .92rem; }
+    .booking-meta {
+      font-size: .78rem; color: var(--text-2); margin-top: 3px;
+      display: flex; gap: 12px; flex-wrap: wrap;
+    }
+    .booking-meta span { display: flex; align-items: center; gap: 4px; }
+    .booking-ref { font-size: .7rem; color: var(--text-3); margin-top: 6px; font-family: monospace; }
+    .booking-right { text-align: right; }
+    .booking-price { font-weight: 600; color: var(--gold); font-size: .95rem; }
+    .status-badge {
+      display: inline-block; padding: 3px 10px; border-radius: 20px;
+      font-size: .7rem; font-weight: 600; letter-spacing: .04em;
+      text-transform: uppercase; margin-top: 6px;
+    }
+    .status-pending   { background: rgba(201,168,76,.12);  color: #D4B05A; border: 1px solid rgba(201,168,76,.25); }
+    .status-confirmed { background: rgba(76,175,125,.12);  color: #7DCA9F; border: 1px solid rgba(76,175,125,.25); }
+    .status-completed { background: rgba(91,155,217,.1);   color: #7EB8E8; border: 1px solid rgba(91,155,217,.25); }
+    .status-cancelled { background: rgba(100,100,95,.12);  color: var(--text-3); border: 1px solid var(--border); }
+    .status-no_show   { background: rgba(217,91,91,.1);    color: #E88;      border: 1px solid rgba(217,91,91,.25); }
+    .booking-actions {
+      padding: 12px 16px; border-top: 1px solid var(--border);
+      display: flex; gap: 8px; justify-content: flex-end;
+    }
+    .btn-sm {
+      padding: 7px 14px; border-radius: 7px; font-size: .78rem;
+      font-weight: 600; cursor: pointer; font-family: var(--font-body);
+      transition: all .15s; border: 1px solid transparent;
+    }
+    .btn-sm-outline { background: transparent; border-color: var(--border2); color: var(--text-2); }
+    .btn-sm-outline:hover { border-color: var(--gold-dim); color: var(--gold); }
+    .btn-sm-danger { background: transparent; border-color: rgba(217,91,91,.3); color: var(--red); }
+    .btn-sm-danger:hover { background: rgba(217,91,91,.08); }
+    .btn-sm-gold { background: var(--gold); color: #111; border-color: var(--gold); }
+    .btn-sm-gold:hover { background: #D4B05A; }
+
+    /* EMPTY STATE */
+    .empty-state { text-align: center; padding: 48px 24px; color: var(--text-2); }
+    .empty-icon  { font-size: 2.5rem; margin-bottom: 12px; }
+    .empty-title { font-size: .95rem; font-weight: 600; color: var(--text); margin-bottom: 6px; }
+    .empty-sub   { font-size: .82rem; }
+    .empty-btn {
+      display: inline-block; margin-top: 16px; padding: 10px 20px;
+      background: var(--gold); color: #111; border-radius: 8px;
+      font-weight: 600; font-size: .85rem; text-decoration: none; cursor: pointer;
+    }
+
+    /* PROFILE */
+    .profile-card {
+      background: var(--surface); border: 1px solid var(--border);
+      border-radius: 14px; overflow: hidden;
+    }
+    .profile-header {
+      padding: 24px; border-bottom: 1px solid var(--border);
+      display: flex; align-items: center; gap: 20px;
+    }
+    .profile-avatar-large {
+      width: 72px; height: 72px; border-radius: 50%;
+      background: var(--surface3); border: 2px solid var(--gold-dim);
+      overflow: hidden; flex-shrink: 0;
+      display: flex; align-items: center; justify-content: center;
+      font-size: 1.6rem; color: var(--gold); font-weight: 700;
+    }
+    .profile-avatar-large img { width: 100%; height: 100%; object-fit: cover; }
+    .profile-header-name { font-family: var(--font-display); font-size: 1.2rem; }
+    .profile-header-joined { font-size: .75rem; color: var(--text-2); margin-top: 3px; }
+    .profile-form { padding: 24px; }
+    .form-row { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; }
+    @media (max-width: 560px) { .form-row { grid-template-columns: 1fr; } }
+    .field { margin-bottom: 16px; }
+    label { display: block; font-size: .78rem; color: var(--text-2); margin-bottom: 6px; font-weight: 500; letter-spacing: .03em; }
+    input[type=text], input[type=email], input[type=tel], input[type=date] {
+      width: 100%; padding: 11px 13px;
+      background: var(--bg); border: 1px solid var(--border);
+      border-radius: var(--radius); color: var(--text);
+      font-family: var(--font-body); font-size: .88rem;
+      outline: none; transition: border-color .2s;
+    }
+    input:focus { border-color: var(--gold); }
+    input::placeholder { color: var(--text-3); }
+    input:disabled { opacity: .5; cursor: not-allowed; }
+    .field-hint { font-size: .72rem; color: var(--text-3); margin-top: 4px; }
+    .btn-save {
+      padding: 11px 24px; background: var(--gold); color: #111;
+      border: none; border-radius: var(--radius);
+      font-weight: 600; font-size: .88rem; cursor: pointer;
+      font-family: var(--font-body); transition: background .15s;
+    }
+    .btn-save:hover { background: #D4B05A; }
+    .btn-save:disabled { opacity: .5; cursor: not-allowed; }
+
+    /* PROVIDER BADGES */
+    .provider-badge {
+      display: inline-flex; align-items: center; gap: 5px;
+      background: var(--surface2); border: 1px solid var(--border);
+      border-radius: 6px; padding: 4px 10px;
+      font-size: .72rem; color: var(--text-2); margin-top: 8px;
+    }
+
+    /* OFFERS */
+    .offers-grid { display: grid; grid-template-columns: repeat(auto-fill,minmax(240px,1fr)); gap: 14px; }
+    .offer-card {
+      background: var(--surface); border: 1px solid var(--border);
+      border-radius: 12px; padding: 18px; position: relative; overflow: hidden;
+    }
+    .offer-card::before {
+      content: ''; position: absolute; top: 0; left: 0; right: 0; height: 3px;
+      background: linear-gradient(90deg, var(--gold), var(--gold-dim));
+    }
+    .offer-badge {
+      font-size: .68rem; font-weight: 700; letter-spacing: .08em;
+      text-transform: uppercase; color: var(--gold); margin-bottom: 8px;
+    }
+    .offer-title { font-weight: 600; font-size: .9rem; margin-bottom: 4px; }
+    .offer-desc { font-size: .78rem; color: var(--text-2); line-height: 1.45; }
+    .offer-cta {
+      display: inline-block; margin-top: 14px; padding: 7px 14px;
+      background: var(--gold-glow); border: 1px solid var(--gold-dim);
+      border-radius: 6px; color: var(--gold);
+      font-size: .78rem; font-weight: 600;
+      text-decoration: none; cursor: pointer; font-family: var(--font-body);
+    }
+    .offer-cta:hover { background: rgba(201,168,76,.22); }
+
+    /* MODAL */
+    .modal-overlay {
+      position: fixed; inset: 0; background: rgba(0,0,0,.75);
+      z-index: 1000; display: none; place-items: center; padding: 24px;
+    }
+    .modal-overlay.show { display: grid; }
+    .modal {
+      background: var(--surface); border: 1px solid var(--border2);
+      border-radius: 16px; width: 100%; max-width: 480px;
+      max-height: 90vh; overflow-y: auto;
+    }
+    .modal-header {
+      padding: 20px 24px 0; display: flex;
+      justify-content: space-between; align-items: flex-start;
+    }
+    .modal-title { font-family: var(--font-display); font-size: 1.1rem; }
+    .modal-close {
+      background: none; border: none; color: var(--text-2);
+      cursor: pointer; font-size: 1.4rem; padding: 0 0 0 8px; line-height: 1;
+    }
+    .modal-close:hover { color: var(--text); }
+    .modal-body { padding: 20px 24px 24px; }
+    .modal-footer { padding: 0 24px 24px; display: flex; gap: 10px; justify-content: flex-end; }
+    .modal-info {
+      background: var(--surface2); border: 1px solid var(--border);
+      border-radius: var(--radius); padding: 14px;
+      margin-bottom: 20px; font-size: .82rem; line-height: 1.6;
+    }
+    .modal-info strong { color: var(--text); }
+    .btn-modal {
+      padding: 10px 20px; border-radius: 8px; font-size: .85rem;
+      font-weight: 600; cursor: pointer; font-family: var(--font-body);
+      border: 1px solid transparent;
+    }
+    .btn-cancel  { background: transparent; border-color: var(--border2); color: var(--text-2); }
+    .btn-cancel:hover { border-color: var(--gold-dim); color: var(--text); }
+    .btn-danger  { background: var(--red); color: #fff; }
+    .btn-danger:hover { background: #c44; }
+    .btn-primary { background: var(--gold); color: #111; }
+    .btn-primary:hover { background: #D4B05A; }
+    .btn-primary:disabled, .btn-danger:disabled { opacity: .5; cursor: not-allowed; }
+
+    /* TOAST */
+    .toast {
+      position: fixed; bottom: 24px; right: 24px;
+      background: var(--surface2); border: 1px solid var(--border2);
+      border-radius: 10px; padding: 12px 16px; font-size: .83rem;
+      max-width: 300px; transform: translateY(80px); opacity: 0;
+      transition: all .3s; z-index: 2000;
+      display: flex; align-items: center; gap: 10px;
+    }
+    .toast.show { transform: translateY(0); opacity: 1; }
+    .toast.success { border-color: rgba(76,175,125,.5); }
+    .toast.error   { border-color: rgba(217,91,91,.5); }
+
+    /* SKELETON */
+    .skeleton {
+      background: linear-gradient(90deg, var(--surface) 25%, var(--surface2) 50%, var(--surface) 75%);
+      background-size: 400% 100%; animation: shimmer 1.4s infinite;
+      border-radius: 8px;
+    }
+    @keyframes shimmer { 0%{background-position:100% 50%} 100%{background-position:0% 50%} }
+    .skel-card {
+      background: var(--surface); border: 1px solid var(--border);
+      border-radius: 12px; padding: 16px; margin-bottom: 12px;
+      display: grid; grid-template-columns: 48px 1fr; gap: 14px; align-items: center;
+    }
+    .skel-circle { width: 48px; height: 48px; border-radius: 50%; }
+    .skel-line   { height: 12px; margin-bottom: 8px; }
+
+    /* LOADING OVERLAY */
+    #loading-overlay {
+      position: fixed; inset: 0; background: var(--bg);
+      display: flex; align-items: center; justify-content: center;
+      z-index: 9999; transition: opacity .4s;
+    }
+    #loading-overlay.fade { opacity: 0; pointer-events: none; }
+    .loader-brand { text-align: center; }
+    .loader-dot {
+      width: 44px; height: 44px; background: var(--gold);
+      border-radius: 50%; margin: 0 auto 14px;
+      display: grid; place-items: center; font-size: 20px;
+      animation: pulse 1.2s ease-in-out infinite;
+    }
+    @keyframes pulse { 0%,100%{transform:scale(1)} 50%{transform:scale(1.08)} }
+    .loader-brand p { font-family: var(--font-display); font-size: 1.1rem; color: var(--text-2); }
+
+    /* DEV BANNER */
+    .dev-banner {
+      background: rgba(201,168,76,.1); border-bottom: 1px solid rgba(201,168,76,.2);
+      padding: 8px 24px; font-size: .75rem; color: var(--gold);
+      text-align: center; display: none;
+    }
+    .dev-banner.show { display: block; }
+  </style>
+</head>
+<body>
+
+<div id="loading-overlay">
+  <div class="loader-brand">
+    <div class="loader-dot">✂</div>
+    <p>Loading your account…</p>
+  </div>
+</div>
+
+<div class="dev-banner" id="dev-banner">
+  ⚠ Dev mode: Firebase not configured. Showing demo data. Replace YOUR_API_KEY in the script to connect.
+</div>
+
+<header class="topbar">
+  <a class="topbar-brand" href="/booking.html">
+    <div class="brand-dot">✂</div>
+    <span class="brand-name">Treysson Trimz</span>
+  </a>
+  <div class="topbar-right">
+    <a href="/booking.html" class="topbar-book">+ Book Appointment</a>
+    <div class="avatar-btn" id="topbar-avatar">?</div>
+  </div>
+</header>
+
+<div class="layout">
+  <aside class="sidebar">
+    <div class="sidebar-profile">
+      <div class="sidebar-avatar" id="sidebar-avatar">?</div>
+      <div class="sidebar-name"  id="sidebar-name">Loading…</div>
+      <div class="sidebar-email" id="sidebar-email"></div>
+      <div class="sidebar-badge">Member</div>
+    </div>
+    <nav class="sidebar-nav">
+      <button class="nav-item active" onclick="showPage('bookings')" id="nav-bookings">
+        <span class="nav-icon">📅</span> My Bookings
+      </button>
+      <button class="nav-item" onclick="showPage('profile')" id="nav-profile">
+        <span class="nav-icon">👤</span> Profile
+      </button>
+      <button class="nav-item" onclick="showPage('offers')" id="nav-offers">
+        <span class="nav-icon">🏷</span> Offers &amp; Products
+      </button>
+      <hr style="border:none;border-top:1px solid var(--border);margin:8px 0;">
+      <button class="nav-item nav-signout" onclick="doSignOut()">
+        <span class="nav-icon">→</span> Sign Out
+      </button>
+    </nav>
+  </aside>
+
+  <main class="main">
+    <div class="mobile-tabs" id="mobile-tabs">
+      <button class="mobile-tab active" onclick="showPage('bookings')">📅 Bookings</button>
+      <button class="mobile-tab" onclick="showPage('profile')">👤 Profile</button>
+      <button class="mobile-tab" onclick="showPage('offers')">🏷 Offers</button>
+    </div>
+
+    <!-- BOOKINGS -->
+    <section class="page-section active" id="page-bookings">
+      <div class="section-header">
+        <div>
+          <h2 class="section-title">My Bookings</h2>
+          <p class="section-sub" id="bookings-sub">Your appointment history</p>
+        </div>
+        <a href="/booking.html" class="btn-sm btn-sm-gold" style="text-decoration:none">+ New Booking</a>
+      </div>
+      <div class="stat-row">
+        <div class="stat-card"><div class="stat-num" id="stat-total">—</div><div class="stat-label">Total Visits</div></div>
+        <div class="stat-card"><div class="stat-num" id="stat-upcoming">—</div><div class="stat-label">Upcoming</div></div>
+        <div class="stat-card"><div class="stat-num" id="stat-spent">—</div><div class="stat-label">Total Spent</div></div>
+      </div>
+      <div class="booking-filters">
+        <button class="filter-pill active" onclick="filterBookings('all',this)">All</button>
+        <button class="filter-pill" onclick="filterBookings('pending',this)">Pending</button>
+        <button class="filter-pill" onclick="filterBookings('confirmed',this)">Confirmed</button>
+        <button class="filter-pill" onclick="filterBookings('completed',this)">Completed</button>
+        <button class="filter-pill" onclick="filterBookings('cancelled',this)">Cancelled</button>
+      </div>
+      <div class="booking-list" id="booking-list">
+        <div class="skel-card"><div class="skeleton skel-circle"></div><div><div class="skeleton skel-line" style="width:60%"></div><div class="skeleton skel-line" style="width:40%"></div></div></div>
+        <div class="skel-card"><div class="skeleton skel-circle"></div><div><div class="skeleton skel-line" style="width:70%"></div><div class="skeleton skel-line" style="width:35%"></div></div></div>
+        <div class="skel-card"><div class="skeleton skel-circle"></div><div><div class="skeleton skel-line" style="width:50%"></div><div class="skeleton skel-line" style="width:45%"></div></div></div>
+      </div>
+    </section>
+
+    <!-- PROFILE -->
+    <section class="page-section" id="page-profile">
+      <div class="section-header">
+        <div>
+          <h2 class="section-title">My Profile</h2>
+          <p class="section-sub">Manage your account details</p>
+        </div>
+      </div>
+      <div class="profile-card">
+        <div class="profile-header">
+          <div class="profile-avatar-large" id="profile-avatar-large">?</div>
+          <div>
+            <div class="profile-header-name" id="profile-display-name">Loading…</div>
+            <div class="profile-header-joined" id="profile-joined"></div>
+            <div class="provider-badge" id="provider-badge"></div>
+          </div>
+        </div>
+        <div class="profile-form">
+          <div class="form-row">
+            <div class="field">
+              <label>First name</label>
+              <input type="text" id="p-first" placeholder="Jordan"/>
+            </div>
+            <div class="field">
+              <label>Last name</label>
+              <input type="text" id="p-last" placeholder="Lee"/>
+            </div>
+          </div>
+          <div class="field">
+            <label>Email address</label>
+            <input type="email" id="p-email" placeholder="you@example.com"/>
+            <p class="field-hint">Changing email requires re-verification.</p>
+          </div>
+          <div class="field">
+            <label>Phone number</label>
+            <input type="tel" id="p-phone" placeholder="+254 712 345 678"/>
+          </div>
+          <button class="btn-save" id="btn-save-profile" onclick="saveProfile()">Save Changes</button>
+        </div>
+      </div>
+    </section>
+
+    <!-- OFFERS -->
+    <section class="page-section" id="page-offers">
+      <div class="section-header">
+        <div>
+          <h2 class="section-title">Offers &amp; Products</h2>
+          <p class="section-sub">Exclusive deals for our members</p>
+        </div>
+      </div>
+      <div class="offers-grid">
+        <div class="offer-card">
+          <div class="offer-badge">🏆 Loyalty Offer</div>
+          <div class="offer-title">Your 5th Cut is Free</div>
+          <div class="offer-desc">Book 4 haircuts and your next one is on us. Automatically tracked on your account.</div>
+          <button class="offer-cta" onclick="window.location.href='/booking.html'">Book Now</button>
+        </div>
+        <div class="offer-card">
+          <div class="offer-badge">🎁 Refer a Friend</div>
+          <div class="offer-title">Get 20% Off Your Next Visit</div>
+          <div class="offer-desc">Refer a friend who books their first appointment. You both save.</div>
+          <button class="offer-cta" onclick="copyReferralLink()">Copy Referral Link</button>
+        </div>
+        <div class="offer-card">
+          <div class="offer-badge">🧴 Product Bundle</div>
+          <div class="offer-title">Grooming Starter Kit</div>
+          <div class="offer-desc">Pomade, beard oil &amp; edge control. Handpicked by our barbers. Available in-store.</div>
+          <button class="offer-cta">Learn More</button>
+        </div>
+        <div class="offer-card">
+          <div class="offer-badge">⏰ Early Bird</div>
+          <div class="offer-title">15% Off Morning Slots</div>
+          <div class="offer-desc">Book any slot before 10 AM and receive an automatic 15% discount. Limited availability.</div>
+          <button class="offer-cta" onclick="window.location.href='/booking.html'">View Morning Slots</button>
+        </div>
+      </div>
+    </section>
+  </main>
+</div>
+
+<!-- CANCEL MODAL -->
+<div class="modal-overlay" id="modal-cancel">
+  <div class="modal">
+    <div class="modal-header">
+      <div class="modal-title">Cancel Appointment</div>
+      <button class="modal-close" onclick="closeModal('modal-cancel')">×</button>
+    </div>
+    <div class="modal-body">
+      <p style="font-size:.88rem;color:var(--text-2);line-height:1.6;">
+        Are you sure you want to cancel? This cannot be undone.
+      </p>
+      <div class="modal-info" id="cancel-booking-summary" style="margin-top:16px"></div>
+    </div>
+    <div class="modal-footer">
+      <button class="btn-modal btn-cancel" onclick="closeModal('modal-cancel')">Keep Appointment</button>
+      <button class="btn-modal btn-danger" id="btn-confirm-cancel" onclick="confirmCancel()">Cancel Appointment</button>
+    </div>
+  </div>
+</div>
+
+<!-- RESCHEDULE MODAL -->
+<div class="modal-overlay" id="modal-reschedule">
+  <div class="modal">
+    <div class="modal-header">
+      <div class="modal-title">Reschedule Appointment</div>
+      <button class="modal-close" onclick="closeModal('modal-reschedule')">×</button>
+    </div>
+    <div class="modal-body">
+      <div class="modal-info" id="reschedule-booking-info"></div>
+      <div class="field">
+        <label>New date</label>
+        <input type="date" id="rs-date" onchange="loadRescheduleSlots()"/>
+      </div>
+      <div class="field" id="rs-slot-field" style="display:none">
+        <label>Available time slots</label>
+        <div id="rs-slots" style="display:flex;flex-wrap:wrap;gap:8px;margin-top:8px;"></div>
+      </div>
+    </div>
+    <div class="modal-footer">
+      <button class="btn-modal btn-cancel" onclick="closeModal('modal-reschedule')">Cancel</button>
+      <button class="btn-modal btn-primary" id="btn-confirm-reschedule" onclick="confirmReschedule()" disabled>Confirm Reschedule</button>
+    </div>
+  </div>
+</div>
+
+<div class="toast" id="toast">
+  <span id="toast-icon"></span>
+  <span id="toast-text"></span>
+</div>
+
+<script type="module">
+  // ─────────────────────────────────────────────────────────────────────────
+  // CONFIG — paste your Firebase config values here
+  // ─────────────────────────────────────────────────────────────────────────
+  const FIREBASE_CONFIG = {
+    apiKey:            "YOUR_API_KEY",
+    authDomain:        "YOUR_PROJECT.firebaseapp.com",
+    projectId:         "YOUR_PROJECT_ID",
+    storageBucket:     "YOUR_PROJECT.appspot.com",
+    messagingSenderId: "YOUR_SENDER_ID",
+    appId:             "YOUR_APP_ID",
+  };
+
+  // If config is still placeholders, run in DEMO MODE (no redirect, show fake data)
+  const IS_DEMO = FIREBASE_CONFIG.apiKey === "YOUR_API_KEY";
+
+  // ─────────────────────────────────────────────────────────────────────────
+  // State
+  // ─────────────────────────────────────────────────────────────────────────
+  let currentUser      = null;
+  let idToken          = null;
+  let allBookings      = [];
+  let cancelTarget     = null;
+  let rescheduleTarget = null;
+  let selectedSlot     = null;
+
+  // ─────────────────────────────────────────────────────────────────────────
+  // Boot
+  // ─────────────────────────────────────────────────────────────────────────
+  if (IS_DEMO) {
+    // Show banner, render demo data immediately — no Firebase needed
+    document.getElementById('dev-banner').classList.add('show');
+    bootDemo();
+  } else {
+    bootFirebase();
+  }
+
+  // ─────────────────────────────────────────────────────────────────────────
+  // DEMO MODE — lets you see the UI without Firebase
+  // ─────────────────────────────────────────────────────────────────────────
+  function bootDemo() {
+    currentUser = {
+      uid: 'demo-uid-001',
+      displayName: 'Demo User',
+      email: 'demo@treyssontrimz.com',
+      photoURL: null,
+      providerData: [{ providerId: 'password' }],
+    };
+    renderUserMeta(currentUser);
+    populateProfileForm({ full_name: 'Demo User', email: 'demo@treyssontrimz.com', phone: '+254 712 000 000', created_at: '2024-01-15' });
+    allBookings = DEMO_BOOKINGS;
+    renderBookingStats();
+    renderBookingList(allBookings);
+    hideLoading();
+  }
+
+  // ─────────────────────────────────────────────────────────────────────────
+  // FIREBASE MODE
+  // ─────────────────────────────────────────────────────────────────────────
+  async function bootFirebase() {
+    try {
+      const { initializeApp }           = await import('https://www.gstatic.com/firebasejs/10.12.0/firebase-app.js');
+      const { getAuth, onAuthStateChanged } = await import('https://www.gstatic.com/firebasejs/10.12.0/firebase-auth.js');
+
+      const app  = initializeApp(FIREBASE_CONFIG);
+      const auth = getAuth(app);
+
+      // Expose signOut to global scope
+      const { signOut: fbSignOut } = await import('https://www.gstatic.com/firebasejs/10.12.0/firebase-auth.js');
+      window._fbAuth    = auth;
+      window._fbSignOut = fbSignOut;
+
+      onAuthStateChanged(auth, async (user) => {
+        if (!user) {
+          // Not logged in → go to auth page
+          window.location.href = '/auth.html';
+          return;
+        }
+        currentUser = user;
+        try { idToken = await user.getIdToken(); } catch {}
+
+        renderUserMeta(user);
+        await loadProfile();
+        await loadBookings();
+        hideLoading();
+      });
+
+      // Safety net: if Firebase hangs for 8s, show an error instead of blank screen
+      setTimeout(() => {
+        const ol = document.getElementById('loading-overlay');
+        if (ol) {
+          ol.innerHTML = `
+            <div style="text-align:center;padding:32px;color:var(--text-2)">
+              <div style="font-size:2rem;margin-bottom:12px">⚠</div>
+              <p style="font-family:var(--font-display);font-size:1rem;color:var(--text)">Connection timeout</p>
+              <p style="font-size:.83rem;margin-top:8px">Check your Firebase config or network connection.</p>
+              <button onclick="window.location.href='/auth.html'" style="margin-top:20px;padding:10px 20px;background:var(--gold);color:#111;border:none;border-radius:8px;cursor:pointer;font-weight:600">
+                Back to Login
+              </button>
+            </div>`;
+        }
+      }, 8000);
+
+    } catch (err) {
+      console.error('Firebase boot error:', err);
+      showTimeoutError();
+    }
+  }
+
+  function showTimeoutError() {
+    const ol = document.getElementById('loading-overlay');
+    if (!ol) return;
+    ol.innerHTML = `
+      <div style="text-align:center;padding:32px;color:var(--text-2)">
+        <div style="font-size:2rem;margin-bottom:12px">⚠</div>
+        <p style="font-family:var(--font-display);font-size:1rem;color:var(--text)">Firebase failed to load</p>
+        <p style="font-size:.83rem;margin-top:8px">Check your API key and project settings.</p>
+        <button onclick="window.location.href='/auth.html'" style="margin-top:20px;padding:10px 20px;background:var(--gold);color:#111;border:none;border-radius:8px;cursor:pointer;font-weight:600">
+          Back to Login
+        </button>
+      </div>`;
+  }
+
+  // ─────────────────────────────────────────────────────────────────────────
+  // Render helpers
+  // ─────────────────────────────────────────────────────────────────────────
+  function hideLoading() {
+    const ol = document.getElementById('loading-overlay');
+    if (!ol) return;
+    ol.classList.add('fade');
+    setTimeout(() => ol.remove(), 500);
+  }
+
+  function renderUserMeta(user) {
+    const name     = user.displayName || user.email?.split('@')[0] || 'Member';
+    const email    = user.email || user.phoneNumber || '';
+    const photo    = user.photoURL;
+    const initials = name.split(' ').map(n => n[0]).join('').slice(0, 2).toUpperCase() || '?';
+
+    setAvatar('topbar-avatar', photo, initials);
+    setAvatar('sidebar-avatar', photo, initials);
+    setAvatar('profile-avatar-large', photo, initials);
+
+    document.getElementById('sidebar-name').textContent       = name;
+    document.getElementById('sidebar-email').textContent      = email;
+    document.getElementById('profile-display-name').textContent = name;
+
+    // Provider badge
+    const provider = user.providerData?.[0]?.providerId || 'password';
+    const providerLabel = { 'google.com': '🔵 Google', 'phone': '📱 Phone OTP', 'password': '✉ Email/Password' }[provider] || provider;
+    document.getElementById('provider-badge').textContent = `Signed in via ${providerLabel}`;
+  }
+
+  function setAvatar(id, photo, initials) {
+    const el = document.getElementById(id);
+    if (!el) return;
+    if (photo) { el.innerHTML = `<img src="${photo}" alt="" onerror="this.parentElement.textContent='${initials}'">`; }
+    else { el.textContent = initials; }
+  }
+
+  // ─────────────────────────────────────────────────────────────────────────
+  // Profile
+  // ─────────────────────────────────────────────────────────────────────────
+  async function loadProfile() {
+    if (IS_DEMO) return; // already populated in bootDemo
+    try {
+      const res = await apiFetch('/api/customers/me');
+      if (!res.ok) return;
+      const data = await res.json();
+      populateProfileForm(data);
+    } catch (e) {
+      // Non-fatal: profile fields just stay empty
+      console.warn('Profile load failed:', e);
+    }
+  }
+
+  function populateProfileForm(data) {
+    const parts = (data.full_name || '').split(' ');
+    const [f, ...l] = parts;
+    document.getElementById('p-first').value = f || '';
+    document.getElementById('p-last').value  = l.join(' ') || '';
+    document.getElementById('p-email').value = data.email || '';
+    document.getElementById('p-phone').value = data.phone || '';
+    if (data.created_at) {
+      document.getElementById('profile-joined').textContent =
+        `Member since ${new Date(data.created_at).toLocaleDateString('en-GB', { month: 'long', year: 'numeric' })}`;
+    }
+  }
+
+  window.saveProfile = async () => {
+    const btn   = document.getElementById('btn-save-profile');
+    const first = document.getElementById('p-first').value.trim();
+    const last  = document.getElementById('p-last').value.trim();
+    const email = document.getElementById('p-email').value.trim();
+    const phone = document.getElementById('p-phone').value.trim();
+    btn.disabled = true; btn.textContent = 'Saving…';
+
+    if (IS_DEMO) {
+      await new Promise(r => setTimeout(r, 600));
+      document.getElementById('sidebar-name').textContent = `${first} ${last}`.trim() || 'Demo User';
+      document.getElementById('profile-display-name').textContent = `${first} ${last}`.trim() || 'Demo User';
+      showToast('success', '✓', 'Profile updated. (Demo — not saved to server)');
+      btn.disabled = false; btn.textContent = 'Save Changes';
+      return;
+    }
+
+    try {
+      const res = await apiFetch('/api/customers/me', {
+        method: 'PUT',
+        body: JSON.stringify({ full_name: `${first} ${last}`.trim(), email, phone }),
+      });
+      if (res.ok) {
+        showToast('success', '✓', 'Profile updated.');
+        document.getElementById('sidebar-name').textContent = `${first} ${last}`.trim();
+        document.getElementById('profile-display-name').textContent = `${first} ${last}`.trim();
+      } else {
+        const err = await res.json().catch(() => ({}));
+        showToast('error', '✕', err.error || 'Failed to update profile.');
+      }
+    } catch { showToast('error', '✕', 'Network error.'); }
+    finally { btn.disabled = false; btn.textContent = 'Save Changes'; }
+  };
+
+  // ─────────────────────────────────────────────────────────────────────────
+  // Bookings
+  // ─────────────────────────────────────────────────────────────────────────
+  async function loadBookings() {
+    if (IS_DEMO) { allBookings = DEMO_BOOKINGS; renderBookingStats(); renderBookingList(allBookings); return; }
+    try {
+      const res = await apiFetch('/api/customers/me/bookings');
+      if (!res.ok) throw new Error(`HTTP ${res.status}`);
+      allBookings = await res.json();
+      renderBookingStats();
+      renderBookingList(allBookings);
+    } catch (e) {
+      console.error('Bookings load error:', e);
+      document.getElementById('booking-list').innerHTML = `
+        <div class="empty-state">
+          <div class="empty-icon">⚠</div>
+          <div class="empty-title">Couldn't load bookings</div>
+          <div class="empty-sub">The server may not have this endpoint yet. Check the console for details.</div>
+        </div>`;
+    }
+  }
+
+  function renderBookingStats() {
+    const total    = allBookings.length;
+    const upcoming = allBookings.filter(b => ['pending','confirmed'].includes(b.status)).length;
+    const spent    = allBookings
+      .filter(b => b.status === 'completed')
+      .reduce((s, b) => s + parseFloat(b.service_price || 0), 0);
+    document.getElementById('stat-total').textContent    = total;
+    document.getElementById('stat-upcoming').textContent = upcoming;
+    document.getElementById('stat-spent').textContent    = spent ? `KSh ${spent.toLocaleString()}` : '—';
+  }
+
+  window.filterBookings = (status, btn) => {
+    document.querySelectorAll('.filter-pill').forEach(p => p.classList.remove('active'));
+    btn.classList.add('active');
+    const filtered = status === 'all' ? allBookings : allBookings.filter(b => b.status === status);
+    renderBookingList(filtered);
+  };
+
+  function renderBookingList(bookings) {
+    const list = document.getElementById('booking-list');
+    if (!bookings.length) {
+      list.innerHTML = `
+        <div class="empty-state">
+          <div class="empty-icon">📅</div>
+          <div class="empty-title">No bookings here</div>
+          <div class="empty-sub">Time to get a fresh cut.</div>
+          <a href="/booking.html" class="empty-btn">Book Appointment</a>
+        </div>`;
+      return;
+    }
+    list.innerHTML = bookings.map(b => {
+      const dateStr  = new Date(b.booking_date).toLocaleDateString('en-GB', { weekday:'short', day:'numeric', month:'short', year:'numeric' });
+      const initials = (b.barber_name || 'B').split(' ').map(n => n[0]).join('').slice(0, 2).toUpperCase();
+      const canAction = ['pending','confirmed'].includes(b.status) && new Date(b.booking_date) >= new Date(new Date().toDateString());
+      const price    = b.service_price ? `KSh ${parseFloat(b.service_price).toLocaleString()}` : '—';
+      return `
+        <div class="booking-card">
+          <div class="booking-card-inner">
+            <div class="booking-barber-avatar">
+              ${b.barber_photo ? `<img src="${b.barber_photo}" alt="${b.barber_name}" onerror="this.parentElement.textContent='${initials}'">` : initials}
+            </div>
+            <div>
+              <div class="booking-service">${escHtml(b.service_name)}</div>
+              <div class="booking-meta">
+                <span>✂ ${escHtml(b.barber_name)}</span>
+                <span>📅 ${dateStr}</span>
+                <span>🕐 ${(b.start_time || '').slice(0, 5)}</span>
+                <span>⏱ ${b.service_duration} min</span>
+              </div>
+              ${b.reference_code ? `<div class="booking-ref">${b.reference_code}</div>` : ''}
+            </div>
+            <div class="booking-right">
+              <div class="booking-price">${price}</div>
+              <span class="status-badge status-${b.status}">${b.status.replace('_',' ')}</span>
+            </div>
+          </div>
+          ${canAction ? `
+          <div class="booking-actions">
+            <button class="btn-sm btn-sm-outline" onclick="openReschedule(${b.id})">Reschedule</button>
+            <button class="btn-sm btn-sm-danger"  onclick="openCancel(${b.id})">Cancel</button>
+          </div>` : ''}
+        </div>`;
+    }).join('');
+  }
+
+  // ─────────────────────────────────────────────────────────────────────────
+  // Cancel
+  // ─────────────────────────────────────────────────────────────────────────
+  window.openCancel = (id) => {
+    const b = allBookings.find(x => x.id === id);
+    if (!b) return;
+    cancelTarget = id;
+    const dateStr = new Date(b.booking_date).toLocaleDateString('en-GB', { weekday:'long', day:'numeric', month:'long' });
+    document.getElementById('cancel-booking-summary').innerHTML =
+      `<strong>${escHtml(b.service_name)}</strong> with ${escHtml(b.barber_name)}<br>${dateStr} at ${(b.start_time||'').slice(0,5)}`;
+    openModal('modal-cancel');
+  };
+
+  window.confirmCancel = async () => {
+    const btn = document.getElementById('btn-confirm-cancel');
+    btn.disabled = true; btn.textContent = 'Cancelling…';
+    try {
+      if (IS_DEMO) {
+        await new Promise(r => setTimeout(r, 700));
+        allBookings = allBookings.map(b => b.id === cancelTarget ? { ...b, status: 'cancelled' } : b);
+        renderBookingStats(); renderBookingList(allBookings);
+        closeModal('modal-cancel'); showToast('success', '✓', 'Booking cancelled. (Demo)');
+      } else {
+        const res = await apiFetch(`/api/customers/me/bookings/${cancelTarget}/cancel`, { method: 'PATCH' });
+        if (res.ok) {
+          await loadBookings(); closeModal('modal-cancel'); showToast('success', '✓', 'Booking cancelled.');
+        } else {
+          const err = await res.json().catch(() => ({}));
+          showToast('error', '✕', err.error || 'Failed to cancel.');
+        }
+      }
+    } catch { showToast('error', '✕', 'Network error.'); }
+    finally { btn.disabled = false; btn.textContent = 'Cancel Appointment'; }
+  };
+
+  // ─────────────────────────────────────────────────────────────────────────
+  // Reschedule
+  // ─────────────────────────────────────────────────────────────────────────
+  window.openReschedule = (id) => {
+    const b = allBookings.find(x => x.id === id);
+    if (!b) return;
+    rescheduleTarget = b; selectedSlot = null;
+    const dateStr = new Date(b.booking_date).toLocaleDateString('en-GB', { weekday:'long', day:'numeric', month:'long' });
+    document.getElementById('reschedule-booking-info').innerHTML =
+      `<strong>${escHtml(b.service_name)}</strong> with ${escHtml(b.barber_name)}<br>
+       <span style="color:var(--text-2)">Currently: ${dateStr} at ${(b.start_time||'').slice(0,5)}</span>`;
+    const tomorrow = new Date(); tomorrow.setDate(tomorrow.getDate() + 1);
+    const rsDate = document.getElementById('rs-date');
+    rsDate.min = tomorrow.toISOString().split('T')[0];
+    rsDate.value = '';
+    document.getElementById('rs-slot-field').style.display = 'none';
+    document.getElementById('btn-confirm-reschedule').disabled = true;
+    openModal('modal-reschedule');
+  };
+
+  window.loadRescheduleSlots = async () => {
+    const date = document.getElementById('rs-date').value;
+    const b    = rescheduleTarget;
+    if (!date || !b) return;
+    document.getElementById('rs-slots').innerHTML = '<span style="color:var(--text-2);font-size:.8rem">Loading slots…</span>';
+    document.getElementById('rs-slot-field').style.display = 'block';
+    try {
+      let slots;
+      if (IS_DEMO) {
+        await new Promise(r => setTimeout(r, 500));
+        slots = ['09:00','09:30','10:00','11:30','14:00','15:30','16:00'];
+      } else {
+        const res = await fetch(`/api/barbers/${b.barber_id}/slots?date=${date}&duration=${b.service_duration}`);
+        slots = await res.json();
+      }
+      if (!slots.length) {
+        document.getElementById('rs-slots').innerHTML = '<span style="color:var(--text-2);font-size:.8rem">No slots available on this date.</span>';
+        return;
+      }
+      document.getElementById('rs-slots').innerHTML = slots.map(s =>
+        `<button class="btn-sm btn-sm-outline slot-pill" onclick="selectRescheduleSlot('${s}',this)">${s}</button>`
+      ).join('');
+    } catch {
+      document.getElementById('rs-slots').innerHTML = '<span style="color:var(--red);font-size:.8rem">Failed to load slots.</span>';
+    }
+  };
+
+  window.selectRescheduleSlot = (slot, btn) => {
+    document.querySelectorAll('.slot-pill').forEach(p => { p.classList.remove('btn-sm-gold'); p.classList.add('btn-sm-outline'); });
+    btn.classList.remove('btn-sm-outline'); btn.classList.add('btn-sm-gold');
+    selectedSlot = slot;
+    document.getElementById('btn-confirm-reschedule').disabled = false;
+  };
+
+  window.confirmReschedule = async () => {
+    const date = document.getElementById('rs-date').value;
+    const b    = rescheduleTarget;
+    if (!date || !selectedSlot || !b) return;
+    const btn = document.getElementById('btn-confirm-reschedule');
+    btn.disabled = true; btn.textContent = 'Rescheduling…';
+    try {
+      if (IS_DEMO) {
+        await new Promise(r => setTimeout(r, 700));
+        allBookings = allBookings.map(x =>
+          x.id === b.id ? { ...x, booking_date: date, start_time: selectedSlot + ':00' } : x
+        );
+        renderBookingStats(); renderBookingList(allBookings);
+        closeModal('modal-reschedule'); showToast('success', '✓', 'Appointment rescheduled. (Demo)');
+      } else {
+        const res = await apiFetch(`/api/customers/me/bookings/${b.id}/reschedule`, {
+          method: 'PATCH',
+          body: JSON.stringify({ barber_id: b.barber_id, booking_date: date, start_time: selectedSlot }),
+        });
+        if (res.ok) {
+          await loadBookings(); closeModal('modal-reschedule'); showToast('success', '✓', 'Appointment rescheduled.');
+        } else {
+          const err = await res.json().catch(() => ({}));
+          showToast('error', '✕', err.error || 'Failed to reschedule.');
+        }
+      }
+    } catch { showToast('error', '✕', 'Network error.'); }
+    finally { btn.disabled = false; btn.textContent = 'Confirm Reschedule'; }
+  };
+
+  // ─────────────────────────────────────────────────────────────────────────
+  // Sign out
+  // ─────────────────────────────────────────────────────────────────────────
+  window.doSignOut = async () => {
+    if (IS_DEMO) { showToast('success', '✓', 'Signed out. (Demo)'); return; }
+    try {
+      await window._fbSignOut(window._fbAuth);
+      window.location.href = '/auth.html';
+    } catch { window.location.href = '/auth.html'; }
+  };
+
+  // ─────────────────────────────────────────────────────────────────────────
+  // Nav
+  // ─────────────────────────────────────────────────────────────────────────
+  window.showPage = (page) => {
+    ['bookings','profile','offers'].forEach(p => {
+      document.getElementById(`page-${p}`)?.classList.toggle('active', p === page);
+      document.getElementById(`nav-${p}`)?.classList.toggle('active', p === page);
+    });
+    document.querySelectorAll('.mobile-tab').forEach((t, i) => {
+      t.classList.toggle('active', ['bookings','profile','offers'][i] === page);
+    });
+  };
+
+  window.openModal  = (id) => document.getElementById(id)?.classList.add('show');
+  window.closeModal = (id) => document.getElementById(id)?.classList.remove('show');
+  document.querySelectorAll('.modal-overlay').forEach(o => {
+    o.addEventListener('click', e => { if (e.target === o) o.classList.remove('show'); });
+  });
+
+  window.showToast = (type, icon, text) => {
+    const t = document.getElementById('toast');
+    t.className = `toast ${type} show`;
+    document.getElementById('toast-icon').textContent = icon;
+    document.getElementById('toast-text').textContent = text;
+    setTimeout(() => t.classList.remove('show'), 3500);
+  };
+
+  window.copyReferralLink = () => {
+    const uid  = currentUser?.uid?.slice(0, 8) || 'demo';
+    const link = `${location.origin}/booking.html?ref=${uid}`;
+    navigator.clipboard.writeText(link)
+      .then(() => showToast('success', '✓', 'Referral link copied!'))
+      .catch(() => showToast('error', '✕', 'Could not copy — check browser permissions.'));
+  };
+
+  // ─────────────────────────────────────────────────────────────────────────
+  // API helper
+  // ─────────────────────────────────────────────────────────────────────────
+  async function apiFetch(url, options = {}) {
+    if (currentUser && !idToken) {
+      try { idToken = await currentUser.getIdToken(true); } catch {}
+    }
+    return fetch(url, {
+      ...options,
+      headers: {
+        'Content-Type': 'application/json',
+        ...(idToken ? { Authorization: `Bearer ${idToken}` } : {}),
+        ...(options.headers || {}),
+      },
+    });
+  }
+
+  function escHtml(str) {
+    return String(str || '').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;');
+  }
+
+  // ─────────────────────────────────────────────────────────────────────────
+  // DEMO DATA
+  // ─────────────────────────────────────────────────────────────────────────
+  const DEMO_BOOKINGS = [
+    {
+      id: 1, reference_code: 'TT-00421',
+      service_name: 'Signature Fade', service_duration: 45, service_price: '1200',
+      barber_name: 'Marcus K.', barber_photo: null, barber_id: 1,
+      booking_date: new Date(Date.now() + 3 * 86400000).toISOString().split('T')[0],
+      start_time: '10:30:00', status: 'confirmed',
+    },
+    {
+      id: 2, reference_code: 'TT-00398',
+      service_name: 'Beard Trim & Shape', service_duration: 30, service_price: '700',
+      barber_name: 'James O.', barber_photo: null, barber_id: 2,
+      booking_date: new Date(Date.now() - 7 * 86400000).toISOString().split('T')[0],
+      start_time: '14:00:00', status: 'completed',
+    },
+    {
+      id: 3, reference_code: 'TT-00355',
+      service_name: 'Classic Cut', service_duration: 30, service_price: '900',
+      barber_name: 'Marcus K.', barber_photo: null, barber_id: 1,
+      booking_date: new Date(Date.now() - 21 * 86400000).toISOString().split('T')[0],
+      start_time: '09:00:00', status: 'completed',
+    },
+    {
+      id: 4, reference_code: 'TT-00312',
+      service_name: 'Hot Towel Shave', service_duration: 45, service_price: '1500',
+      barber_name: 'David M.', barber_photo: null, barber_id: 3,
+      booking_date: new Date(Date.now() - 35 * 86400000).toISOString().split('T')[0],
+      start_time: '11:00:00', status: 'cancelled',
+    },
+  ];
+</script>
+</body>
+</html>

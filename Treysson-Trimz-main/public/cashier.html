@@ -1,0 +1,1269 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Cashier · Treysson Trimz</title>
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,600;0,700;1,400&family=DM+Sans:wght@300;400;500;600&display=swap" rel="stylesheet">
+<style>
+:root {
+  --gold:#C9A96E; --gold-light:#E8C98A; --gold-dim:#7A6340; --gold-faint:rgba(201,169,110,0.08);
+  --black:#0A0806; --near-black:#111009; --dark:#1A1714; --card:#181510;
+  --border:rgba(201,169,110,0.13); --border-hover:rgba(201,169,110,0.3);
+  --warm-white:#F5F0E8; --muted:#7A7468; --muted2:#4E4A44;
+  --success:#4CAF7D; --danger:#E05252; --warning:#E0A050; --info:#5297E0;
+  --font-display:'Playfair Display',Georgia,serif; --font:'DM Sans',sans-serif;
+  --sidebar-w:220px; --topbar-h:60px;
+}
+*,*::before,*::after{margin:0;padding:0;box-sizing:border-box;}
+html{font-size:14px;}
+body{font-family:var(--font);background:var(--near-black);color:var(--warm-white);min-height:100vh;display:flex;overflow-x:hidden;}
+::-webkit-scrollbar{width:3px;height:3px;}
+::-webkit-scrollbar-thumb{background:var(--gold-dim);border-radius:2px;}
+::selection{background:var(--gold);color:var(--black);}
+a{color:inherit;text-decoration:none;}
+button{cursor:pointer;font-family:var(--font);border:none;background:none;color:inherit;}
+input,select,textarea{font-family:var(--font);}
+
+/* ── SIDEBAR ── */
+.sidebar{width:var(--sidebar-w);min-height:100vh;background:var(--black);border-right:0.5px solid var(--border);display:flex;flex-direction:column;position:fixed;top:0;left:0;bottom:0;z-index:50;}
+.sidebar-logo{padding:18px 16px;border-bottom:0.5px solid var(--border);}
+.sidebar-logo-main{font-family:var(--font-display);font-size:1rem;font-weight:700;}
+.sidebar-logo-main span{color:var(--gold);}
+.sidebar-logo-sub{font-size:0.52rem;letter-spacing:0.3em;text-transform:uppercase;color:var(--gold);margin-top:2px;opacity:0.8;}
+.sidebar-section{padding:14px 8px 4px;}
+.sidebar-section-label{font-size:0.5rem;letter-spacing:0.35em;text-transform:uppercase;color:var(--muted2);padding:0 8px;margin-bottom:4px;}
+.nav-item{display:flex;align-items:center;gap:8px;padding:7px 10px;border-radius:4px;font-size:0.78rem;color:var(--muted);cursor:pointer;margin-bottom:1px;border-left:2px solid transparent;}
+.nav-item:hover{background:var(--gold-faint);color:var(--warm-white);}
+.nav-item.active{background:var(--gold-faint);color:var(--gold);border-left-color:var(--gold);}
+.nav-badge{margin-left:auto;background:var(--gold);color:var(--black);font-size:0.56rem;font-weight:600;padding:1px 5px;border-radius:10px;}
+.sidebar-footer{margin-top:auto;padding:12px 8px;border-top:0.5px solid var(--border);}
+.staff-pill{display:flex;align-items:center;gap:8px;padding:7px 8px;border-radius:4px;}
+.staff-avatar{width:26px;height:26px;border-radius:50%;background:var(--gold);color:var(--black);font-size:0.6rem;font-weight:600;display:flex;align-items:center;justify-content:center;flex-shrink:0;}
+.staff-name{font-size:0.76rem;font-weight:500;}
+.staff-role{font-size:0.6rem;color:var(--muted);}
+.staff-logout{margin-left:auto;color:var(--muted);font-size:0.7rem;}
+.staff-logout:hover{color:var(--danger);}
+
+/* ── MAIN ── */
+.main{margin-left:var(--sidebar-w);flex:1;display:flex;flex-direction:column;min-height:100vh;}
+
+/* ── TOPBAR ── */
+.topbar{height:var(--topbar-h);background:var(--black);border-bottom:0.5px solid var(--border);display:flex;align-items:center;padding:0 22px;gap:12px;position:sticky;top:0;z-index:40;}
+.topbar-title{font-family:var(--font-display);font-size:1.05rem;font-weight:700;font-style:italic;}
+.topbar-breadcrumb{font-size:0.66rem;color:var(--muted);display:flex;align-items:center;gap:4px;}
+.topbar-breadcrumb span{color:var(--gold);}
+.topbar-right{margin-left:auto;display:flex;align-items:center;gap:10px;}
+.topbar-btn{padding:6px 14px;font-size:0.65rem;letter-spacing:0.1em;text-transform:uppercase;border:0.5px solid var(--border-hover);color:var(--gold);border-radius:3px;}
+.topbar-btn:hover{background:var(--gold);color:var(--black);}
+.topbar-btn.primary{background:var(--gold);color:var(--black);border-color:var(--gold);}
+.topbar-btn.primary:hover{background:var(--gold-light);}
+.topbar-date{font-size:0.66rem;color:var(--muted);}
+
+/* ── CASHIER LAYOUT ── */
+.cashier-body{display:grid;grid-template-columns:1fr 380px;gap:0;flex:1;}
+
+/* ── LEFT: SALE BUILDER ── */
+.sale-panel{padding:20px;border-right:0.5px solid var(--border);overflow-y:auto;max-height:calc(100vh - var(--topbar-h));}
+
+/* ── SECTION HEADERS ── */
+.panel-section{margin-bottom:20px;}
+.panel-section-title{font-size:0.58rem;letter-spacing:0.3em;text-transform:uppercase;color:var(--gold);margin-bottom:10px;display:flex;align-items:center;gap:10px;}
+.panel-section-title::after{content:'';flex:1;height:0.5px;background:var(--border);}
+
+/* CLIENT SEARCH */
+.client-search-wrap{position:relative;}
+.client-search{width:100%;background:var(--card);border:0.5px solid var(--border);color:var(--warm-white);font-size:0.85rem;padding:10px 14px 10px 38px;border-radius:4px;outline:none;}
+.client-search:focus{border-color:var(--gold);}
+.client-search-icon{position:absolute;left:12px;top:50%;transform:translateY(-50%);color:var(--muted);font-size:0.9rem;pointer-events:none;}
+.client-results{position:absolute;top:100%;left:0;right:0;background:var(--dark);border:0.5px solid var(--border);border-top:none;z-index:20;max-height:200px;overflow-y:auto;display:none;}
+.client-results.open{display:block;}
+.client-result-item{padding:10px 14px;cursor:pointer;display:flex;align-items:center;gap:10px;border-bottom:0.5px solid var(--border);}
+.client-result-item:last-child{border-bottom:none;}
+.client-result-item:hover{background:var(--gold-faint);}
+.cr-avatar{width:28px;height:28px;border-radius:50%;background:var(--gold-dim);color:var(--black);font-size:0.6rem;font-weight:600;display:flex;align-items:center;justify-content:center;flex-shrink:0;}
+.cr-name{font-size:0.8rem;}
+.cr-phone{font-size:0.62rem;color:var(--muted);}
+.cr-loyalty{margin-left:auto;display:flex;align-items:center;gap:3px;}
+.cr-loyalty-dot{width:7px;height:7px;border-radius:50%;background:rgba(201,169,110,0.15);border:0.5px solid var(--border);}
+.cr-loyalty-dot.done{background:var(--gold);}
+
+/* SELECTED CLIENT CARD */
+.selected-client{background:var(--card);border:0.5px solid var(--border);border-radius:4px;padding:12px 14px;display:none;align-items:center;gap:12px;margin-top:10px;}
+.selected-client.show{display:flex;}
+.sc-info{flex:1;}
+.sc-name{font-size:0.9rem;font-weight:500;}
+.sc-phone{font-size:0.65rem;color:var(--muted);}
+.sc-loyalty{display:flex;gap:4px;align-items:center;margin-top:6px;}
+.sc-dot{width:9px;height:9px;border-radius:50%;background:rgba(201,169,110,0.12);border:0.5px solid var(--border);}
+.sc-dot.done{background:var(--gold);border-color:var(--gold);}
+.sc-dot.free{width:12px;height:12px;border:1.5px solid var(--gold);background:transparent;display:flex;align-items:center;justify-content:center;font-size:7px;color:var(--gold);}
+.sc-free-badge{margin-left:8px;font-size:0.56rem;background:rgba(201,169,110,0.15);color:var(--gold);padding:2px 7px;border-radius:20px;font-weight:600;}
+.sc-remove{color:var(--muted);font-size:0.7rem;margin-left:auto;}
+.sc-remove:hover{color:var(--danger);}
+
+/* NEW CLIENT FORM */
+.new-client-toggle{font-size:0.68rem;color:var(--gold);cursor:pointer;margin-top:8px;display:inline-block;}
+.new-client-toggle:hover{opacity:0.7;}
+.new-client-form{display:none;background:var(--card);border:0.5px solid var(--border);border-radius:4px;padding:14px;margin-top:8px;}
+.new-client-form.open{display:block;}
+.form-grid-2{display:grid;grid-template-columns:1fr 1fr;gap:10px;}
+.form-group{margin-bottom:12px;}
+.form-label{font-size:0.56rem;letter-spacing:0.22em;text-transform:uppercase;color:var(--muted);display:block;margin-bottom:5px;}
+.form-input,.form-select{width:100%;background:rgba(255,255,255,0.03);border:0.5px solid var(--border);color:var(--warm-white);font-size:0.82rem;padding:8px 12px;border-radius:3px;outline:none;}
+.form-input:focus,.form-select:focus{border-color:var(--gold);}
+.form-select option{background:var(--dark);}
+.btn-sm{font-size:0.65rem;letter-spacing:0.12em;text-transform:uppercase;padding:7px 16px;border-radius:3px;border:0.5px solid var(--border);color:var(--muted);}
+.btn-sm:hover{border-color:var(--gold);color:var(--gold);}
+.btn-sm.primary{background:var(--gold);color:var(--black);border-color:var(--gold);}
+.btn-sm.primary:hover{background:var(--gold-light);}
+
+/* DIVISION TABS */
+.division-tabs{display:flex;gap:1px;background:var(--border);border-radius:4px;overflow:hidden;margin-bottom:12px;}
+.div-tab{flex:1;font-size:0.65rem;letter-spacing:0.12em;text-transform:uppercase;padding:8px;text-align:center;color:var(--muted);background:var(--card);}
+.div-tab.active{background:var(--gold);color:var(--black);font-weight:600;}
+.div-tab:hover:not(.active){background:var(--gold-faint);color:var(--warm-white);}
+
+/* SERVICE GRID */
+.service-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:8px;}
+.service-tile{background:var(--card);border:0.5px solid var(--border);border-radius:4px;padding:12px 10px;cursor:pointer;text-align:center;position:relative;overflow:hidden;}
+.service-tile:hover{border-color:var(--gold);background:var(--dark);}
+.service-tile.in-cart{border-color:var(--gold);background:rgba(201,169,110,0.1);}
+.service-tile.in-cart::after{content:'✓';position:absolute;top:5px;right:7px;font-size:0.6rem;color:var(--gold);}
+.st-icon{font-size:1.3rem;margin-bottom:5px;}
+.st-name{font-size:0.72rem;font-weight:500;line-height:1.3;margin-bottom:3px;}
+.st-price{font-size:0.65rem;color:var(--gold);}
+.st-duration{font-size:0.58rem;color:var(--muted);margin-top:2px;}
+
+/* CUSTOM ITEM */
+.custom-item-row{display:flex;gap:8px;margin-top:10px;}
+.custom-item-row .form-input{flex:1;}
+
+/* ── RIGHT: CART & PAYMENT ── */
+.cart-panel{background:var(--black);display:flex;flex-direction:column;max-height:calc(100vh - var(--topbar-h));overflow-y:auto;}
+
+/* CART */
+.cart-header{padding:16px 18px;border-bottom:0.5px solid var(--border);display:flex;align-items:center;justify-content:space-between;}
+.cart-title{font-family:var(--font-display);font-size:1rem;font-style:italic;}
+.cart-count{font-size:0.62rem;background:var(--gold);color:var(--black);padding:2px 8px;border-radius:20px;font-weight:600;}
+.cart-items{flex:1;padding:12px 16px;}
+.cart-empty{text-align:center;padding:32px 0;color:var(--muted);font-size:0.8rem;}
+.cart-empty-icon{font-size:2rem;margin-bottom:10px;opacity:0.4;}
+.cart-item{display:flex;align-items:flex-start;gap:10px;padding:10px 0;border-bottom:0.5px solid rgba(201,169,110,0.06);}
+.cart-item:last-child{border-bottom:none;}
+.ci-info{flex:1;}
+.ci-name{font-size:0.8rem;font-weight:500;}
+.ci-meta{font-size:0.62rem;color:var(--muted);margin-top:2px;}
+.ci-price{font-size:0.8rem;color:var(--gold);font-weight:500;white-space:nowrap;}
+.ci-remove{color:var(--muted);font-size:0.7rem;margin-top:2px;}
+.ci-remove:hover{color:var(--danger);}
+.ci-qty{display:flex;align-items:center;gap:6px;margin-top:5px;}
+.qty-btn{width:20px;height:20px;border-radius:50%;border:0.5px solid var(--border);display:flex;align-items:center;justify-content:center;font-size:0.7rem;color:var(--muted);}
+.qty-btn:hover{border-color:var(--gold);color:var(--gold);}
+.qty-val{font-size:0.75rem;min-width:16px;text-align:center;}
+
+/* DISCOUNT */
+.discount-row{padding:10px 16px;border-top:0.5px solid var(--border);display:flex;align-items:center;gap:8px;}
+.discount-row .form-input{font-size:0.78rem;padding:6px 10px;}
+.discount-type-toggle{display:flex;border:0.5px solid var(--border);border-radius:3px;overflow:hidden;flex-shrink:0;}
+.dt-btn{font-size:0.65rem;padding:5px 10px;color:var(--muted);}
+.dt-btn.active{background:var(--gold);color:var(--black);}
+
+/* TOTALS */
+.cart-totals{padding:12px 16px;border-top:0.5px solid var(--border);}
+.total-row{display:flex;justify-content:space-between;align-items:center;margin-bottom:6px;font-size:0.78rem;color:var(--muted);}
+.total-row.grand{border-top:0.5px solid var(--border);padding-top:10px;margin-top:10px;font-size:1rem;color:var(--warm-white);font-weight:600;}
+.total-row.grand .total-label{font-family:var(--font-display);font-style:italic;}
+.total-row.grand .total-val{color:var(--gold);font-size:1.2rem;}
+.total-row.discount-row-total{color:var(--success);}
+
+/* STAFF ASSIGN */
+.staff-assign{padding:10px 16px;border-top:0.5px solid var(--border);}
+
+/* PAYMENT METHODS */
+.payment-section{padding:12px 16px;border-top:0.5px solid var(--border);}
+.payment-title{font-size:0.56rem;letter-spacing:0.25em;text-transform:uppercase;color:var(--muted);margin-bottom:10px;}
+.payment-grid{display:grid;grid-template-columns:1fr 1fr;gap:6px;margin-bottom:12px;}
+.pay-tile{border:0.5px solid var(--border);border-radius:4px;padding:10px 8px;text-align:center;cursor:pointer;transition:all 0.2s;}
+.pay-tile:hover{border-color:rgba(201,169,110,0.4);background:var(--gold-faint);}
+.pay-tile.selected{border-color:var(--gold);background:rgba(201,169,110,0.1);}
+.pay-tile-icon{font-size:1.2rem;margin-bottom:4px;}
+.pay-tile-name{font-size:0.62rem;letter-spacing:0.08em;text-transform:uppercase;color:var(--muted);}
+.pay-tile.selected .pay-tile-name{color:var(--gold);}
+
+/* PAYMENT INPUT AREAS */
+.payment-input-area{display:none;margin-bottom:12px;}
+.payment-input-area.show{display:block;}
+.mpesa-phone{display:flex;gap:8px;}
+.mpesa-status{padding:10px 14px;border-radius:3px;font-size:0.75rem;display:none;}
+.mpesa-status.show{display:flex;align-items:center;gap:8px;margin-top:8px;}
+.mpesa-status.pending{background:rgba(224,160,80,0.1);border:0.5px solid rgba(224,160,80,0.3);color:var(--warning);}
+.mpesa-status.success{background:rgba(76,175,125,0.1);border:0.5px solid rgba(76,175,125,0.3);color:var(--success);}
+.mpesa-status.failed{background:rgba(224,82,82,0.1);border:0.5px solid rgba(224,82,82,0.3);color:var(--danger);}
+.stk-spinner{width:12px;height:12px;border:1.5px solid rgba(224,160,80,0.3);border-top-color:var(--warning);border-radius:50%;animation:spin 0.8s linear infinite;flex-shrink:0;}
+@keyframes spin{to{transform:rotate(360deg);}}
+.ref-display{background:var(--dark);border:0.5px solid rgba(76,175,125,0.3);border-radius:3px;padding:8px 12px;font-size:0.82rem;color:var(--success);letter-spacing:0.08em;margin-top:8px;display:none;}
+.ref-display.show{display:block;}
+.paybill-info{background:var(--dark);border:0.5px solid var(--border);border-radius:3px;padding:10px 12px;margin-bottom:10px;font-size:0.75rem;}
+.paybill-row{display:flex;justify-content:space-between;padding:3px 0;}
+.paybill-row span:last-child{color:var(--gold);font-weight:500;}
+
+/* NOTIFICATIONS */
+.notif-section{padding:10px 16px;border-top:0.5px solid var(--border);}
+.notif-title{font-size:0.56rem;letter-spacing:0.25em;text-transform:uppercase;color:var(--muted);margin-bottom:8px;}
+.notif-options{display:flex;flex-direction:column;gap:6px;}
+.notif-opt{display:flex;align-items:center;gap:8px;font-size:0.75rem;color:var(--muted);cursor:pointer;}
+.notif-opt input[type=checkbox]{appearance:none;width:13px;height:13px;border:0.5px solid var(--border);background:transparent;border-radius:2px;cursor:pointer;position:relative;flex-shrink:0;}
+.notif-opt input[type=checkbox]:checked{background:var(--gold);border-color:var(--gold);}
+.notif-opt input[type=checkbox]:checked::after{content:'✓';position:absolute;top:-1px;left:1px;font-size:8px;color:var(--black);font-weight:700;}
+
+/* CHARGE BUTTON */
+.charge-area{padding:14px 16px;border-top:0.5px solid var(--border);background:var(--black);position:sticky;bottom:0;}
+.charge-btn{width:100%;background:var(--gold);color:var(--black);font-size:0.75rem;letter-spacing:0.2em;text-transform:uppercase;padding:16px;border-radius:3px;font-weight:600;display:flex;align-items:center;justify-content:center;gap:10px;}
+.charge-btn:hover:not(:disabled){background:var(--gold-light);}
+.charge-btn:disabled{opacity:0.45;cursor:not-allowed;}
+.charge-btn .btn-spinner{width:14px;height:14px;border:2px solid rgba(0,0,0,0.25);border-top-color:var(--black);border-radius:50%;animation:spin 0.7s linear infinite;display:none;}
+
+/* ── MODALS ── */
+.modal-overlay{position:fixed;inset:0;background:rgba(10,8,6,0.88);z-index:200;display:none;align-items:center;justify-content:center;backdrop-filter:blur(4px);}
+.modal-overlay.open{display:flex;}
+.modal{background:var(--dark);border:0.5px solid var(--border);border-radius:6px;width:540px;max-width:95vw;max-height:90vh;overflow-y:auto;position:relative;}
+.modal::before{content:'';position:absolute;top:0;left:0;right:0;height:2px;background:linear-gradient(to right,var(--gold),transparent);}
+.modal-header{padding:20px 24px 16px;border-bottom:0.5px solid var(--border);display:flex;align-items:center;justify-content:space-between;}
+.modal-title{font-family:var(--font-display);font-size:1.1rem;font-style:italic;}
+.modal-close{color:var(--muted);font-size:1rem;cursor:pointer;}
+.modal-close:hover{color:var(--warm-white);}
+.modal-body{padding:20px 24px;}
+
+/* RECEIPT MODAL */
+.receipt{font-family:var(--font);max-width:360px;margin:0 auto;}
+.receipt-logo{text-align:center;margin-bottom:16px;}
+.receipt-logo-name{font-family:var(--font-display);font-size:1.2rem;font-weight:700;}
+.receipt-logo-name span{color:var(--gold);}
+.receipt-logo-sub{font-size:0.55rem;letter-spacing:0.3em;text-transform:uppercase;color:var(--gold);opacity:0.8;}
+.receipt-divider{border:none;border-top:0.5px dashed rgba(201,169,110,0.3);margin:14px 0;}
+.receipt-row{display:flex;justify-content:space-between;font-size:0.8rem;margin-bottom:7px;color:rgba(245,240,232,0.75);}
+.receipt-row.bold{color:var(--warm-white);font-weight:600;}
+.receipt-row.total{font-size:1rem;color:var(--gold);font-weight:600;padding-top:6px;border-top:0.5px solid var(--border);}
+.receipt-ref{text-align:center;font-size:0.65rem;color:var(--muted);margin-top:14px;letter-spacing:0.1em;}
+.receipt-thank{text-align:center;font-family:var(--font-display);font-style:italic;font-size:0.95rem;color:var(--gold);margin-top:10px;}
+.receipt-loyalty{text-align:center;background:rgba(201,169,110,0.07);border:0.5px solid var(--border);border-radius:3px;padding:10px;margin-top:12px;font-size:0.72rem;color:var(--muted);}
+.receipt-loyalty strong{color:var(--gold);display:block;margin-bottom:3px;}
+.receipt-actions{display:flex;gap:10px;margin-top:18px;}
+.receipt-actions button{flex:1;padding:10px;font-size:0.65rem;letter-spacing:0.15em;text-transform:uppercase;border-radius:3px;border:0.5px solid var(--border);color:var(--muted);}
+.receipt-actions .print-btn{background:var(--gold);color:var(--black);border-color:var(--gold);}
+.receipt-actions .email-btn:hover{border-color:var(--gold);color:var(--gold);}
+.receipt-actions .whatsapp-btn:hover{border-color:var(--success);color:var(--success);}
+
+/* TODAY'S SUMMARY */
+.today-bar{background:var(--card);border-bottom:0.5px solid var(--border);padding:10px 22px;display:flex;gap:24px;align-items:center;overflow-x:auto;}
+.today-stat{display:flex;flex-direction:column;align-items:center;min-width:80px;}
+.today-stat-val{font-family:var(--font-display);font-size:1.1rem;font-weight:700;color:var(--gold);}
+.today-stat-label{font-size:0.55rem;letter-spacing:0.18em;text-transform:uppercase;color:var(--muted);margin-top:2px;}
+.today-divider{width:0.5px;height:32px;background:var(--border);flex-shrink:0;}
+
+/* TRANSACTIONS LOG */
+.txn-log{padding:16px 20px;}
+.txn-log-title{font-size:0.58rem;letter-spacing:0.25em;text-transform:uppercase;color:var(--gold);margin-bottom:12px;}
+.txn-table{width:100%;border-collapse:collapse;}
+.txn-table thead th{font-size:0.54rem;letter-spacing:0.18em;text-transform:uppercase;color:var(--muted2);padding:7px 10px;text-align:left;border-bottom:0.5px solid var(--border);background:rgba(0,0,0,0.2);}
+.txn-table tbody tr{border-bottom:0.5px solid rgba(201,169,110,0.05);}
+.txn-table tbody tr:hover{background:var(--gold-faint);}
+.txn-table tbody td{padding:8px 10px;font-size:0.76rem;vertical-align:middle;}
+.badge{display:inline-flex;align-items:center;font-size:0.56rem;padding:2px 7px;border-radius:20px;font-weight:500;white-space:nowrap;}
+.badge-success{background:rgba(76,175,125,0.12);color:var(--success);}
+.badge-warning{background:rgba(224,160,80,0.12);color:var(--warning);}
+.badge-info{background:rgba(82,151,224,0.12);color:var(--info);}
+.badge-gold{background:rgba(201,169,110,0.12);color:var(--gold);}
+.badge-muted{background:rgba(122,116,104,0.12);color:var(--muted);}
+.badge-danger{background:rgba(224,82,82,0.12);color:var(--danger);}
+.action-btn{font-size:0.6rem;color:var(--muted);border:0.5px solid var(--border);padding:3px 8px;border-radius:3px;}
+.action-btn:hover{color:var(--gold);border-color:var(--gold);}
+
+/* FREE CUT ALERT */
+.free-cut-alert{background:linear-gradient(135deg,rgba(201,169,110,0.15),rgba(201,169,110,0.08));border:0.5px solid rgba(201,169,110,0.4);border-radius:4px;padding:12px 14px;margin:10px 16px;display:none;align-items:center;gap:10px;}
+.free-cut-alert.show{display:flex;}
+.fca-icon{font-size:1.2rem;flex-shrink:0;}
+.fca-text{flex:1;font-size:0.78rem;}
+.fca-text strong{color:var(--gold);display:block;margin-bottom:2px;}
+.fca-btn{font-size:0.6rem;letter-spacing:0.1em;text-transform:uppercase;background:var(--gold);color:var(--black);padding:5px 12px;border-radius:3px;flex-shrink:0;}
+
+/* TOAST */
+#toast{position:fixed;bottom:22px;right:22px;z-index:999;background:var(--gold);color:var(--black);font-size:0.7rem;letter-spacing:0.08em;padding:11px 18px;border-radius:3px;transform:translateY(60px);opacity:0;pointer-events:none;}
+#toast.show{transform:none;opacity:1;}
+
+/* MOBILE */
+.mobile-toggle{display:none;position:fixed;top:14px;left:14px;z-index:60;width:32px;height:32px;background:var(--black);border:0.5px solid var(--border);border-radius:4px;flex-direction:column;align-items:center;justify-content:center;gap:3px;}
+.mobile-toggle span{display:block;width:14px;height:1px;background:var(--gold);}
+
+@media(max-width:1100px){.cashier-body{grid-template-columns:1fr 340px;}}
+@media(max-width:900px){.cashier-body{grid-template-columns:1fr;}.cart-panel{max-height:none;border-top:0.5px solid var(--border);}}
+@media(max-width:768px){:root{--sidebar-w:0px;}.sidebar{transform:translateX(-220px);--sidebar-w:220px;}.sidebar.open{transform:translateX(0);}.main{margin-left:0;}.mobile-toggle{display:flex;}.service-grid{grid-template-columns:repeat(2,1fr);}}
+@media(max-width:480px){.service-grid{grid-template-columns:1fr 1fr;}.payment-grid{grid-template-columns:repeat(3,1fr);}}
+
+/* PRINT RECEIPT */
+@media print{
+  body *{display:none!important;}
+  .receipt-print-area, .receipt-print-area *{display:block!important;}
+  .receipt-print-area{position:fixed;inset:0;background:white;color:black;padding:24px;font-family:Arial,sans-serif;}
+}
+</style>
+</head>
+<body>
+
+<!-- SIDEBAR -->
+<aside class="sidebar" id="sidebar">
+  <div class="sidebar-logo">
+    <div class="sidebar-logo-main">TREYSSON <span>TRIMZ</span></div>
+    <div class="sidebar-logo-sub">Admin Portal</div>
+  </div>
+  <div class="sidebar-section">
+    <div class="sidebar-section-label">Main</div>
+    <div class="nav-item" onclick="go('dashboard.html')">
+      <svg width="14" height="14" fill="none" stroke="currentColor" stroke-width="1.5" viewBox="0 0 24 24"><rect x="3" y="3" width="7" height="7" rx="1"/><rect x="14" y="3" width="7" height="7" rx="1"/><rect x="3" y="14" width="7" height="7" rx="1"/><rect x="14" y="14" width="7" height="7" rx="1"/></svg>
+      Dashboard
+    </div>
+    <div class="nav-item" onclick="go('bookings.html')">
+      <svg width="14" height="14" fill="none" stroke="currentColor" stroke-width="1.5" viewBox="0 0 24 24"><rect x="3" y="4" width="18" height="18" rx="2"/><path d="M16 2v4M8 2v4M3 10h18"/></svg>
+      Bookings <span class="nav-badge">4</span>
+    </div>
+    <div class="nav-item active">
+      <svg width="14" height="14" fill="none" stroke="currentColor" stroke-width="1.5" viewBox="0 0 24 24"><rect x="2" y="5" width="20" height="14" rx="2"/><path d="M2 10h20"/></svg>
+      Cashier
+    </div>
+    <div class="nav-item" onclick="go('loyalty.html')">
+      <svg width="14" height="14" fill="none" stroke="currentColor" stroke-width="1.5" viewBox="0 0 24 24"><path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/></svg>
+      Loyalty <span class="nav-badge">2</span>
+    </div>
+  </div>
+  <div class="sidebar-section">
+    <div class="sidebar-section-label">Management</div>
+    <div class="nav-item" onclick="go('inventory.html')">
+      <svg width="14" height="14" fill="none" stroke="currentColor" stroke-width="1.5" viewBox="0 0 24 24"><path d="M21 16V8a2 2 0 00-1-1.73l-7-4a2 2 0 00-2 0l-7 4A2 2 0 003 8v8a2 2 0 001 1.73l7 4a2 2 0 002 0l7-4A2 2 0 0021 16z"/></svg>
+      Inventory
+    </div>
+    <div class="nav-item" onclick="go('staff.html')">
+      <svg width="14" height="14" fill="none" stroke="currentColor" stroke-width="1.5" viewBox="0 0 24 24"><path d="M17 21v-2a4 4 0 00-4-4H5a4 4 0 00-4 4v2"/><circle cx="9" cy="7" r="4"/></svg>
+      Staff
+    </div>
+  </div>
+  <div class="sidebar-footer">
+    <div class="staff-pill">
+      <div class="staff-avatar" id="staffAvatar">TR</div>
+      <div>
+        <div class="staff-name" id="staffName">Treysson</div>
+        <div class="staff-role" id="staffRoleLabel">Cashier</div>
+      </div>
+      <span class="staff-logout" onclick="logout()">⎋</span>
+    </div>
+  </div>
+</aside>
+
+<button class="mobile-toggle" onclick="document.getElementById('sidebar').classList.toggle('open')">
+  <span></span><span></span><span></span>
+</button>
+
+<!-- MAIN -->
+<div class="main">
+  <!-- TOPBAR -->
+  <div class="topbar">
+    <div>
+      <div class="topbar-title">Cashier</div>
+      <div class="topbar-breadcrumb">Admin <span>›</span> Point of Sale</div>
+    </div>
+    <div class="topbar-right">
+      <div class="topbar-date" id="topbarDate"></div>
+      <button class="topbar-btn" onclick="openModal('historyModal')">📋 Today's Log</button>
+      <button class="topbar-btn primary" onclick="resetSale()">+ New Sale</button>
+    </div>
+  </div>
+
+  <!-- TODAY BAR -->
+  <div class="today-bar">
+    <div class="today-stat"><div class="today-stat-val" id="todayRevenue">KES 0</div><div class="today-stat-label">Today's Revenue</div></div>
+    <div class="today-divider"></div>
+    <div class="today-stat"><div class="today-stat-val" id="todaySales">0</div><div class="today-stat-label">Sales</div></div>
+    <div class="today-divider"></div>
+    <div class="today-stat"><div class="today-stat-val" id="todayBarber">KES 0</div><div class="today-stat-label">Barbershop</div></div>
+    <div class="today-divider"></div>
+    <div class="today-stat"><div class="today-stat-val" id="todaySalon">KES 0</div><div class="today-stat-label">Salon</div></div>
+    <div class="today-divider"></div>
+    <div class="today-stat"><div class="today-stat-val" id="todaySpa">KES 0</div><div class="today-stat-label">Spa</div></div>
+    <div class="today-divider"></div>
+    <div class="today-stat"><div class="today-stat-val" id="todayMpesa">KES 0</div><div class="today-stat-label">M-Pesa</div></div>
+    <div class="today-divider"></div>
+    <div class="today-stat"><div class="today-stat-val" id="todayCash">KES 0</div><div class="today-stat-label">Cash</div></div>
+  </div>
+
+  <!-- CASHIER BODY -->
+  <div class="cashier-body">
+
+    <!-- ── LEFT PANEL ── -->
+    <div class="sale-panel">
+
+      <!-- CLIENT -->
+      <div class="panel-section">
+        <div class="panel-section-title">Client</div>
+        <div class="client-search-wrap">
+          <span class="client-search-icon">🔍</span>
+          <input class="client-search" type="text" placeholder="Search by name or phone…" id="clientSearch" oninput="searchClients()" onblur="setTimeout(()=>closeResults(),200)">
+          <div class="client-results" id="clientResults"></div>
+        </div>
+        <div class="selected-client" id="selectedClientCard">
+          <div class="staff-avatar" id="scAvatar" style="width:34px;height:34px;font-size:0.75rem;">JM</div>
+          <div class="sc-info">
+            <div class="sc-name" id="scName">James M.</div>
+            <div class="sc-phone" id="scPhone">0712 xxx xxx</div>
+            <div class="sc-loyalty" id="scLoyalty"></div>
+          </div>
+          <button class="sc-remove" onclick="clearClient()">✕ Remove</button>
+        </div>
+        <div class="free-cut-alert" id="freeCutAlert">
+          <div class="fca-icon">★</div>
+          <div class="fca-text">
+            <strong>Free Cut Available!</strong>
+            This client has earned their complimentary haircut courtesy of Treysson Trimz.
+          </div>
+          <button class="fca-btn" onclick="applyFreeCut()">Apply Free Cut</button>
+        </div>
+        <span class="new-client-toggle" onclick="toggleNewClient()">+ Register new client</span>
+        <div class="new-client-form" id="newClientForm">
+          <div class="form-grid-2">
+            <div class="form-group"><label class="form-label">First Name</label><input class="form-input" type="text" id="ncFirstName" placeholder="John"></div>
+            <div class="form-group"><label class="form-label">Last Name</label><input class="form-input" type="text" id="ncLastName" placeholder="Doe"></div>
+          </div>
+          <div class="form-grid-2">
+            <div class="form-group"><label class="form-label">Phone / WhatsApp</label><input class="form-input" type="tel" id="ncPhone" placeholder="07XX XXX XXX"></div>
+            <div class="form-group"><label class="form-label">Email (optional)</label><input class="form-input" type="email" id="ncEmail" placeholder="john@email.com"></div>
+          </div>
+          <div style="display:flex;gap:8px">
+            <button class="btn-sm primary" onclick="registerClient()">Save & Select</button>
+            <button class="btn-sm" onclick="toggleNewClient()">Cancel</button>
+          </div>
+        </div>
+      </div>
+
+      <!-- DIVISION TABS -->
+      <div class="panel-section">
+        <div class="panel-section-title">Service</div>
+        <div class="division-tabs">
+          <div class="div-tab active" onclick="switchDiv(this,'barber')">✂ Barbershop</div>
+          <div class="div-tab" onclick="switchDiv(this,'salon')">💇 Salon</div>
+          <div class="div-tab" onclick="switchDiv(this,'spa')">🌿 Spa</div>
+        </div>
+        <div class="service-grid" id="serviceGrid"></div>
+
+        <!-- Custom / Ad-hoc Item -->
+        <div style="margin-top:12px;">
+          <div class="panel-section-title" style="margin-bottom:8px">Custom Item / Manual Price</div>
+          <div class="custom-item-row">
+            <input class="form-input" type="text" id="customName" placeholder="Service name…" style="flex:2">
+            <input class="form-input" type="number" id="customPrice" placeholder="KES" style="flex:1">
+            <button class="btn-sm primary" onclick="addCustomItem()">Add</button>
+          </div>
+        </div>
+      </div>
+
+      <!-- MANUAL DISCOUNT -->
+      <div class="panel-section">
+        <div class="panel-section-title">Manual Discount</div>
+        <div class="discount-row" style="padding:0;gap:8px;">
+          <input class="form-input" type="number" id="discountVal" placeholder="0" min="0" oninput="recalcTotals()" style="flex:1">
+          <div class="discount-type-toggle">
+            <button class="dt-btn active" id="dtPercent" onclick="setDiscountType('%')">%</button>
+            <button class="dt-btn" id="dtFixed" onclick="setDiscountType('KES')">KES</button>
+          </div>
+          <input class="form-input" type="text" id="discountReason" placeholder="Reason (optional)" style="flex:2">
+        </div>
+      </div>
+
+    </div><!-- /sale-panel -->
+
+    <!-- ── RIGHT PANEL / CART ── -->
+    <div class="cart-panel">
+      <div class="cart-header">
+        <div class="cart-title">Current Sale</div>
+        <div class="cart-count" id="cartCount">0 items</div>
+      </div>
+
+      <!-- CART ITEMS -->
+      <div class="cart-items" id="cartItems">
+        <div class="cart-empty" id="cartEmpty">
+          <div class="cart-empty-icon">🧾</div>
+          <div>Add services to begin</div>
+        </div>
+      </div>
+
+      <!-- TOTALS -->
+      <div class="cart-totals">
+        <div class="total-row"><span class="total-label">Subtotal</span><span class="total-val" id="totalSubtotal">KES 0</span></div>
+        <div class="total-row discount-row-total" id="discountRowTotal" style="display:none"><span class="total-label">Discount</span><span class="total-val" id="totalDiscount">−KES 0</span></div>
+        <div class="total-row grand"><span class="total-label">Total Due</span><span class="total-val" id="totalGrand">KES 0</span></div>
+      </div>
+
+      <!-- STAFF ASSIGN -->
+      <div class="staff-assign">
+        <div class="payment-title">Assign to Staff</div>
+        <select class="form-select" id="staffAssign">
+          <option value="Treysson">Treysson (Senior Barber)</option>
+          <option value="Brian">Brian (Barber)</option>
+          <option value="Amira">Amira (Stylist)</option>
+          <option value="Grace">Grace (Spa Therapist)</option>
+        </select>
+      </div>
+
+      <!-- PAYMENT METHOD -->
+      <div class="payment-section">
+        <div class="payment-title">Payment Method</div>
+        <div class="payment-grid">
+          <div class="pay-tile selected" onclick="selectPay(this,'mpesa_stk')" data-method="mpesa_stk">
+            <div class="pay-tile-icon">📱</div>
+            <div class="pay-tile-name">M-Pesa STK</div>
+          </div>
+          <div class="pay-tile" onclick="selectPay(this,'mpesa_manual')" data-method="mpesa_manual">
+            <div class="pay-tile-icon">📲</div>
+            <div class="pay-tile-name">Mpesa Manual</div>
+          </div>
+          <div class="pay-tile" onclick="selectPay(this,'kcb')" data-method="kcb">
+            <div class="pay-tile-icon">🏦</div>
+            <div class="pay-tile-name">KCB Paybill</div>
+          </div>
+          <div class="pay-tile" onclick="selectPay(this,'card')" data-method="card">
+            <div class="pay-tile-icon">💳</div>
+            <div class="pay-tile-name">Card</div>
+          </div>
+          <div class="pay-tile" onclick="selectPay(this,'cash')" data-method="cash">
+            <div class="pay-tile-icon">💵</div>
+            <div class="pay-tile-name">Cash</div>
+          </div>
+          <div class="pay-tile" onclick="selectPay(this,'split')" data-method="split">
+            <div class="pay-tile-icon">🔀</div>
+            <div class="pay-tile-name">Split Pay</div>
+          </div>
+        </div>
+
+        <!-- M-PESA STK -->
+        <div class="payment-input-area show" id="pay_mpesa_stk">
+          <div class="payment-title">Send STK Push to</div>
+          <div class="mpesa-phone">
+            <input class="form-input" type="tel" id="mpesaPhone" placeholder="07XX XXX XXX (auto-fills from client)">
+            <button class="btn-sm primary" onclick="sendSTKPush()">Send Push</button>
+          </div>
+          <div class="mpesa-status pending" id="stkStatus">
+            <div class="stk-spinner"></div>
+            <span id="stkStatusText">Waiting for STK Push…</span>
+          </div>
+          <div class="ref-display" id="mpesaRef"></div>
+        </div>
+
+        <!-- M-PESA MANUAL -->
+        <div class="payment-input-area" id="pay_mpesa_manual">
+          <div class="payment-title">Enter M-Pesa Reference</div>
+          <input class="form-input" type="text" id="mpesaManualRef" placeholder="e.g. RGX7YH2341" style="letter-spacing:0.08em;text-transform:uppercase;margin-bottom:8px">
+          <div style="font-size:0.68rem;color:var(--muted)">Ask client to send KES <strong id="manualMpesaAmount" style="color:var(--gold)">—</strong> to Paybill 522533 · A/C 0000000</div>
+        </div>
+
+        <!-- KCB PAYBILL -->
+        <div class="payment-input-area" id="pay_kcb">
+          <div class="paybill-info">
+            <div class="paybill-row"><span>Paybill Number</span><span>522522</span></div>
+            <div class="paybill-row"><span>Account Number</span><span>Treysson Trimz</span></div>
+            <div class="paybill-row"><span>Amount</span><span id="kcbAmount">KES —</span></div>
+          </div>
+          <input class="form-input" type="text" id="kcbRef" placeholder="KCB confirmation code…" style="letter-spacing:0.08em">
+        </div>
+
+        <!-- CARD -->
+        <div class="payment-input-area" id="pay_card">
+          <select class="form-select" id="cardType" style="margin-bottom:8px">
+            <option>Visa</option><option>Mastercard</option><option>Amex</option>
+          </select>
+          <input class="form-input" type="text" id="cardRef" placeholder="Card terminal reference / last 4 digits">
+        </div>
+
+        <!-- CASH -->
+        <div class="payment-input-area" id="pay_cash">
+          <div class="payment-title">Cash Tendered</div>
+          <input class="form-input" type="number" id="cashTendered" placeholder="Amount given" oninput="calcChange()">
+          <div style="display:flex;justify-content:space-between;margin-top:8px;font-size:0.8rem;color:var(--muted)">
+            <span>Change due:</span>
+            <span id="changeDisplay" style="color:var(--gold);font-weight:600">KES —</span>
+          </div>
+        </div>
+
+        <!-- SPLIT PAY -->
+        <div class="payment-input-area" id="pay_split">
+          <div class="payment-title">Split Payment</div>
+          <div style="display:flex;gap:8px;margin-bottom:8px;align-items:center">
+            <span style="font-size:0.75rem;color:var(--muted);min-width:60px">M-Pesa</span>
+            <input class="form-input" type="number" id="splitMpesa" placeholder="KES" oninput="calcSplitBalance()">
+          </div>
+          <div style="display:flex;gap:8px;align-items:center">
+            <span style="font-size:0.75rem;color:var(--muted);min-width:60px">Cash</span>
+            <input class="form-input" type="number" id="splitCash" placeholder="KES" oninput="calcSplitBalance()">
+          </div>
+          <div style="display:flex;justify-content:space-between;margin-top:8px;font-size:0.78rem;color:var(--muted)">
+            <span>Remaining:</span><span id="splitBalance" style="color:var(--warning);font-weight:600">KES 0</span>
+          </div>
+        </div>
+
+      </div>
+
+      <!-- NOTIFICATIONS -->
+      <div class="notif-section">
+        <div class="notif-title">Send Notifications</div>
+        <div class="notif-options">
+          <label class="notif-opt"><input type="checkbox" id="notifWhatsapp" checked> WhatsApp thank-you to client</label>
+          <label class="notif-opt"><input type="checkbox" id="notifSMS"> SMS receipt to client</label>
+          <label class="notif-opt"><input type="checkbox" id="notifEmail" checked> Email receipt to client</label>
+          <label class="notif-opt"><input type="checkbox" id="notifBarberEmail"> Email copy to barber/stylist</label>
+          <label class="notif-opt"><input type="checkbox" id="notifSheets" checked> Sync to Google Sheets</label>
+        </div>
+      </div>
+
+      <!-- NOTES -->
+      <div style="padding:10px 16px;border-top:0.5px solid var(--border);">
+        <div class="payment-title">Notes (optional)</div>
+        <textarea class="form-input" id="saleNotes" placeholder="Any notes for this transaction…" rows="2" style="resize:none;font-size:0.78rem;"></textarea>
+      </div>
+
+      <!-- CHARGE BUTTON -->
+      <div class="charge-area">
+        <button class="charge-btn" id="chargeBtn" onclick="processPayment()" disabled>
+          <div class="btn-spinner" id="chargeSpinner"></div>
+          <span id="chargeBtnText">Add items to charge</span>
+        </button>
+      </div>
+
+    </div><!-- /cart-panel -->
+  </div><!-- /cashier-body -->
+
+  <!-- TODAY'S TRANSACTIONS LOG -->
+  <div class="txn-log">
+    <div class="txn-log-title">Today's Transactions</div>
+    <table class="txn-table">
+      <thead><tr>
+        <th>Time</th><th>Client</th><th>Service</th><th>Staff</th>
+        <th>Amount</th><th>Payment</th><th>Status</th><th>Actions</th>
+      </tr></thead>
+      <tbody id="txnLogBody"></tbody>
+    </table>
+  </div>
+
+</div><!-- /main -->
+
+<!-- RECEIPT MODAL -->
+<div class="modal-overlay" id="receiptModal">
+  <div class="modal">
+    <div class="modal-header">
+      <div class="modal-title">Receipt</div>
+      <button class="modal-close" onclick="closeModal('receiptModal')">✕</button>
+    </div>
+    <div class="modal-body">
+      <div class="receipt" id="receiptContent"></div>
+    </div>
+  </div>
+</div>
+
+<!-- HISTORY MODAL -->
+<div class="modal-overlay" id="historyModal">
+  <div class="modal" style="width:700px;">
+    <div class="modal-header">
+      <div class="modal-title">Today's Transaction Log</div>
+      <button class="modal-close" onclick="closeModal('historyModal')">✕</button>
+    </div>
+    <div class="modal-body">
+      <table class="txn-table">
+        <thead><tr><th>Time</th><th>Client</th><th>Service</th><th>Staff</th><th>Amount</th><th>Payment</th><th>Status</th></tr></thead>
+        <tbody id="historyBody"></tbody>
+      </table>
+    </div>
+  </div>
+</div>
+
+<div id="toast"></div>
+
+<script>
+// ── AUTH ──
+(function(){
+  const u = sessionStorage.getItem('tt_user');
+  if (!u) { window.location.replace('login.html'); return; }
+  try {
+    const user = JSON.parse(u);
+    const initials = user.name.split(' ').map(w=>w[0]).join('').toUpperCase().slice(0,2);
+    document.getElementById('staffAvatar').textContent = initials;
+    document.getElementById('staffName').textContent = user.name;
+    document.getElementById('staffRoleLabel').textContent = user.role.charAt(0).toUpperCase()+user.role.slice(1);
+  } catch(e){}
+})();
+function go(url){window.location.href=url;}
+function logout(){sessionStorage.removeItem('tt_user');window.location.replace('login.html');}
+
+// ── SERVICES DATA ──
+const SERVICES = {
+  barber:[
+    {id:'b1',name:'Signature Haircut',price:800,icon:'✂',duration:'30 min',division:'Barbershop'},
+    {id:'b2',name:'Classic Fade',price:900,icon:'〰',duration:'40 min',division:'Barbershop'},
+    {id:'b3',name:'Beard Sculpt & Trim',price:500,icon:'▲',duration:'20 min',division:'Barbershop'},
+    {id:'b4',name:'Hot Towel Shave',price:700,icon:'◎',duration:'25 min',division:'Barbershop'},
+    {id:'b5',name:'Cut + Beard Combo',price:1300,icon:'◈',duration:'55 min',division:'Barbershop'},
+    {id:'b6',name:'Kids Haircut',price:600,icon:'★',duration:'25 min',division:'Barbershop'},
+  ],
+  salon:[
+    {id:'s1',name:'Hair Colour',price:2500,icon:'◉',duration:'90 min',division:'Salon'},
+    {id:'s2',name:'Blowout & Styling',price:1200,icon:'✦',duration:'45 min',division:'Salon'},
+    {id:'s3',name:'Braids & Weaves',price:2000,icon:'∞',duration:'120 min',division:'Salon'},
+    {id:'s4',name:'Deep Conditioning',price:1500,icon:'◎',duration:'60 min',division:'Salon'},
+    {id:'s5',name:'Relaxer Treatment',price:1800,icon:'◈',duration:'75 min',division:'Salon'},
+    {id:'s6',name:'Mani & Pedi',price:1000,icon:'◆',duration:'50 min',division:'Salon'},
+  ],
+  spa:[
+    {id:'p1',name:'Swedish Massage',price:3500,icon:'☽',duration:'60 min',division:'Spa'},
+    {id:'p2',name:'Deep Tissue Massage',price:4000,icon:'▲',duration:'60 min',division:'Spa'},
+    {id:'p3',name:'Luxury Facial',price:2500,icon:'◎',duration:'45 min',division:'Spa'},
+    {id:'p4',name:'Body Wrap',price:3800,icon:'◉',duration:'75 min',division:'Spa'},
+    {id:'p5',name:'Couples Package',price:7000,icon:'∞',duration:'90 min',division:'Spa'},
+    {id:'p6',name:'Express Refresh',price:1800,icon:'✦',duration:'30 min',division:'Spa'},
+  ]
+};
+
+// ── CLIENT DATA ──
+const CLIENTS = [
+  {id:'c1',name:'James M.',phone:'0712 345 678',email:'james@email.com',cuts:6,division:'barber'},
+  {id:'c2',name:'Amina K.',phone:'0723 456 789',email:'amina@email.com',cuts:3,division:'salon'},
+  {id:'c3',name:'Brian O.',phone:'0701 234 567',email:'brian@email.com',cuts:5,division:'barber'},
+  {id:'c4',name:'Sarah W.',phone:'0734 567 890',email:'sarah@email.com',cuts:2,division:'spa'},
+  {id:'c5',name:'Kevin N.',phone:'0745 678 901',email:'kevin@email.com',cuts:7,division:'barber'},
+  {id:'c6',name:'Linda A.',phone:'0756 789 012',email:'linda@email.com',cuts:1,division:'salon'},
+  {id:'c7',name:'David C.',phone:'0767 890 123',email:'david@email.com',cuts:7,division:'spa'},
+];
+
+// ── STATE ──
+let cart = [];
+let selectedClient = null;
+let selectedPayMethod = 'mpesa_stk';
+let discountType = '%';
+let todayTxns = [];
+let todayTotals = {revenue:0,sales:0,barber:0,salon:0,spa:0,mpesa:0,cash:0};
+let stkPolling = null;
+let freeCutApplied = false;
+
+// ── INIT ──
+document.addEventListener('DOMContentLoaded', () => {
+  document.getElementById('topbarDate').textContent = new Date().toLocaleDateString('en-KE',{weekday:'short',day:'numeric',month:'short',year:'numeric'});
+  renderServices('barber');
+  updateChargeBtn();
+});
+
+// ── SERVICES ──
+function switchDiv(el, type) {
+  document.querySelectorAll('.div-tab').forEach(t=>t.classList.remove('active'));
+  el.classList.add('active');
+  renderServices(type);
+}
+function renderServices(type) {
+  const cartIds = cart.map(i=>i.id);
+  document.getElementById('serviceGrid').innerHTML = SERVICES[type].map(s=>`
+    <div class="service-tile ${cartIds.includes(s.id)?'in-cart':''}" onclick="toggleService(${JSON.stringify(s).replace(/"/g,"'")})" data-id="${s.id}">
+      <div class="st-icon">${s.icon}</div>
+      <div class="st-name">${s.name}</div>
+      <div class="st-price">KES ${s.price.toLocaleString()}</div>
+      <div class="st-duration">${s.duration}</div>
+    </div>`).join('');
+}
+function toggleService(s) {
+  const idx = cart.findIndex(i=>i.id===s.id);
+  if (idx >= 0) cart.splice(idx,1);
+  else cart.push({...s, qty:1});
+  renderCart();
+  // Re-render grid to update in-cart state
+  const active = document.querySelector('.div-tab.active');
+  if(active) {
+    const type = active.textContent.includes('Barber')?'barber':active.textContent.includes('Salon')?'salon':'spa';
+    renderServices(type);
+  }
+}
+function addCustomItem() {
+  const name = document.getElementById('customName').value.trim();
+  const price = parseFloat(document.getElementById('customPrice').value);
+  if (!name || !price) { showToast('⚠ Enter item name and price'); return; }
+  cart.push({id:'custom_'+Date.now(),name,price,icon:'◈',duration:'',division:'Custom',qty:1});
+  document.getElementById('customName').value='';
+  document.getElementById('customPrice').value='';
+  renderCart();
+}
+
+// ── CART ──
+function renderCart() {
+  const el = document.getElementById('cartItems');
+  if (cart.length === 0) {
+    el.innerHTML = '<div class="cart-empty" id="cartEmpty"><div class="cart-empty-icon">🧾</div><div>Add services to begin</div></div>';
+    document.getElementById('cartCount').textContent = '0 items';
+    updateChargeBtn();
+    recalcTotals();
+    return;
+  }
+  el.innerHTML = cart.map((item,i)=>`
+    <div class="cart-item">
+      <div class="ci-info">
+        <div class="ci-name">${item.name}</div>
+        <div class="ci-meta">${item.division}${item.duration?' · '+item.duration:''}</div>
+        <div class="ci-qty">
+          <button class="qty-btn" onclick="changeQty(${i},-1)">−</button>
+          <span class="qty-val">${item.qty}</span>
+          <button class="qty-btn" onclick="changeQty(${i},1)">+</button>
+        </div>
+      </div>
+      <div>
+        <div class="ci-price">KES ${(item.price*item.qty).toLocaleString()}</div>
+        <button class="ci-remove" onclick="removeFromCart(${i})">✕</button>
+      </div>
+    </div>`).join('');
+  document.getElementById('cartCount').textContent = cart.length + ' item' + (cart.length!==1?'s':'');
+  recalcTotals();
+  updateChargeBtn();
+}
+function changeQty(idx, delta) {
+  cart[idx].qty = Math.max(1, cart[idx].qty + delta);
+  renderCart();
+}
+function removeFromCart(idx) {
+  cart.splice(idx,1);
+  renderCart();
+  const active = document.querySelector('.div-tab.active');
+  if(active){const type=active.textContent.includes('Barber')?'barber':active.textContent.includes('Salon')?'salon':'spa';renderServices(type);}
+}
+function recalcTotals() {
+  const subtotal = cart.reduce((s,i)=>s+i.price*i.qty,0);
+  let discount = 0;
+  const dv = parseFloat(document.getElementById('discountVal').value)||0;
+  if (dv > 0) {
+    discount = discountType==='%' ? subtotal*(dv/100) : dv;
+    discount = Math.min(discount, subtotal);
+  }
+  if (freeCutApplied) {
+    const haircuts = ['Signature Haircut','Classic Fade','Kids Haircut'];
+    const fc = cart.find(i=>haircuts.includes(i.name));
+    if (fc) discount = Math.max(discount, fc.price);
+  }
+  const grand = Math.max(0, subtotal - discount);
+  document.getElementById('totalSubtotal').textContent = 'KES ' + subtotal.toLocaleString();
+  document.getElementById('totalGrand').textContent = 'KES ' + grand.toLocaleString();
+  const discRow = document.getElementById('discountRowTotal');
+  if (discount > 0) {
+    discRow.style.display = 'flex';
+    document.getElementById('totalDiscount').textContent = '−KES ' + Math.round(discount).toLocaleString();
+  } else { discRow.style.display = 'none'; }
+  // Update payment-specific displays
+  document.getElementById('manualMpesaAmount').textContent = 'KES ' + grand.toLocaleString();
+  document.getElementById('kcbAmount').textContent = 'KES ' + grand.toLocaleString();
+  calcChange();
+  calcSplitBalance();
+}
+
+// ── DISCOUNT ──
+function setDiscountType(type) {
+  discountType = type;
+  document.getElementById('dtPercent').classList.toggle('active', type==='%');
+  document.getElementById('dtFixed').classList.toggle('active', type==='KES');
+  recalcTotals();
+}
+function applyFreeCut() {
+  freeCutApplied = true;
+  document.getElementById('freeCutAlert').classList.remove('show');
+  recalcTotals();
+  showToast('★ Free cut applied');
+}
+
+// ── CLIENT SEARCH ──
+function searchClients() {
+  const q = document.getElementById('clientSearch').value.toLowerCase().trim();
+  const results = document.getElementById('clientResults');
+  if (!q) { results.classList.remove('open'); return; }
+  const matches = CLIENTS.filter(c=>c.name.toLowerCase().includes(q)||c.phone.includes(q));
+  if (!matches.length) { results.classList.remove('open'); return; }
+  results.innerHTML = matches.map(c=>`
+    <div class="client-result-item" onclick="selectClient('${c.id}')">
+      <div class="cr-avatar">${c.name.split(' ').map(w=>w[0]).join('')}</div>
+      <div>
+        <div class="cr-name">${c.name}</div>
+        <div class="cr-phone">${c.phone}</div>
+      </div>
+      <div class="cr-loyalty">
+        ${[...Array(7)].map((_,i)=>`<div class="cr-loyalty-dot ${i<c.cuts?'done':''}"></div>`).join('')}
+        ${c.cuts>=7?'<span style="font-size:0.55rem;color:var(--gold);margin-left:4px">FREE</span>':''}
+      </div>
+    </div>`).join('');
+  results.classList.add('open');
+}
+function closeResults(){document.getElementById('clientResults').classList.remove('open');}
+
+function selectClient(id) {
+  selectedClient = CLIENTS.find(c=>c.id===id);
+  if (!selectedClient) return;
+  closeResults();
+  document.getElementById('clientSearch').value = '';
+  document.getElementById('clientResults').classList.remove('open');
+  document.getElementById('mpesaPhone').value = selectedClient.phone;
+
+  // Show card
+  const card = document.getElementById('selectedClientCard');
+  card.classList.add('show');
+  document.getElementById('scAvatar').textContent = selectedClient.name.split(' ').map(w=>w[0]).join('');
+  document.getElementById('scName').textContent = selectedClient.name;
+  document.getElementById('scPhone').textContent = selectedClient.phone;
+
+  // Loyalty dots
+  const loyaltyEl = document.getElementById('scLoyalty');
+  loyaltyEl.innerHTML = [
+    ...Array(7)].map((_,i)=>`<div class="sc-dot ${i<selectedClient.cuts?'done':''}"></div>`).join('')
+    + '<div class="sc-dot free">★</div>'
+    + (selectedClient.cuts >= 7 ? '<span class="sc-free-badge">Free Cut Ready!</span>' : `<span style="font-size:0.62rem;color:var(--muted);margin-left:6px">${selectedClient.cuts}/7 cuts</span>`);
+
+  // Free cut alert
+  if (selectedClient.cuts >= 7) {
+    document.getElementById('freeCutAlert').classList.add('show');
+    showToast('★ ' + selectedClient.name + ' has earned a FREE haircut!');
+  } else {
+    document.getElementById('freeCutAlert').classList.remove('show');
+  }
+}
+
+function clearClient() {
+  selectedClient = null;
+  freeCutApplied = false;
+  document.getElementById('selectedClientCard').classList.remove('show');
+  document.getElementById('freeCutAlert').classList.remove('show');
+  document.getElementById('clientSearch').value = '';
+  document.getElementById('mpesaPhone').value = '';
+  recalcTotals();
+}
+
+function toggleNewClient() {
+  document.getElementById('newClientForm').classList.toggle('open');
+}
+
+function registerClient() {
+  const first = document.getElementById('ncFirstName').value.trim();
+  const last = document.getElementById('ncLastName').value.trim();
+  const phone = document.getElementById('ncPhone').value.trim();
+  if (!first || !phone) { showToast('⚠ Name and phone required'); return; }
+  const newClient = {id:'c'+Date.now(), name:first+' '+last, phone, email:document.getElementById('ncEmail').value.trim(), cuts:0, division:'barber'};
+  CLIENTS.push(newClient);
+  selectClient(newClient.id);
+  toggleNewClient();
+  showToast('✓ Client registered');
+}
+
+// ── PAYMENT ──
+function selectPay(el, method) {
+  document.querySelectorAll('.pay-tile').forEach(t=>t.classList.remove('selected'));
+  el.classList.add('selected');
+  selectedPayMethod = method;
+  document.querySelectorAll('.payment-input-area').forEach(a=>a.classList.remove('show'));
+  const target = document.getElementById('pay_'+method);
+  if (target) target.classList.add('show');
+  clearSTKStatus();
+}
+
+function calcChange() {
+  const grand = getGrandTotal();
+  const tendered = parseFloat(document.getElementById('cashTendered').value)||0;
+  const change = tendered - grand;
+  document.getElementById('changeDisplay').textContent = change >= 0 ? 'KES '+change.toLocaleString() : 'KES —';
+  document.getElementById('changeDisplay').style.color = change < 0 ? 'var(--danger)' : 'var(--gold)';
+}
+function calcSplitBalance() {
+  const grand = getGrandTotal();
+  const mpesa = parseFloat(document.getElementById('splitMpesa').value)||0;
+  const cash = parseFloat(document.getElementById('splitCash').value)||0;
+  const balance = grand - mpesa - cash;
+  document.getElementById('splitBalance').textContent = 'KES '+Math.max(0,balance).toLocaleString();
+  document.getElementById('splitBalance').style.color = balance <= 0 ? 'var(--success)' : 'var(--warning)';
+}
+function getGrandTotal() {
+  const subtotal = cart.reduce((s,i)=>s+i.price*i.qty,0);
+  const dv = parseFloat(document.getElementById('discountVal').value)||0;
+  let discount = dv > 0 ? (discountType==='%' ? subtotal*(dv/100) : dv) : 0;
+  if (freeCutApplied) {
+    const fc = cart.find(i=>['Signature Haircut','Classic Fade','Kids Haircut'].includes(i.name));
+    if (fc) discount = Math.max(discount, fc.price);
+  }
+  return Math.max(0, subtotal - discount);
+}
+
+// ── STK PUSH ──
+function sendSTKPush() {
+  const phone = document.getElementById('mpesaPhone').value.trim();
+  if (!phone) { showToast('⚠ Enter phone number for STK push'); return; }
+  const amount = getGrandTotal();
+  if (amount <= 0) { showToast('⚠ Add items first'); return; }
+  const statusEl = document.getElementById('stkStatus');
+  statusEl.className = 'mpesa-status pending show';
+  document.getElementById('stkStatusText').textContent = 'Sending STK Push to ' + phone + '…';
+  clearTimeout(stkPolling);
+  // Simulate STK (replace with real Daraja API call)
+  stkPolling = setTimeout(() => {
+    const success = Math.random() > 0.2; // 80% success for demo
+    if (success) {
+      const ref = 'RGX' + Math.random().toString(36).slice(2,9).toUpperCase();
+      statusEl.className = 'mpesa-status success show';
+      document.getElementById('stkStatusText').textContent = '✓ Payment confirmed · KES ' + amount.toLocaleString();
+      const refEl = document.getElementById('mpesaRef');
+      refEl.textContent = 'M-Pesa Ref: ' + ref;
+      refEl.classList.add('show');
+      refEl.dataset.ref = ref;
+      showToast('✓ M-Pesa payment received');
+    } else {
+      statusEl.className = 'mpesa-status failed show';
+      document.getElementById('stkStatusText').textContent = '✕ STK Push failed — ask client to pay manually';
+    }
+  }, 3000);
+}
+function clearSTKStatus() {
+  clearTimeout(stkPolling);
+  document.getElementById('stkStatus').classList.remove('show');
+  document.getElementById('mpesaRef').classList.remove('show');
+}
+
+// ── CHARGE BUTTON ──
+function updateChargeBtn() {
+  const btn = document.getElementById('chargeBtn');
+  const hasItems = cart.length > 0;
+  btn.disabled = !hasItems;
+  document.getElementById('chargeBtnText').textContent = hasItems
+    ? 'Process Payment · KES ' + getGrandTotal().toLocaleString()
+    : 'Add items to charge';
+}
+
+// ── PROCESS PAYMENT ──
+function processPayment() {
+  if (cart.length === 0) return;
+  const grand = getGrandTotal();
+  const btn = document.getElementById('chargeBtn');
+  btn.disabled = true;
+  document.getElementById('chargeSpinner').style.display = 'block';
+  document.getElementById('chargeBtnText').textContent = 'Processing…';
+
+  setTimeout(() => {
+    // Build transaction
+    const now = new Date();
+    const txn = {
+      id: 'TXN'+Date.now(),
+      time: now.toLocaleTimeString('en-KE',{hour:'2-digit',minute:'2-digit'}),
+      client: selectedClient ? selectedClient.name : 'Walk-in',
+      phone: selectedClient?.phone || '—',
+      email: selectedClient?.email || '',
+      services: cart.map(i=>i.name).join(', '),
+      division: cart[0]?.division || 'Barbershop',
+      staff: document.getElementById('staffAssign').value,
+      amount: grand,
+      payMethod: selectedPayMethod,
+      status: 'paid',
+      notes: document.getElementById('saleNotes').value,
+      ref: getPayRef(),
+    };
+
+    // Update loyalty
+    if (selectedClient && !freeCutApplied) {
+      const hasHaircut = cart.some(i=>['Signature Haircut','Classic Fade','Kids Haircut','Cut + Beard Combo'].includes(i.name));
+      if (hasHaircut) {
+        const c = CLIENTS.find(cl=>cl.id===selectedClient.id);
+        if (c) { c.cuts = (c.cuts >= 7) ? 1 : c.cuts + 1; }
+      }
+    } else if (freeCutApplied && selectedClient) {
+      const c = CLIENTS.find(cl=>cl.id===selectedClient.id);
+      if (c) c.cuts = 0; // Reset after free cut redeemed
+    }
+
+    // Update today totals
+    todayTotals.revenue += grand;
+    todayTotals.sales++;
+    if (txn.division==='Barbershop') todayTotals.barber += grand;
+    else if (txn.division==='Salon') todayTotals.salon += grand;
+    else if (txn.division==='Spa') todayTotals.spa += grand;
+    if (selectedPayMethod.includes('mpesa')) todayTotals.mpesa += grand;
+    if (selectedPayMethod==='cash') todayTotals.cash += grand;
+    todayTxns.unshift(txn);
+
+    updateTodayBar();
+    addToLog(txn);
+    sendNotifications(txn);
+
+    // Sheets sync
+    if (document.getElementById('notifSheets').checked) {
+      fakeSheetSync(txn);
+    }
+
+    // Show receipt
+    showReceipt(txn);
+
+    // Reset
+    btn.disabled = false;
+    document.getElementById('chargeSpinner').style.display = 'none';
+    document.getElementById('chargeBtnText').textContent = 'Add items to charge';
+    resetSale();
+  }, 1200);
+}
+
+function getPayRef() {
+  const m = {mpesa_stk:'M-Pesa STK',mpesa_manual:'M-Pesa Manual',kcb:'KCB Paybill',card:'Card',cash:'Cash',split:'Split Pay'};
+  const refEl = document.getElementById('mpesaRef');
+  if (selectedPayMethod==='mpesa_stk' && refEl.dataset.ref) return refEl.dataset.ref;
+  if (selectedPayMethod==='mpesa_manual') return document.getElementById('mpesaManualRef').value||'Manual';
+  if (selectedPayMethod==='kcb') return document.getElementById('kcbRef').value||'KCB';
+  if (selectedPayMethod==='card') return document.getElementById('cardRef').value||'Card';
+  return m[selectedPayMethod]||selectedPayMethod;
+}
+
+// ── TODAY BAR ──
+function updateTodayBar() {
+  document.getElementById('todayRevenue').textContent = 'KES '+todayTotals.revenue.toLocaleString();
+  document.getElementById('todaySales').textContent = todayTotals.sales;
+  document.getElementById('todayBarber').textContent = 'KES '+todayTotals.barber.toLocaleString();
+  document.getElementById('todaySalon').textContent = 'KES '+todayTotals.salon.toLocaleString();
+  document.getElementById('todaySpa').textContent = 'KES '+todayTotals.spa.toLocaleString();
+  document.getElementById('todayMpesa').textContent = 'KES '+todayTotals.mpesa.toLocaleString();
+  document.getElementById('todayCash').textContent = 'KES '+todayTotals.cash.toLocaleString();
+}
+
+// ── LOG ──
+function addToLog(txn) {
+  const payLabels = {mpesa_stk:'M-Pesa',mpesa_manual:'M-Pesa',kcb:'KCB',card:'Card',cash:'Cash',split:'Split'};
+  const payBadges = {mpesa_stk:'badge-gold',mpesa_manual:'badge-gold',kcb:'badge-info',card:'badge-info',cash:'badge-muted',split:'badge-warning'};
+  const row = `<tr>
+    <td>${txn.time}</td>
+    <td>${txn.client}</td>
+    <td>${txn.services}</td>
+    <td>${txn.staff}</td>
+    <td style="color:var(--gold);font-weight:500">KES ${txn.amount.toLocaleString()}</td>
+    <td><span class="badge ${payBadges[txn.payMethod]||'badge-muted'}">${payLabels[txn.payMethod]||txn.payMethod}</span></td>
+    <td><span class="badge badge-success">Paid</span></td>
+    <td><button class="action-btn" onclick="showReceiptById('${txn.id}')">Receipt</button></td>
+  </tr>`;
+  document.getElementById('txnLogBody').insertAdjacentHTML('afterbegin', row);
+  document.getElementById('historyBody').insertAdjacentHTML('afterbegin', row.replace(`<button class="action-btn"`,`<button class="action-btn" style="display:none"`));
+}
+
+// ── RECEIPT ──
+function showReceipt(txn) {
+  const now = new Date();
+  const loyaltyLine = selectedClient ? (() => {
+    const c = CLIENTS.find(cl=>cl.name===txn.client);
+    const cuts = c ? c.cuts : 0;
+    const dotsHtml = [...Array(7)].map((_,i)=>`<span style="display:inline-block;width:10px;height:10px;border-radius:50%;background:${i<cuts?'#C9A96E':'rgba(201,169,110,0.15)'};border:0.5px solid rgba(201,169,110,0.3);margin:0 2px"></span>`).join('');
+    return `<div class="receipt-loyalty">
+      <strong>Treysson Loyalty Programme</strong>
+      ${dotsHtml}<span style="display:inline-flex;width:13px;height:13px;border-radius:50%;border:1.5px solid #C9A96E;align-items:center;justify-content:center;font-size:8px;color:#C9A96E;margin:0 2px">★</span>
+      <div style="margin-top:6px">${cuts}/7 cuts · ${7-cuts>0?'<strong style="color:#C9A96E">'+(7-cuts)+'</strong> more for your FREE haircut':'★ Free cut earned!'}</div>
+    </div>`;
+  })() : '';
+
+  const divisionMsgs = {
+    Barbershop: 'Thank you for choosing Treysson Trimz. Sharp as ever.',
+    Salon: 'Thank you for trusting us with your look. You\'re radiant.',
+    Spa: 'Thank you for taking care of yourself at Treysson Trimz. Restore. Renew.'
+  };
+
+  document.getElementById('receiptContent').innerHTML = `
+    <div class="receipt-logo">
+      <div class="receipt-logo-name">TREYSSON <span>TRIMZ</span></div>
+      <div class="receipt-logo-sub">Barbershop · Salon · Spa · Nairobi</div>
+    </div>
+    <hr class="receipt-divider">
+    <div class="receipt-row"><span>Date</span><span>${now.toLocaleDateString('en-KE',{day:'numeric',month:'short',year:'numeric'})}</span></div>
+    <div class="receipt-row"><span>Time</span><span>${txn.time}</span></div>
+    <div class="receipt-row"><span>Receipt #</span><span>${txn.id}</span></div>
+    <div class="receipt-row"><span>Cashier</span><span>${txn.staff}</span></div>
+    ${txn.client!=='Walk-in'?`<div class="receipt-row"><span>Client</span><span>${txn.client}</span></div>`:''}
+    <hr class="receipt-divider">
+    ${cart.map(i=>`<div class="receipt-row"><span>${i.name} ${i.qty>1?'x'+i.qty:''}</span><span>KES ${(i.price*i.qty).toLocaleString()}</span></div>`).join('')}
+    <hr class="receipt-divider">
+    <div class="receipt-row bold"><span>Total Paid</span><span style="color:var(--gold)">KES ${txn.amount.toLocaleString()}</span></div>
+    <div class="receipt-row"><span>Payment</span><span>${{mpesa_stk:'M-Pesa STK',mpesa_manual:'M-Pesa',kcb:'KCB Paybill',card:'Card',cash:'Cash',split:'Split Pay'}[txn.payMethod]||txn.payMethod}</span></div>
+    ${txn.ref&&txn.ref!=='Cash'?`<div class="receipt-row"><span>Reference</span><span style="letter-spacing:0.05em">${txn.ref}</span></div>`:''}
+    <hr class="receipt-divider">
+    ${loyaltyLine}
+    <div class="receipt-thank">${divisionMsgs[txn.division]||divisionMsgs.Barbershop}</div>
+    <div class="receipt-ref">hello@treyssontrimz.co.ke · +254 700 000 000</div>
+    <div class="receipt-actions">
+      <button class="print-btn" onclick="printReceipt()">🖨 Print</button>
+      <button class="email-btn" onclick="emailReceipt('${txn.client}')">✉ Email</button>
+      <button class="whatsapp-btn" onclick="whatsappReceipt('${txn.phone||''}')">💬 WhatsApp</button>
+    </div>`;
+  openModal('receiptModal');
+}
+function showReceiptById(id) {
+  const txn = todayTxns.find(t=>t.id===id);
+  if (txn) showReceipt(txn);
+}
+function printReceipt() {
+  window.print();
+}
+function emailReceipt(client) {
+  showToast('✉ Receipt emailed to ' + (client||'client'));
+  closeModal('receiptModal');
+}
+function whatsappReceipt(phone) {
+  const msg = encodeURIComponent('Thank you for visiting Treysson Trimz! Your receipt is ready. We look forward to seeing you again.');
+  window.open('https://wa.me/254'+phone.replace(/^0/,'').replace(/\s/g,'')+'?text='+msg,'_blank');
+}
+
+// ── NOTIFICATIONS ──
+function sendNotifications(txn) {
+  const msgs = [];
+  if (document.getElementById('notifWhatsapp').checked && txn.phone!=='—') {
+    msgs.push('WhatsApp thank-you');
+  }
+  if (document.getElementById('notifSMS').checked) msgs.push('SMS');
+  if (document.getElementById('notifEmail').checked && txn.email) msgs.push('email receipt');
+  if (msgs.length) showToast('✓ Sent: ' + msgs.join(', ') + ' to ' + txn.client);
+}
+function fakeSheetSync(txn) {
+  setTimeout(()=>showToast('📊 Synced to Google Sheets'), 800);
+}
+
+// ── RESET ──
+function resetSale() {
+  cart = [];
+  selectedClient = null;
+  freeCutApplied = false;
+  document.getElementById('selectedClientCard').classList.remove('show');
+  document.getElementById('freeCutAlert').classList.remove('show');
+  document.getElementById('clientSearch').value = '';
+  document.getElementById('mpesaPhone').value = '';
+  document.getElementById('discountVal').value = '';
+  document.getElementById('saleNotes').value = '';
+  document.getElementById('mpesaManualRef').value = '';
+  document.getElementById('kcbRef').value = '';
+  document.getElementById('cardRef').value = '';
+  document.getElementById('cashTendered').value = '';
+  document.getElementById('splitMpesa').value = '';
+  document.getElementById('splitCash').value = '';
+  clearSTKStatus();
+  renderCart();
+  const activeDiv = document.querySelector('.div-tab.active');
+  if(activeDiv){const type=activeDiv.textContent.includes('Barber')?'barber':activeDiv.textContent.includes('Salon')?'salon':'spa';renderServices(type);}
+}
+
+// ── MODALS ──
+function openModal(id){document.getElementById(id).classList.add('open');}
+function closeModal(id){document.getElementById(id).classList.remove('open');}
+document.querySelectorAll('.modal-overlay').forEach(m=>{
+  m.addEventListener('click',e=>{if(e.target===m)m.classList.remove('open');});
+});
+
+// ── TOAST ──
+let toastTimer;
+function showToast(msg){
+  const t=document.getElementById('toast');
+  t.textContent=msg;t.style.transition='none';t.style.transform='translateY(60px)';t.style.opacity='0';
+  requestAnimationFrame(()=>{
+    t.style.transition='all 0.3s';t.style.transform='none';t.style.opacity='1';
+  });
+  clearTimeout(toastTimer);
+  toastTimer=setTimeout(()=>{t.style.transform='translateY(60px)';t.style.opacity='0';},3000);
+}
+</script>
+</body>
+</html>
