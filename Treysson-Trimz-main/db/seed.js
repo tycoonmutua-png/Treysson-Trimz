@@ -34,7 +34,7 @@ async function seed() {
 
     // --- Barbers ---
     const barbers = [
-      { name: 'Treysson', specialties: ['Skin Fade','Beard Trim'],     bio: 'Head barber with 8+ years experience.' },
+      { name: 'Eli', specialties: ['Skin Fade','Beard Trim'],     bio: 'Barber with 8+ years experience.' },
       { name: 'Kevin',    specialties: ['Classic Cut','Hair Treatment'], bio: 'Specialist in natural hair and treatments.' },
       { name: 'Jayden',   specialties: ['Hot Towel Shave','Combos'],   bio: 'Precision cuts and classic shaves.' },
     ];
