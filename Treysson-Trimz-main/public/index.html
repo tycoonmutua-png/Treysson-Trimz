@@ -963,12 +963,20 @@ Reach Us @TreyssonTrimz_utawala on all social media platforms.
         </div>
         <div class="form-group">
           <label class="form-label">Preferred Time</label>
-          <select class="form-select">
-            <option>08:00 AM</option><option>09:00 AM</option><option>10:00 AM</option>
-            <option>11:00 AM</option><option>12:00 PM</option><option>01:00 PM</option>
-            <option>02:00 PM</option><option>03:00 PM</option><option>04:00 PM</option>
-            <option>05:00 PM</option><option>06:00 PM</option><option>07:00 PM</option>
-          </select>
+ <select class="form-select" id="timeSelect">
+  <option value="08:00">08:00 AM</option>
+  <option value="09:00">09:00 AM</option>
+  <option value="10:00">10:00 AM</option>
+  <option value="11:00">11:00 AM</option>
+  <option value="12:00">12:00 PM</option>
+  <option value="13:00">01:00 PM</option>
+  <option value="14:00">02:00 PM</option>
+  <option value="15:00">03:00 PM</option>
+  <option value="16:00">04:00 PM</option>
+  <option value="17:00">05:00 PM</option>
+  <option value="18:00">06:00 PM</option>
+  <option value="19:00">07:00 PM</option>
+</select>
         </div>
       </div>
       <div class="form-group">
@@ -1305,10 +1313,92 @@ function showTestimonial(idx, dot) {
   dot.classList.add('active');
 }
 
-function submitBooking() {
-  const toast = document.getElementById('toast');
-  toast.classList.add('show');
-  setTimeout(() => toast.classList.remove('show'), 4000);
+async function submitBooking() {
+  // ── Validation ──
+  const firstName = document.querySelector('input[placeholder="Anthony"]').value.trim();
+  const lastName  = document.querySelector('input[placeholder="Kiio"]').value.trim();
+  const phone     = document.querySelector('input[type="tel"]').value.trim();
+  const email     = document.querySelector('input[type="email"]').value.trim();
+  const division  = document.getElementById('divisionSelect').value;
+  const service   = document.getElementById('serviceSelect').value;
+  const date      = document.querySelector('input[type="date"]').value;
+  const time      = document.querySelector('#timeSelect').value;
+  const notes     = document.querySelector('.form-textarea').value.trim();
+  const payMethod = document.querySelector('.pay-opt.active')?.textContent?.trim() || 'M-Pesa';
+
+  if (!firstName || !lastName) { showError('Please enter your full name.'); return; }
+  if (!phone) { showError('Please enter your phone number.'); return; }
+  if (!division || !service || service === 'Choose division first') { showError('Please select a division and service.'); return; }
+  if (!date) { showError('Please select a preferred date.'); return; }
+
+  const submitBtn = document.querySelector('.form-submit');
+  submitBtn.disabled = true;
+  submitBtn.textContent = 'Processing…';
+
+  try {
+    const res = await fetch('/api/bookings', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({
+        customer_name:  `${firstName} ${lastName}`,
+        customer_phone: phone,
+        customer_email: email || null,
+        service_id:     1, // will be dynamic later
+        booking_date:   date,
+        start_time:     time || '08:00',
+        notes:          notes,
+        payment_method: payMethod
+      })
+    });
+
+    const data = await res.json();
+
+    if (data.success) {
+      showPaymentModal(data.data, firstName, phone, service, date, time);
+    } else {
+      showError(data.message || 'Booking failed. Please try again.');
+    }
+  } catch (err) {
+    showError('Network error. Please try again.');
+  } finally {
+    submitBtn.disabled = false;
+    submitBtn.textContent = 'Confirm Booking & Pay';
+  }
+}
+
+function showError(msg) {
+  let err = document.getElementById('bookingError');
+  if (!err) {
+    err = document.createElement('div');
+    err.id = 'bookingError';
+    err.style.cssText = 'background:rgba(224,82,82,0.1);border:0.5px solid rgba(224,82,82,0.4);color:#E05252;padding:12px 16px;font-family:var(--font-sans);font-size:0.75rem;letter-spacing:0.1em;margin-bottom:16px;';
+    document.querySelector('.form-submit').before(err);
+  }
+  err.textContent = '⚠ ' + msg;
+  err.style.display = 'block';
+  setTimeout(() => err.style.display = 'none', 4000);
+}
+
+function showPaymentModal(booking, name, phone, service, date, time) {
+  const ref = booking.reference_code || 'TT-' + Math.floor(10000 + Math.random() * 90000);
+  const amount = booking.price || '---';
+  const waText = encodeURIComponent(
+    `Hello Treysson Trimz! 🙏\n\nI just made a booking:\n• Name: ${name}\n• Service: ${service}\n• Date: ${date}\n• Time: ${time}\n• Ref: ${ref}\n\nI'll pay via KCB Paybill.`
+  );
+
+  document.getElementById('paymentModal').style.display = 'flex';
+  document.getElementById('modalRef').textContent = ref;
+  document.getElementById('modalName').textContent = name;
+  document.getElementById('modalService').textContent = service;
+  document.getElementById('modalDate').textContent = date + (time ? ' at ' + time : '');
+  document.getElementById('modalAmount').textContent = 'KES ' + amount;
+  document.getElementById('waLink').href = booking.customerWALink || `https://wa.me/254700000000?text=${waText}`;
+// Open admin WA too
+if (booking.adminWALink) window.open(booking.adminWALink, '_blank');
+}
+
+function closeModal() {
+  document.getElementById('paymentModal').style.display = 'none';
 }
 
 // Scroll reveal
@@ -1330,6 +1420,40 @@ dateInputs.forEach(d => d.min = today);
 // Init services
 renderServices('barber');
 </script>
+<!-- PAYMENT MODAL -->
+<div id="paymentModal" style="display:none;position:fixed;inset:0;z-index:999;background:rgba(10,8,6,0.92);align-items:center;justify-content:center;padding:24px;">
+  <div style="background:#111009;border:0.5px solid rgba(201,169,110,0.25);max-width:480px;width:100%;padding:40px 36px;position:relative;">
+    <button onclick="closeModal()" style="position:absolute;top:16px;right:16px;color:#C9A96E;font-size:1.2rem;cursor:pointer;background:none;border:none;">✕</button>
+    <div style="font-family:'Playfair Display',serif;font-size:1.4rem;font-style:italic;margin-bottom:4px;">Booking Confirmed! 🎉</div>
+    <div style="font-size:0.6rem;letter-spacing:0.3em;text-transform:uppercase;color:#C9A96E;margin-bottom:28px;">Complete your payment to confirm your slot</div>
+    <div style="background:rgba(201,169,110,0.05);border:0.5px solid rgba(201,169,110,0.15);padding:16px 20px;margin-bottom:24px;">
+      <div style="font-size:0.58rem;letter-spacing:0.25em;text-transform:uppercase;color:#7A7468;margin-bottom:12px;">Booking Summary</div>
+      <div style="display:flex;justify-content:space-between;font-size:0.82rem;margin-bottom:6px;"><span style="color:#7A7468">Reference</span><span style="color:#C9A96E;font-weight:600;" id="modalRef"></span></div>
+      <div style="display:flex;justify-content:space-between;font-size:0.82rem;margin-bottom:6px;"><span style="color:#7A7468">Name</span><span id="modalName"></span></div>
+      <div style="display:flex;justify-content:space-between;font-size:0.82rem;margin-bottom:6px;"><span style="color:#7A7468">Service</span><span id="modalService"></span></div>
+      <div style="display:flex;justify-content:space-between;font-size:0.82rem;margin-bottom:6px;"><span style="color:#7A7468">Date & Time</span><span id="modalDate"></span></div>
+      <div style="display:flex;justify-content:space-between;font-size:0.88rem;margin-top:10px;padding-top:10px;border-top:0.5px solid rgba(201,169,110,0.15);"><span style="color:#7A7468">Amount</span><span style="color:#C9A96E;font-family:'Playfair Display',serif;font-size:1.1rem;font-weight:700;" id="modalAmount"></span></div>
+    </div>
+    <div style="background:rgba(201,169,110,0.05);border:0.5px solid rgba(201,169,110,0.15);padding:16px 20px;margin-bottom:20px;">
+      <div style="font-size:0.58rem;letter-spacing:0.25em;text-transform:uppercase;color:#7A7468;margin-bottom:12px;">KCB Paybill Payment</div>
+      <div style="display:flex;justify-content:space-between;font-size:0.82rem;margin-bottom:6px;"><span style="color:#7A7468">Paybill No.</span><span style="color:#C9A96E;font-weight:600;">522522</span></div>
+      <div style="display:flex;justify-content:space-between;font-size:0.82rem;margin-bottom:6px;"><span style="color:#7A7468">Account No.</span><span style="color:#C9A96E;font-weight:600;">TRIMZ</span></div>
+      <div style="font-size:0.72rem;color:rgba(245,240,232,0.4);margin-top:8px;">Use your name as reference when paying</div>
+    </div>
+    <div style="font-size:0.72rem;color:rgba(245,240,232,0.5);margin-bottom:24px;line-height:1.9;">
+      <div>1. Open M-Pesa → Lipa na M-Pesa → Pay Bill</div>
+      <div>2. Business No: <strong style="color:#C9A96E">522522</strong></div>
+      <div>3. Account No: <strong style="color:#C9A96E">TRIMZ</strong></div>
+      <div>4. Amount: <strong style="color:#C9A96E" id="modalRef4"></strong></div>
+    </div>
+    <a id="waLink" href="#" target="_blank" style="display:block;width:100%;background:#25D366;color:#fff;text-align:center;padding:14px;font-family:'DM Sans',sans-serif;font-size:0.72rem;letter-spacing:0.18em;text-transform:uppercase;font-weight:600;margin-bottom:12px;text-decoration:none;">
+      📲 Send Booking via WhatsApp
+    </a>
+    <button onclick="closeModal()" style="width:100%;border:0.5px solid rgba(201,169,110,0.3);color:#C9A96E;padding:12px;font-family:'DM Sans',sans-serif;font-size:0.7rem;letter-spacing:0.18em;text-transform:uppercase;cursor:pointer;background:none;">
+      Done — I've Paid
+    </button>
+  </div>
+</div>
 <div class="page-transition" id="pageTransition"></div>
 <script>
 function smoothNav(e, url) {
