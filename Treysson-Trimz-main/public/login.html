@@ -3,854 +3,162 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Staff Login · Treysson Trimz</title>
-<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,600;0,700;1,400;1,700&family=DM+Sans:wght@300;400;500;600&display=swap" rel="stylesheet">
-<script src="https://accounts.google.com/gsi/client" async defer></script>
+<title>Admin Login · Treysson Trimz</title>
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,600;0,700;1,400&family=DM+Sans:wght@300;400;500;600&display=swap" rel="stylesheet">
 <style>
 :root {
-  --gold:#C9A96E;--gold-light:#E8C98A;--gold-dim:#7A6340;--gold-faint:rgba(201,169,110,0.07);
-  --black:#0A0806;--near-black:#111009;--dark:#1A1714;--card:#181510;
-  --border:rgba(201,169,110,0.13);--warm-white:#F5F0E8;--muted:#7A7468;
-  --danger:#E05252;--success:#4CAF7D;--info:#5297E0;
-  --font-display:'Playfair Display',Georgia,serif;--font:'DM Sans',sans-serif;
+  --gold: #C9A96E; --gold-light: #E8C98A; --gold-dim: #7A6340;
+  --black: #0A0806; --near-black: #0f0d0a; --dark: #1a1209;
+  --border: rgba(201,169,110,0.18); --warm-white: #F5F0E8;
+  --muted: rgba(245,240,232,0.4); --danger: #E05252;
+  --font-display: 'Playfair Display', Georgia, serif;
+  --font: 'DM Sans', sans-serif;
 }
-*,*::before,*::after{margin:0;padding:0;box-sizing:border-box;}
-html{font-size:15px;height:100%;}
-body{font-family:var(--font);background:var(--black);color:var(--warm-white);min-height:100%;display:flex;}
-::selection{background:var(--gold);color:var(--black);}
-
-/* LEFT PANEL — sticky so it stays visible while right scrolls */
-.left-panel{
-  flex:1;position:sticky;top:0;height:100vh;
-  display:flex;flex-direction:column;justify-content:flex-end;
-  padding:48px;overflow:hidden;
+*, *::before, *::after { margin: 0; padding: 0; box-sizing: border-box; }
+html, body { height: 100%; }
+body {
+  font-family: var(--font); background: var(--black);
+  color: var(--warm-white); min-height: 100vh;
+  display: flex; align-items: center; justify-content: center;
+  position: relative; overflow: hidden;
 }
-.left-bg{position:absolute;inset:0;background:linear-gradient(135deg,#0c0a06 0%,#1c1208 60%,#0A0806 100%);}
-.left-bg::after{content:'';position:absolute;inset:0;background:
-  radial-gradient(ellipse 70% 70% at 60% 40%,rgba(201,169,110,0.08) 0%,transparent 70%),
-  repeating-linear-gradient(0deg,transparent,transparent 60px,rgba(201,169,110,0.015) 60px,rgba(201,169,110,0.015) 61px),
-  repeating-linear-gradient(90deg,transparent,transparent 60px,rgba(201,169,110,0.015) 60px,rgba(201,169,110,0.015) 61px);}
-.left-image{position:absolute;inset:0;z-index:0;}
-.left-image img{width:100%;height:100%;object-fit:cover;filter:brightness(0.22) contrast(1.1) sepia(0.2);}
-.left-content{position:relative;z-index:2;}
-.left-logo{position:absolute;top:48px;left:48px;z-index:2;}
-.left-logo-main{font-family:var(--font-display);font-size:1.4rem;font-weight:700;letter-spacing:0.04em;}
-.left-logo-main span{color:var(--gold);}
-.left-logo-sub{font-size:0.58rem;letter-spacing:0.35em;text-transform:uppercase;color:var(--gold);margin-top:3px;opacity:0.8;}
-.left-quote{font-family:var(--font-display);font-size:clamp(1.6rem,3vw,2.4rem);font-style:italic;line-height:1.3;margin-bottom:16px;color:rgba(245,240,232,0.9);}
-.left-quote em{color:var(--gold);}
-.left-sub{font-size:0.82rem;color:var(--muted);letter-spacing:0.05em;line-height:1.7;}
-.left-divider{width:40px;height:0.5px;background:var(--gold);margin-bottom:20px;}
-.role-badges{display:flex;gap:8px;flex-wrap:wrap;margin-top:24px;}
-.role-badge{font-size:0.58rem;letter-spacing:0.2em;text-transform:uppercase;border:0.5px solid rgba(201,169,110,0.3);color:var(--gold);padding:5px 12px;background:rgba(201,169,110,0.05);}
-
-/* RIGHT PANEL — scrollable */
-.right-panel{
-  width:480px;flex-shrink:0;background:var(--near-black);
-  border-left:0.5px solid var(--border);
-  display:flex;flex-direction:column;
-  min-height:100vh;padding:48px 44px 80px;
-  position:relative;overflow-y:auto;
+body::before {
+  content: ''; position: absolute; inset: 0; pointer-events: none;
+  background:
+    radial-gradient(ellipse 70% 60% at 50% 40%, rgba(201,169,110,0.07) 0%, transparent 70%),
+    repeating-linear-gradient(0deg, transparent, transparent 60px, rgba(201,169,110,0.012) 60px, rgba(201,169,110,0.012) 61px),
+    repeating-linear-gradient(90deg, transparent, transparent 60px, rgba(201,169,110,0.012) 60px, rgba(201,169,110,0.012) 61px);
 }
-.right-panel::before{
-  content:'';position:fixed;top:0;right:0;width:480px;height:2px;
-  background:linear-gradient(to left,var(--gold),transparent);
-  z-index:10;pointer-events:none;
+.login-grid {
+  display: grid; grid-template-columns: 1fr 1fr;
+  width: 100%; max-width: 820px; min-height: 520px;
+  border: 0.5px solid var(--border);
+  position: relative; z-index: 1;
+  margin: 24px;
 }
-
-/* TABS */
-.view-tabs{display:flex;border:0.5px solid var(--border);border-radius:4px;overflow:hidden;margin-bottom:28px;}
-.view-tab{flex:1;font-size:0.65rem;letter-spacing:0.15em;text-transform:uppercase;padding:10px;text-align:center;color:var(--muted);cursor:pointer;transition:all 0.2s;}
-.view-tab.active{background:var(--gold);color:var(--black);font-weight:600;}
-.view-tab:hover:not(.active){background:var(--gold-faint);color:var(--warm-white);}
-
-/* VIEWS */
-.view{display:none;}
-.view.active{display:block;}
-
-/* HEADINGS */
-.login-eyebrow{font-size:0.6rem;letter-spacing:0.35em;text-transform:uppercase;color:var(--gold);margin-bottom:10px;display:flex;align-items:center;gap:12px;}
-.login-eyebrow::before{content:'';display:block;width:24px;height:0.5px;background:var(--gold);}
-.login-title{font-family:var(--font-display);font-size:1.9rem;font-weight:700;line-height:1.15;margin-bottom:6px;}
-.login-title em{font-style:italic;color:var(--gold);}
-.login-sub{font-size:0.8rem;color:var(--muted);margin-bottom:24px;line-height:1.7;}
-
-/* ROLE SELECTOR */
-.role-selector{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-bottom:20px;}
-.role-opt{border:0.5px solid var(--border);padding:12px 10px;cursor:pointer;transition:all 0.2s;text-align:center;background:transparent;border-radius:3px;}
-.role-opt:hover{background:var(--gold-faint);border-color:rgba(201,169,110,0.4);}
-.role-opt.selected{background:var(--gold-faint);border-color:var(--gold);}
-.role-opt-icon{font-size:1.2rem;margin-bottom:5px;}
-.role-opt-name{font-size:0.68rem;letter-spacing:0.1em;text-transform:uppercase;color:var(--muted);transition:color 0.2s;}
-.role-opt.selected .role-opt-name{color:var(--gold);font-weight:600;}
-.role-opt-desc{font-size:0.58rem;color:rgba(122,116,104,0.6);margin-top:3px;}
-
-/* DEMO HINT */
-.demo-hint{background:rgba(201,169,110,0.06);border:0.5px solid rgba(201,169,110,0.15);border-radius:4px;padding:12px 14px;margin-bottom:18px;}
-.demo-hint-title{font-size:0.56rem;letter-spacing:0.2em;text-transform:uppercase;color:var(--gold);margin-bottom:8px;}
-.demo-creds{display:grid;grid-template-columns:1fr 1fr;gap:4px;}
-.demo-cred{font-size:0.62rem;color:var(--muted);cursor:pointer;padding:5px 7px;border-radius:3px;transition:background 0.2s;line-height:1.5;}
-.demo-cred:hover{background:rgba(201,169,110,0.1);color:var(--gold);}
-.demo-cred strong{color:rgba(245,240,232,0.7);display:block;font-size:0.6rem;}
-
-/* DIVIDER */
-.or-divider{display:flex;align-items:center;gap:12px;margin:18px 0;font-size:0.6rem;letter-spacing:0.2em;text-transform:uppercase;color:var(--muted);}
-.or-divider::before,.or-divider::after{content:'';flex:1;height:0.5px;background:var(--border);}
-
-/* GOOGLE BTN */
-.google-btn{
-  width:100%;display:flex;align-items:center;justify-content:center;gap:12px;
-  padding:12px 20px;border:0.5px solid var(--border);border-radius:3px;
-  background:rgba(255,255,255,0.03);color:var(--warm-white);
-  font-size:0.78rem;letter-spacing:0.05em;cursor:pointer;
-  transition:all 0.2s;margin-bottom:4px;font-family:var(--font);
+.left-panel {
+  background: linear-gradient(160deg, #1a1209 0%, #0f0b05 100%);
+  padding: 48px 44px;
+  display: flex; flex-direction: column; justify-content: space-between;
+  border-right: 0.5px solid var(--border);
 }
-.google-btn:hover{border-color:rgba(201,169,110,0.4);background:rgba(255,255,255,0.06);}
-.google-btn.loading{opacity:0.6;cursor:not-allowed;}
-.google-btn svg{flex-shrink:0;}
-
-/* GOOGLE STATUS */
-.google-status{
-  display:none;align-items:center;gap:8px;
-  padding:10px 13px;border-radius:3px;font-size:0.73rem;margin-top:8px;
+.right-panel {
+  background: var(--near-black);
+  padding: 48px 44px;
+  display: flex; flex-direction: column; justify-content: center;
 }
-.google-status.show{display:flex;}
-.google-status.pending{background:rgba(82,151,224,0.1);border:0.5px solid rgba(82,151,224,0.3);color:var(--info);}
-.google-status.success{background:rgba(76,175,125,0.1);border:0.5px solid rgba(76,175,125,0.3);color:var(--success);}
-.google-status.error{background:rgba(224,82,82,0.1);border:0.5px solid rgba(224,82,82,0.3);color:var(--danger);}
-.g-spinner{width:12px;height:12px;border:1.5px solid rgba(82,151,224,0.3);border-top-color:var(--info);border-radius:50%;animation:spin 0.8s linear infinite;flex-shrink:0;}
-
-/* FORM */
-.form-row{display:grid;grid-template-columns:1fr 1fr;gap:12px;}
-.form-group{margin-bottom:14px;}
-.form-label{font-size:0.56rem;letter-spacing:0.25em;text-transform:uppercase;color:var(--muted);margin-bottom:6px;display:block;}
-.form-input-wrap{position:relative;}
-.form-input{width:100%;background:rgba(255,255,255,0.03);border:0.5px solid var(--border);color:var(--warm-white);font-family:var(--font);font-size:0.88rem;padding:11px 14px;transition:border-color 0.2s;outline:none;border-radius:2px;}
-.form-input:focus{border-color:var(--gold);background:rgba(201,169,110,0.04);}
-.form-input.error{border-color:var(--danger);}
-.pw-toggle{position:absolute;right:12px;top:50%;transform:translateY(-50%);color:var(--muted);cursor:pointer;font-size:0.62rem;letter-spacing:0.08em;user-select:none;}
-.pw-toggle:hover{color:var(--gold);}
-
-/* PASSWORD STRENGTH */
-.pw-strength{margin-top:6px;}
-.pw-strength-bar{display:flex;gap:3px;margin-bottom:4px;}
-.pw-strength-seg{flex:1;height:2px;border-radius:2px;background:var(--border);transition:background 0.3s;}
-.pw-strength-seg.weak{background:var(--danger);}
-.pw-strength-seg.fair{background:#E0A050;}
-.pw-strength-seg.strong{background:var(--success);}
-.pw-strength-label{font-size:0.6rem;color:var(--muted);}
-
-/* TERMS */
-.terms-check{display:flex;align-items:flex-start;gap:8px;font-size:0.7rem;color:var(--muted);margin-bottom:14px;line-height:1.5;}
-.terms-check input[type=checkbox]{appearance:none;width:14px;height:14px;min-width:14px;border:0.5px solid var(--border);background:transparent;cursor:pointer;position:relative;border-radius:2px;margin-top:2px;}
-.terms-check input[type=checkbox]:checked{background:var(--gold);border-color:var(--gold);}
-.terms-check input[type=checkbox]:checked::after{content:'✓';position:absolute;top:-1px;left:2px;font-size:9px;color:var(--black);font-weight:700;}
-.terms-check a{color:var(--gold);text-decoration:none;}
-
-/* LOGIN META */
-.login-meta{display:flex;align-items:center;justify-content:space-between;margin-bottom:16px;}
-.remember{display:flex;align-items:center;gap:8px;font-size:0.7rem;color:var(--muted);cursor:pointer;}
-.remember input[type=checkbox]{appearance:none;width:13px;height:13px;border:0.5px solid var(--border);background:transparent;cursor:pointer;position:relative;border-radius:2px;flex-shrink:0;}
-.remember input[type=checkbox]:checked{background:var(--gold);border-color:var(--gold);}
-.remember input[type=checkbox]:checked::after{content:'✓';position:absolute;top:-1px;left:1px;font-size:8px;color:var(--black);font-weight:700;}
-.forgot{font-size:0.67rem;color:var(--gold);cursor:pointer;}
-.forgot:hover{opacity:0.7;}
-
-/* MAIN BUTTON */
-.main-btn{
-  width:100%;background:var(--gold);color:var(--black);
-  font-family:var(--font);font-size:0.72rem;letter-spacing:0.22em;
-  text-transform:uppercase;padding:15px;cursor:pointer;border:none;
-  border-radius:2px;display:flex;align-items:center;justify-content:center;
-  gap:10px;transition:background 0.2s;
+.logo-main { font-family: var(--font-display); font-size: 1.5rem; font-weight: 700; letter-spacing: 0.04em; }
+.logo-main span { color: var(--gold); }
+.logo-sub { font-size: 0.55rem; letter-spacing: 0.4em; text-transform: uppercase; color: var(--gold); margin-top: 4px; opacity: 0.7; }
+.gold-line { width: 36px; height: 0.5px; background: rgba(201,169,110,0.5); margin: 28px 0; }
+.tagline { font-family: var(--font-display); font-size: 1.8rem; font-style: italic; line-height: 1.35; margin-bottom: 14px; }
+.tagline em { color: var(--gold); }
+.panel-desc { font-size: 0.82rem; color: rgba(245,240,232,0.42); line-height: 1.8; }
+.feat { display: flex; align-items: center; gap: 10px; font-size: 0.73rem; color: rgba(245,240,232,0.45); margin-bottom: 9px; }
+.feat-dot { width: 5px; height: 5px; border-radius: 50%; background: var(--gold); flex-shrink: 0; opacity: 0.7; }
+.panel-footer { font-size: 0.6rem; color: rgba(245,240,232,0.2); letter-spacing: 0.15em; margin-top: 8px; }
+.login-title { font-family: var(--font-display); font-size: 1.5rem; font-weight: 700; font-style: italic; margin-bottom: 5px; }
+.login-sub { font-size: 0.6rem; letter-spacing: 0.28em; text-transform: uppercase; color: var(--gold); margin-bottom: 36px; }
+.error-msg {
+  font-size: 0.72rem; color: var(--danger); display: none;
+  padding: 10px 14px; margin-bottom: 18px;
+  background: rgba(224,82,82,0.07);
+  border: 0.5px solid rgba(224,82,82,0.2);
 }
-.main-btn:hover:not(:disabled){background:var(--gold-light);}
-.main-btn:disabled{opacity:0.5;cursor:not-allowed;}
-.btn-spinner{width:13px;height:13px;border:2px solid rgba(0,0,0,0.25);border-top-color:var(--black);border-radius:50%;animation:spin 0.7s linear infinite;display:none;flex-shrink:0;}
-.main-btn.loading .btn-spinner{display:block;}
-@keyframes spin{to{transform:rotate(360deg);}}
-
-/* ALERTS */
-.alert{padding:10px 13px;border-radius:3px;font-size:0.73rem;margin-bottom:14px;display:none;align-items:center;gap:8px;line-height:1.5;}
-.alert.show{display:flex;}
-.alert-danger{background:rgba(224,82,82,0.1);border:0.5px solid rgba(224,82,82,0.3);color:#E05252;}
-.alert-success{background:rgba(76,175,125,0.1);border:0.5px solid rgba(76,175,125,0.3);color:var(--success);}
-.alert-info{background:rgba(82,151,224,0.1);border:0.5px solid rgba(82,151,224,0.3);color:var(--info);}
-
-/* SUCCESS REDIRECT */
-.login-success{display:none;text-align:center;padding:24px 0;}
-.login-success.show{display:block;}
-.success-icon{width:56px;height:56px;border-radius:50%;background:rgba(76,175,125,0.15);border:1px solid var(--success);display:flex;align-items:center;justify-content:center;margin:0 auto 16px;font-size:1.4rem;color:var(--success);}
-.success-title{font-family:var(--font-display);font-size:1.3rem;font-style:italic;margin-bottom:6px;}
-.success-sub{font-size:0.78rem;color:var(--muted);}
-.success-role-tag{display:inline-block;margin-top:12px;font-size:0.6rem;letter-spacing:0.2em;text-transform:uppercase;background:rgba(201,169,110,0.15);color:var(--gold);padding:4px 14px;border-radius:20px;}
-.success-redirect{font-size:0.65rem;color:var(--gold);margin-top:16px;animation:blink 1.2s ease infinite;}
-@keyframes blink{0%,100%{opacity:0.3}50%{opacity:1}}
-
-/* PENDING CARD */
-.pending-card{text-align:center;padding:24px 0;}
-.pending-icon{font-size:2.2rem;margin-bottom:12px;}
-.pending-title{font-family:var(--font-display);font-size:1.2rem;font-style:italic;margin-bottom:8px;}
-.pending-sub{font-size:0.78rem;color:var(--muted);line-height:1.7;margin-bottom:16px;}
-.pending-steps{text-align:left;background:var(--card);border:0.5px solid var(--border);border-radius:4px;padding:14px 16px;margin-bottom:16px;}
-.pending-step{display:flex;gap:10px;font-size:0.73rem;color:var(--muted);padding:5px 0;border-bottom:0.5px solid rgba(201,169,110,0.06);}
-.pending-step:last-child{border-bottom:none;}
-.pending-step-num{color:var(--gold);font-weight:600;min-width:16px;}
-
-/* FOOTER */
-.login-footer{margin-top:auto;padding-top:28px;text-align:center;font-size:0.62rem;color:rgba(122,116,104,0.4);letter-spacing:0.08em;}
-.login-footer a{color:var(--gold-dim);text-decoration:none;}
-.login-footer a:hover{color:var(--gold);}
-
-/* RESPONSIVE */
-@media(max-width:960px){
-  .left-panel{display:none;}
-  .right-panel{width:100%;border-left:none;}
-  .right-panel::before{width:100%;}
+.error-msg.show { display: block; }
+.form-label { display: block; font-size: 0.58rem; letter-spacing: 0.28em; text-transform: uppercase; color: var(--muted); margin-bottom: 8px; }
+.form-input {
+  width: 100%; background: #000000;
+  border: 0.5px solid rgba(201,169,110,0.5);
+  color: var(--gold); font-family: 'Playfair Display', Georgia, serif;
+  font-size: 1rem; font-weight: 600;
+  padding: 13px 16px; outline: none;
+  transition: border-color 0.3s, background 0.3s;
+  margin-bottom: 18px;
+  letter-spacing: 0.05em;
 }
-@media(max-width:480px){
-  .right-panel{padding:28px 20px 60px;}
-  .form-row{grid-template-columns:1fr;}
+.form-input:focus { border-color: var(--gold-light); background: #0a0806; }
+.form-input::placeholder { color: rgba(201,169,110,0.35); font-style: italic; }
+.login-btn {
+  width: 100%; background: var(--gold); color: var(--black);
+  font-family: var(--font); font-size: 0.7rem; letter-spacing: 0.24em;
+  text-transform: uppercase; font-weight: 600;
+  padding: 16px; border: none; cursor: pointer;
+  transition: background 0.25s; margin-top: 6px;
+}
+.login-btn:hover { background: var(--gold-light); }
+.login-btn:disabled { opacity: 0.55; cursor: not-allowed; }
+.back-link { text-align: center; margin-top: 28px; font-size: 0.68rem; color: rgba(245,240,232,0.25); }
+.back-link a { color: rgba(201,169,110,0.5); text-decoration: none; transition: color 0.2s; }
+.back-link a:hover { color: var(--gold); }
+
+@media (max-width: 640px) {
+  .login-grid { grid-template-columns: 1fr; margin: 0; min-height: 100vh; }
+  .left-panel { display: none; }
+  .right-panel { padding: 48px 28px; justify-content: flex-start; padding-top: 80px; }
 }
 </style>
 </head>
 <body>
-
-<!-- LEFT PANEL -->
-<div class="left-panel">
-  <div class="left-bg"></div>
-  <div class="left-image">
-    <img src="https://images.unsplash.com/photo-1621605815971-fbc98d665033?w=900&q=80" alt="Treysson Trimz" loading="lazy">
-  </div>
-  <div class="left-logo">
-    <div class="left-logo-main">TREYSSON <span>TRIMZ</span></div>
-    <div class="left-logo-sub">Staff Portal</div>
-  </div>
-  <div class="left-content">
-    <div class="left-divider"></div>
-    <p class="left-quote">Where every cut<br>is <em>an act of craft</em></p>
-    <p class="left-sub">Sign in to manage bookings, process payments,<br>track loyalty, and view real-time insights.</p>
-    <div class="role-badges">
-      <div class="role-badge">Super Admin</div>
-      <div class="role-badge">Manager</div>
-      <div class="role-badge">Cashier</div>
-      <div class="role-badge">Barber / Stylist</div>
+<div class="login-grid">
+  <div class="left-panel">
+    <div>
+      <div class="logo-main">TREYSSON <span>TRIMZ</span></div>
+      <div class="logo-sub">Admin Portal</div>
+      <div class="gold-line"></div>
+      <div class="tagline">Command your<br><em>business</em><br>from here</div>
+      <p class="panel-desc">Full visibility over bookings, revenue, staff performance and loyalty — in one elegant dashboard.</p>
     </div>
+    <div>
+      <div class="gold-line" style="margin-bottom:20px"></div>
+      <div class="feat"><div class="feat-dot"></div>Real-time booking management</div>
+      <div class="feat"><div class="feat-dot"></div>Revenue & payment tracking</div>
+      <div class="feat"><div class="feat-dot"></div>Loyalty programme control</div>
+      <div class="feat"><div class="feat-dot"></div>Staff performance reports</div>
+      <div class="gold-line" style="margin-top:24px;margin-bottom:14px"></div>
+      <div class="panel-footer">Utawala · Nairobi, Kenya</div>
+    </div>
+  </div>
+  <div class="right-panel">
+    <div class="login-title">Welcome back</div>
+    <div class="login-sub">Sign in to continue</div>
+    <div class="error-msg" id="errorMsg">Incorrect username or password.</div>
+    <label class="form-label">Username</label>
+    <input class="form-input" type="text" id="username" placeholder="admin" autocomplete="username">
+    <label class="form-label">Password</label>
+    <input class="form-input" type="password" id="password" placeholder="••••••••" autocomplete="current-password">
+    <button class="login-btn" id="loginBtn" onclick="handleLogin()">Sign In →</button>
+    <div class="back-link"><a href="/">← Back to Treysson Trimz</a></div>
   </div>
 </div>
-
-<!-- RIGHT PANEL -->
-<div class="right-panel" id="rightPanel">
-
-  <!-- TABS -->
-  <div class="view-tabs">
-    <div class="view-tab active" onclick="switchView('signin')">Sign In</div>
-    <div class="view-tab" onclick="switchView('register')">Create Account</div>
-  </div>
-
-  <!-- ══ SIGN IN ══ -->
-  <div class="view active" id="view-signin">
-
-    <p class="login-eyebrow">Staff Access</p>
-    <h1 class="login-title">Sign in to<br><em>your portal</em></h1>
-    <p class="login-sub">Select your role and enter your credentials.</p>
-
-    <div class="role-selector">
-      <div class="role-opt selected" onclick="selectRole(this,'admin')" data-role="admin">
-        <div class="role-opt-icon">👑</div>
-        <div class="role-opt-name">Admin</div>
-        <div class="role-opt-desc">Full access</div>
-      </div>
-      <div class="role-opt" onclick="selectRole(this,'manager')" data-role="manager">
-        <div class="role-opt-icon">📊</div>
-        <div class="role-opt-name">Manager</div>
-        <div class="role-opt-desc">Reports & staff</div>
-      </div>
-      <div class="role-opt" onclick="selectRole(this,'cashier')" data-role="cashier">
-        <div class="role-opt-icon">💳</div>
-        <div class="role-opt-name">Cashier</div>
-        <div class="role-opt-desc">Sales & payments</div>
-      </div>
-      <div class="role-opt" onclick="selectRole(this,'barber')" data-role="barber">
-        <div class="role-opt-icon">✂️</div>
-        <div class="role-opt-name">Barber / Stylist</div>
-        <div class="role-opt-desc">My schedule</div>
-      </div>
-    </div>
-
-    <div class="demo-hint">
-      <div class="demo-hint-title">Demo Credentials — click to fill</div>
-      <div class="demo-creds">
-        <div class="demo-cred" onclick="fillDemo('treysson@trimz.co.ke','admin123','admin')">
-          <strong>treysson@trimz.co.ke</strong>pw: admin123
-        </div>
-        <div class="demo-cred" onclick="fillDemo('manager@trimz.co.ke','mgr456','manager')">
-          <strong>manager@trimz.co.ke</strong>pw: mgr456
-        </div>
-        <div class="demo-cred" onclick="fillDemo('cashier@trimz.co.ke','cash789','cashier')">
-          <strong>cashier@trimz.co.ke</strong>pw: cash789
-        </div>
-        <div class="demo-cred" onclick="fillDemo('jere@trimz.co.ke','barber321','barber')">
-          <strong>jeredine@trimz.co.ke</strong>pw: barber321
-        </div>
-      </div>
-    </div>
-
-    <!-- GOOGLE SIGN IN -->
-    <button class="google-btn" id="googleSigninBtn" onclick="startGoogleSignIn('signin')">
-      <svg width="18" height="18" viewBox="0 0 48 48">
-        <path fill="#EA4335" d="M24 9.5c3.54 0 6.71 1.22 9.21 3.6l6.85-6.85C35.9 2.38 30.47 0 24 0 14.62 0 6.51 5.38 2.56 13.22l7.98 6.19C12.43 13.72 17.74 9.5 24 9.5z"/>
-        <path fill="#4285F4" d="M46.98 24.55c0-1.57-.15-3.09-.38-4.55H24v9.02h12.94c-.58 2.96-2.26 5.48-4.78 7.18l7.73 6c4.51-4.18 7.09-10.36 7.09-17.65z"/>
-        <path fill="#FBBC05" d="M10.53 28.59c-.48-1.45-.76-2.99-.76-4.59s.27-3.14.76-4.59l-7.98-6.19C.92 16.46 0 20.12 0 24c0 3.88.92 7.54 2.56 10.78l7.97-6.19z"/>
-        <path fill="#34A853" d="M24 48c6.48 0 11.93-2.13 15.89-5.81l-7.73-6c-2.18 1.48-4.97 2.31-8.16 2.31-6.26 0-11.57-4.22-13.47-9.91l-7.98 6.19C6.51 42.62 14.62 48 24 48z"/>
-      </svg>
-      <span id="googleSigninText">Continue with Google</span>
-    </button>
-    <div class="google-status" id="googleSigninStatus">
-      <div class="g-spinner"></div>
-      <span id="googleSigninStatusText">Opening Google sign-in…</span>
-    </div>
-
-    <div class="or-divider">or sign in with email</div>
-
-    <div class="alert alert-danger" id="signinAlert">
-      <span>⚠</span><span id="signinAlertMsg"></span>
-    </div>
-
-    <div class="form-group">
-      <label class="form-label">Email Address</label>
-      <input class="form-input" type="email" id="emailInput" placeholder="you@trimz.co.ke" autocomplete="email">
-    </div>
-    <div class="form-group">
-      <label class="form-label">Password</label>
-      <div class="form-input-wrap">
-        <input class="form-input" type="password" id="passwordInput" placeholder="••••••••" autocomplete="current-password">
-        <span class="pw-toggle" id="pwToggle" onclick="togglePw('passwordInput','pwToggle')">SHOW</span>
-      </div>
-    </div>
-
-    <div class="login-meta">
-      <label class="remember"><input type="checkbox" id="rememberMe"> Remember this device</label>
-      <span class="forgot" onclick="showForgot()">Forgot password?</span>
-    </div>
-
-    <button class="main-btn" id="signinBtn" onclick="doLogin()">
-      <div class="btn-spinner"></div>
-      <span class="btn-label">Sign In</span>
-    </button>
-
-    <div class="login-success" id="loginSuccess">
-      <div class="success-icon">✓</div>
-      <div class="success-title">Welcome, <em id="successName">Treysson</em></div>
-      <div class="success-sub">Identity verified. Loading your portal…</div>
-      <div class="success-role-tag" id="successRole">Admin</div>
-      <div class="success-redirect">Redirecting now…</div>
-    </div>
-
-  </div><!-- /view-signin -->
-
-  <!-- ══ CREATE ACCOUNT ══ -->
-  <div class="view" id="view-register">
-
-    <p class="login-eyebrow">New Staff Account</p>
-    <h1 class="login-title">Create your<br><em>account</em></h1>
-    <p class="login-sub">Register below. A Super Admin will approve your account before you can sign in.</p>
-
-    <button class="google-btn" id="googleRegisterBtn" onclick="startGoogleSignIn('register')">
-      <svg width="18" height="18" viewBox="0 0 48 48">
-        <path fill="#EA4335" d="M24 9.5c3.54 0 6.71 1.22 9.21 3.6l6.85-6.85C35.9 2.38 30.47 0 24 0 14.62 0 6.51 5.38 2.56 13.22l7.98 6.19C12.43 13.72 17.74 9.5 24 9.5z"/>
-        <path fill="#4285F4" d="M46.98 24.55c0-1.57-.15-3.09-.38-4.55H24v9.02h12.94c-.58 2.96-2.26 5.48-4.78 7.18l7.73 6c4.51-4.18 7.09-10.36 7.09-17.65z"/>
-        <path fill="#FBBC05" d="M10.53 28.59c-.48-1.45-.76-2.99-.76-4.59s.27-3.14.76-4.59l-7.98-6.19C.92 16.46 0 20.12 0 24c0 3.88.92 7.54 2.56 10.78l7.97-6.19z"/>
-        <path fill="#34A853" d="M24 48c6.48 0 11.93-2.13 15.89-5.81l-7.73-6c-2.18 1.48-4.97 2.31-8.16 2.31-6.26 0-11.57-4.22-13.47-9.91l-7.98 6.19C6.51 42.62 14.62 48 24 48z"/>
-      </svg>
-      <span id="googleRegisterText">Register with Google</span>
-    </button>
-    <div class="google-status" id="googleRegisterStatus">
-      <div class="g-spinner"></div>
-      <span id="googleRegisterStatusText">Opening Google…</span>
-    </div>
-
-    <div class="or-divider">or fill in your details</div>
-
-    <div class="alert alert-danger" id="registerAlert">
-      <span>⚠</span><span id="registerAlertMsg"></span>
-    </div>
-
-    <div id="registerFormFields">
-      <div class="form-row">
-        <div class="form-group">
-          <label class="form-label">First Name</label>
-          <input class="form-input" type="text" id="regFirst" placeholder="John" autocomplete="given-name">
-        </div>
-        <div class="form-group">
-          <label class="form-label">Last Name</label>
-          <input class="form-input" type="text" id="regLast" placeholder="Doe" autocomplete="family-name">
-        </div>
-      </div>
-      <div class="form-group">
-        <label class="form-label">Work Email</label>
-        <input class="form-input" type="email" id="regEmail" placeholder="john@trimz.co.ke" autocomplete="email">
-      </div>
-      <div class="form-group">
-        <label class="form-label">Phone / WhatsApp</label>
-        <input class="form-input" type="tel" id="regPhone" placeholder="+254 7XX XXX XXX">
-      </div>
-      <div class="form-group">
-        <label class="form-label">Role Applying For</label>
-        <select class="form-input" id="regRole" style="appearance:none;cursor:pointer;">
-          <option value="">Select your role…</option>
-          <option value="admin">Admin / Owner</option>
-          <option value="manager">Manager</option>
-          <option value="cashier">Cashier</option>
-          <option value="barber">Barber</option>
-          <option value="stylist">Stylist</option>
-          <option value="therapist">Spa Therapist</option>
-        </select>
-      </div>
-      <div class="form-group">
-        <label class="form-label">Password</label>
-        <div class="form-input-wrap">
-          <input class="form-input" type="password" id="regPassword" placeholder="Min. 8 characters" oninput="checkStrength(this.value)" autocomplete="new-password">
-          <span class="pw-toggle" onclick="togglePw('regPassword','regPwToggle')" id="regPwToggle">SHOW</span>
-        </div>
-        <div class="pw-strength">
-          <div class="pw-strength-bar">
-            <div class="pw-strength-seg" id="ps1"></div>
-            <div class="pw-strength-seg" id="ps2"></div>
-            <div class="pw-strength-seg" id="ps3"></div>
-            <div class="pw-strength-seg" id="ps4"></div>
-          </div>
-          <div class="pw-strength-label" id="pwStrengthLabel">Enter a password</div>
-        </div>
-      </div>
-      <div class="form-group">
-        <label class="form-label">Confirm Password</label>
-        <input class="form-input" type="password" id="regConfirm" placeholder="Repeat password" autocomplete="new-password">
-      </div>
-      <div class="form-group">
-        <label class="form-label">Invitation Code <span style="color:var(--muted);font-size:0.55rem">(if provided by admin)</span></label>
-        <input class="form-input" type="text" id="regCode" placeholder="e.g. TT-2025-STAFF" style="letter-spacing:0.08em;text-transform:uppercase">
-      </div>
-      <div class="terms-check">
-        <input type="checkbox" id="agreeTerms">
-        <label for="agreeTerms">I agree to the <a href="#">Staff Terms of Use</a> and <a href="#">Privacy Policy</a>. My account must be approved by an admin before I can sign in.</label>
-      </div>
-      <button class="main-btn" id="registerBtn" onclick="doRegister()">
-        <div class="btn-spinner"></div>
-        <span class="btn-label">Submit for Approval</span>
-      </button>
-    </div>
-
-    <div id="pendingCard" style="display:none" class="pending-card">
-      <div class="pending-icon">⏳</div>
-      <div class="pending-title">Account <em>Pending Approval</em></div>
-      <div class="pending-sub">Your registration has been received. A Super Admin will review and activate your account.</div>
-      <div class="pending-steps">
-        <div class="pending-step"><span class="pending-step-num">1</span><span>Details submitted ✓</span></div>
-        <div class="pending-step"><span class="pending-step-num">2</span><span>Admin reviews your role and access</span></div>
-        <div class="pending-step"><span class="pending-step-num">3</span><span>You'll get a WhatsApp/email when approved</span></div>
-        <div class="pending-step"><span class="pending-step-num">4</span><span>Sign in with your credentials</span></div>
-      </div>
-      <button class="main-btn" onclick="switchView('signin')" style="max-width:220px;margin:0 auto">
-        <span class="btn-label">Back to Sign In</span>
-      </button>
-    </div>
-
-  </div><!-- /view-register -->
-
-  <div class="login-footer">
-    © 2025 Treysson Trimz &nbsp;·&nbsp;
-    <a href="../index.html">← Back to website</a>
-    &nbsp;·&nbsp;
-    <a href="mailto:treysson@trimz.co.ke">Support</a>
-  </div>
-
-</div><!-- /right-panel -->
-
-<!-- ══════════════════════════════════════════════════════
-     PASTE YOUR GOOGLE CLIENT ID INTO THE LINE BELOW.
-     Get one free at: https://console.cloud.google.com
-     → APIs & Services → Credentials → Create OAuth 2.0 Client ID
-     → Application type: Web → Authorised JS origins: your domain
-     Replace  YOUR_GOOGLE_CLIENT_ID  with the actual string.
-════════════════════════════════════════════════════════ -->
-<div id="g_id_onload"
-  data-client_id="YOUR_GOOGLE_CLIENT_ID.apps.googleusercontent.com"
-  data-callback="handleGoogleOneTap"
-  data-auto_prompt="false">
-</div>
-
 <script>
-// ══════════════════════════════════════════════
-// ⚙ CONFIG — update these for your real setup
-// ══════════════════════════════════════════════
-const GOOGLE_CLIENT_ID = 'YOUR_GOOGLE_CLIENT_ID.apps.googleusercontent.com';
-
-// Staff user database (replace with real backend API)
-const USERS = {
-  'treysson@trimz.co.ke': { password:'admin123',  role:'admin',   name:'Treysson', redirect:'dashboard.html' },
-  'manager@trimz.co.ke':  { password:'mgr456',    role:'manager', name:'Manager',  redirect:'dashboard.html' },
-  'cashier@trimz.co.ke':  { password:'cash789',   role:'cashier', name:'Cashier',  redirect:'cashier.html'   },
-  'jeredine@trimz.co.ke':    { password:'barber321', role:'barber',  name:'Jeredine',    redirect:'dashboard.html' },
-};
-
-// Role → redirect map (used for Google sign-in role detection)
-const ROLE_REDIRECTS = {
-  admin:   'dashboard.html',
-  manager: 'dashboard.html',
-  cashier: 'cashier.html',
-  barber:  'dashboard.html',
-  stylist: 'dashboard.html',
-};
-
-const VALID_INVITE_CODES = ['TT-2025-STAFF','TT-2025-ADMIN','TRIMZ-NEW'];
-
-let currentView = 'signin';
-let isLoading = false;
-let googleClient = null; // holds the Google OAuth client instance
-
-// ══════════════════════════════════════════════
-// GOOGLE OAUTH — real implementation
-// ══════════════════════════════════════════════
-
-// Called once google gsi script has loaded
-function initGoogleClient() {
-  if (typeof google === 'undefined' || !google.accounts) return;
-
-  // Check if Client ID is real (not placeholder)
-  if (GOOGLE_CLIENT_ID.includes('YOUR_GOOGLE_CLIENT_ID')) {
-    // Demo mode — simulate Google flow
-    console.warn('Google Client ID not set. Running in demo mode.');
-    return;
-  }
-
-  googleClient = google.accounts.oauth2.initTokenClient({
-    client_id: GOOGLE_CLIENT_ID,
-    scope: 'openid email profile',
-    callback: handleGoogleToken,
-    error_callback: handleGoogleError,
-  });
+const ADMINS = [
+  { username: 'admin', password: 'TrimzAdmin2024' },
+  { username: 'eli', password: 'Eli@Trimz' },
+];
+if (sessionStorage.getItem('tt_admin_auth') === 'true') {
+  window.location.href = '/admin/dashboard.html';
 }
-
-// Real Google token callback
-async function handleGoogleToken(tokenResponse) {
-  if (tokenResponse.error) { handleGoogleError(tokenResponse); return; }
-
-  try {
-    // Fetch user info from Google
-    const res = await fetch('https://www.googleapis.com/oauth2/v3/userinfo', {
-      headers: { Authorization: 'Bearer ' + tokenResponse.access_token }
-    });
-    const profile = await res.json();
-    processGoogleUser(profile.email, profile.name, profile.given_name);
-  } catch(e) {
-    setGoogleStatus('signin', 'error', '✕ Could not fetch Google profile. Try email sign-in.');
-    setGoogleStatus('register', 'error', '✕ Could not fetch Google profile.');
-  }
-}
-
-function handleGoogleError(err) {
-  const msg = err.type === 'popup_closed' ? 'Sign-in popup closed.' :
-              err.type === 'access_denied' ? 'Access denied by Google.' :
-              'Google sign-in failed. Try email login.';
-  setGoogleStatus('signin',   'error', '✕ ' + msg);
-  setGoogleStatus('register', 'error', '✕ ' + msg);
-  setBtnLoading('googleSigninBtn',   false, 'Continue with Google');
-  setBtnLoading('googleRegisterBtn', false, 'Register with Google');
-}
-
-// One-Tap callback (from data-callback attribute)
-function handleGoogleOneTap(credentialResponse) {
-  try {
-    // Decode JWT payload (middle section, base64url)
-    const b64 = credentialResponse.credential.split('.')[1].replace(/-/g,'+').replace(/_/g,'/');
-    const payload = JSON.parse(atob(b64));
-    processGoogleUser(payload.email, payload.name, payload.given_name);
-  } catch(e) {
-    console.error('One-Tap decode error', e);
-  }
-}
-
-// Shared: handle google user after we have their email + name
-function processGoogleUser(email, fullName, firstName) {
-  email = (email || '').toLowerCase().trim();
-  const user = USERS[email];
-
-  if (user) {
-    // ✓ Known staff — sign them in directly
-    setGoogleStatus('signin', 'success', '✓ Google account recognised — signing you in…');
-    loginSuccess(user.name, user.role, email, user.redirect);
-  } else {
-    // Unknown — send to register and pre-fill
-    switchView('register');
-    if (email)     document.getElementById('regEmail').value = email;
-    if (firstName) document.getElementById('regFirst').value = firstName;
-    if (fullName && fullName.includes(' '))
-      document.getElementById('regLast').value = fullName.split(' ').slice(1).join(' ');
-
-    const al = document.getElementById('registerAlert');
-    al.className = 'alert alert-info show';
-    document.getElementById('registerAlertMsg').textContent =
-      'Google account linked (' + email + '). Complete your details to register.';
-    document.getElementById('rightPanel').scrollTop = 0;
-  }
-
-  setBtnLoading('googleSigninBtn',   false, 'Continue with Google');
-  setBtnLoading('googleRegisterBtn', false, 'Register with Google');
-}
-
-// Start Google sign-in flow
-function startGoogleSignIn(context) {
-  const btnId = context === 'signin' ? 'googleSigninBtn' : 'googleRegisterBtn';
-  const statusId = context === 'signin' ? 'googleSigninStatus' : 'googleRegisterStatus';
-  const statusTextId = context === 'signin' ? 'googleSigninStatusText' : 'googleRegisterStatusText';
-
-  setBtnLoading(btnId, true, 'Opening Google…');
-  setGoogleStatus(context, 'pending', 'Waiting for Google sign-in…');
-
-  // If Client ID not set → demo mode
-  if (GOOGLE_CLIENT_ID.includes('YOUR_GOOGLE_CLIENT_ID')) {
-    setTimeout(() => {
-      // Demo: simulate picking a known staff email
-      const demoEmail = context === 'signin' ? 'treysson@trimz.co.ke' : 'newstaff@gmail.com';
-      const demoName  = context === 'signin' ? 'Treysson' : 'New Staff';
-      processGoogleUser(demoEmail, demoName, demoName.split(' ')[0]);
-      setBtnLoading(btnId, false, context === 'signin' ? 'Continue with Google' : 'Register with Google');
-    }, 1200);
-    return;
-  }
-
-  // Real Google OAuth popup
-  if (googleClient) {
-    googleClient.requestAccessToken({ prompt: 'select_account' });
-  } else {
-    // Fallback: try initialising again
-    initGoogleClient();
-    if (googleClient) {
-      googleClient.requestAccessToken({ prompt: 'select_account' });
-    } else {
-      setGoogleStatus(context, 'error', '✕ Google sign-in not available. Use email instead.');
-      setBtnLoading(btnId, false, context === 'signin' ? 'Continue with Google' : 'Register with Google');
-    }
-  }
-}
-
-function setGoogleStatus(context, type, msg) {
-  const id = context === 'signin' ? 'googleSigninStatus' : 'googleRegisterStatus';
-  const textId = context === 'signin' ? 'googleSigninStatusText' : 'googleRegisterStatusText';
-  const el = document.getElementById(id);
-  el.className = 'google-status show ' + type;
-  document.getElementById(textId).textContent = msg;
-  // Auto-hide after 4s unless pending
-  if (type !== 'pending') setTimeout(() => el.classList.remove('show'), 4000);
-}
-
-// ══════════════════════════════════════════════
-// EMAIL SIGN IN
-// ══════════════════════════════════════════════
-function doLogin() {
-  if (isLoading) return;
-  hideAllAlerts();
-
-  const email    = document.getElementById('emailInput').value.trim().toLowerCase();
-  const password = document.getElementById('passwordInput').value;
-
-  if (!email)    { markError('emailInput');    showAlert('signinAlert','Please enter your email address.'); return; }
-  if (!password) { markError('passwordInput'); showAlert('signinAlert','Please enter your password.'); return; }
-
-  isLoading = true;
-  setBtnLoading('signinBtn', true, 'Verifying…');
-
+function handleLogin() {
+  const username = document.getElementById('username').value.trim();
+  const password = document.getElementById('password').value;
+  const btn = document.getElementById('loginBtn');
+  const err = document.getElementById('errorMsg');
+  err.classList.remove('show');
+  btn.disabled = true; btn.textContent = 'Signing in…';
   setTimeout(() => {
-    const user = USERS[email];
-    if (!user) {
-      isLoading = false;
-      setBtnLoading('signinBtn', false, 'Sign In');
-      markError('emailInput');
-      showAlert('signinAlert','No account found with this email.');
-      return;
+    const match = ADMINS.find(a => a.username === username && a.password === password);
+    if (match) {
+      sessionStorage.setItem('tt_admin_auth', 'true');
+      sessionStorage.setItem('tt_admin_user', username);
+      window.location.href = '/admin/dashboard.html';
+    } else {
+      err.classList.add('show');
+      btn.disabled = false; btn.textContent = 'Sign In →';
     }
-    if (user.password !== password) {
-      isLoading = false;
-      setBtnLoading('signinBtn', false, 'Sign In');
-      markError('passwordInput');
-      showAlert('signinAlert','Incorrect password. Please try again.');
-      return;
-    }
-    loginSuccess(user.name, user.role, email, user.redirect);
   }, 800);
 }
-
-// ══════════════════════════════════════════════
-// REGISTER
-// ══════════════════════════════════════════════
-function doRegister() {
-  hideAllAlerts();
-
-  const first   = document.getElementById('regFirst').value.trim();
-  const last    = document.getElementById('regLast').value.trim();
-  const email   = document.getElementById('regEmail').value.trim().toLowerCase();
-  const phone   = document.getElementById('regPhone').value.trim();
-  const role    = document.getElementById('regRole').value;
-  const password= document.getElementById('regPassword').value;
-  const confirm = document.getElementById('regConfirm').value;
-  const code    = document.getElementById('regCode').value.trim().toUpperCase();
-  const agreed  = document.getElementById('agreeTerms').checked;
-
-  if (!first || !last)              { showAlert('registerAlert','Enter your full name.'); return; }
-  if (!email || !email.includes('@')){ showAlert('registerAlert','Enter a valid email address.'); return; }
-  if (!phone)                        { showAlert('registerAlert','Enter your phone number.'); return; }
-  if (!role)                         { showAlert('registerAlert','Select the role you are applying for.'); return; }
-  if (!password || password.length < 8){ showAlert('registerAlert','Password must be at least 8 characters.'); return; }
-  if (password !== confirm)          { showAlert('registerAlert','Passwords do not match.'); return; }
-  if (code && !VALID_INVITE_CODES.includes(code)){ showAlert('registerAlert','Invalid invitation code. Leave blank if you don\'t have one.'); return; }
-  if (!agreed)                       { showAlert('registerAlert','You must agree to the terms to continue.'); return; }
-
-  setBtnLoading('registerBtn', true, 'Submitting…');
-
-  setTimeout(() => {
-    // In production: POST { first, last, email, phone, role, code } to your backend
-    console.log('📝 New registration request:', { first, last, email, phone, role, code: code || 'none' });
-
-    // Show pending state
-    setBtnLoading('registerBtn', false, 'Submit for Approval');
-    document.getElementById('registerFormFields').style.display = 'none';
-    document.getElementById('pendingCard').style.display = 'block';
-    document.getElementById('rightPanel').scrollTop = 0;
-  }, 1200);
-}
-
-// ══════════════════════════════════════════════
-// SHARED HELPERS
-// ══════════════════════════════════════════════
-
-// Show success screen then redirect
-function loginSuccess(name, role, email, redirect) {
-  sessionStorage.setItem('tt_user', JSON.stringify({
-    name, role, email, loginTime: Date.now()
-  }));
-  isLoading = false;
-
-  document.getElementById('successName').textContent = name;
-  document.getElementById('successRole').textContent = role.charAt(0).toUpperCase() + role.slice(1);
-  document.getElementById('loginSuccess').classList.add('show');
-
-  // Hide the rest of signin view smoothly
-  ['role-selector','demo-hint','or-divider','login-meta'].forEach(cls => {
-    document.querySelectorAll('.view-signin .' + cls).forEach(el => el.style.display = 'none');
-  });
-
-  // ── REDIRECT ──
-  // Role-based: cashier → cashier.html, everyone else → dashboard.html
-  const dest = redirect || ROLE_REDIRECTS[role] || 'dashboard.html';
-  setTimeout(() => { window.location.href = dest; }, 1800);
-}
-
-function switchView(view) {
-  currentView = view;
-  document.querySelectorAll('.view').forEach(v => v.classList.remove('active'));
-  document.getElementById('view-' + view).classList.add('active');
-  document.querySelectorAll('.view-tab').forEach((t, i) => {
-    t.classList.toggle('active', (i===0 && view==='signin') || (i===1 && view==='register'));
-  });
-  hideAllAlerts();
-  document.getElementById('rightPanel').scrollTop = 0;
-}
-
-function selectRole(el, role) {
-  document.querySelectorAll('.role-opt').forEach(o => o.classList.remove('selected'));
-  el.classList.add('selected');
-}
-
-function fillDemo(email, pw, role) {
-  document.getElementById('emailInput').value = email;
-  document.getElementById('passwordInput').value = pw;
-  document.querySelectorAll('.role-opt').forEach(o => {
-    o.classList.toggle('selected', o.dataset.role === role);
-  });
-  hideAllAlerts();
-}
-
-function togglePw(inputId, toggleId) {
-  const input = document.getElementById(inputId);
-  const toggle = document.getElementById(toggleId);
-  input.type = input.type === 'password' ? 'text' : 'password';
-  toggle.textContent = input.type === 'password' ? 'SHOW' : 'HIDE';
-}
-
-function hideAllAlerts() {
-  document.querySelectorAll('.alert').forEach(a => a.classList.remove('show'));
-  document.querySelectorAll('.form-input').forEach(i => i.classList.remove('error'));
-}
-
-function showAlert(id, msg) {
-  const el = document.getElementById(id);
-  const msgEl = document.getElementById(id + 'Msg');
-  if (msgEl) msgEl.textContent = msg;
-  el.classList.add('show');
-}
-
-function markError(id) {
-  document.getElementById(id).classList.add('error');
-}
-
-function setBtnLoading(btnId, loading, label) {
-  const btn = document.getElementById(btnId);
-  if (!btn) return;
-  btn.disabled = loading;
-  // For google-btn (no .btn-label span)
-  if (btn.classList.contains('google-btn')) {
-    btn.classList.toggle('loading', loading);
-    const span = btn.querySelector('span[id]');
-    if (span && label) span.textContent = label;
-    return;
-  }
-  btn.classList.toggle('loading', loading);
-  const labelEl = btn.querySelector('.btn-label');
-  if (labelEl && label) labelEl.textContent = label;
-}
-
-function checkStrength(pw) {
-  const segs = ['ps1','ps2','ps3','ps4'].map(id => document.getElementById(id));
-  const label = document.getElementById('pwStrengthLabel');
-  segs.forEach(s => s.className = 'pw-strength-seg');
-  if (!pw) { label.textContent = 'Enter a password'; return; }
-  let score = 0;
-  if (pw.length >= 8)        score++;
-  if (/[A-Z]/.test(pw))     score++;
-  if (/[0-9]/.test(pw))     score++;
-  if (/[^A-Za-z0-9]/.test(pw)) score++;
-  const cls = ['weak','fair','fair','strong'];
-  const lbl = ['Too weak','Fair','Good','Strong ✓'];
-  for (let i = 0; i < score; i++) segs[i].classList.add(cls[Math.min(score-1,3)]);
-  label.textContent = lbl[Math.min(score-1,3)] || 'Too weak';
-  label.style.color = score>=3 ? 'var(--success)' : score>=2 ? '#E0A050' : 'var(--danger)';
-}
-
-function showForgot() {
-  const email = document.getElementById('emailInput').value.trim();
-  alert(email
-    ? 'Password reset link will be sent to:\n' + email + '\n\nOr contact:\ntreysson@trimz.co.ke\n+254 700 000 000'
-    : 'Enter your email first, then click Forgot password.\n\nOr contact:\ntreysson@trimz.co.ke\n+254 700 000 000'
-  );
-}
-
-// Keyboard shortcuts
-document.addEventListener('keydown', e => {
-  if (e.key === 'Enter' && !isLoading) {
-    currentView === 'signin' ? doLogin() : doRegister();
-  }
-});
-
-// Init
-window.addEventListener('DOMContentLoaded', () => {
-  setTimeout(() => document.getElementById('emailInput').focus(), 150);
-});
-
-// Init Google client once GSI script loads
-window.addEventListener('load', () => {
-  setTimeout(initGoogleClient, 500);
-});
+document.addEventListener('keydown', e => { if (e.key === 'Enter') handleLogin(); });
 </script>
 </body>
 </html>
