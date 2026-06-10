@@ -604,6 +604,10 @@ tbody td { padding: 10px 12px; font-size: 0.78rem; vertical-align: middle; }
 </div>
 
 <script>
+  // Auth guard — redirect to login if not authenticated
+if (sessionStorage.getItem('tt_admin_auth') !== 'true') {
+  window.location.href = '/admin/login.html';
+}
 // ── DATA ──
 const TRANSACTIONS = [
   { client:'James M.', phone:'0712 xxx xxx', service:'Classic Fade', staff:'Eli', amount:900, pay:'M-Pesa', status:'paid' },
