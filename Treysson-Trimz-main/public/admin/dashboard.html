@@ -331,7 +331,7 @@ tbody td { padding: 10px 12px; font-size: 0.78rem; vertical-align: middle; }
     <div class="staff-pill">
       <div class="staff-avatar">TR</div>
       <div><div class="staff-name">Eli</div><div class="staff-role">Super Admin</div></div>
-      <span class="staff-logout" title="Logout">⎋</span>
+      <span class="staff-logout" title="Logout" onclick="handleLogout()">⎋ Logout</span>
     </div>
   </div>
 </aside>
@@ -783,6 +783,17 @@ setTimeout(buildTransactions, 0);
 setTimeout(buildTopServices, 0);
 setTimeout(buildStaff, 0);
 setTimeout(buildLoyalty, 0);
+
+// Auth guard
+if (sessionStorage.getItem('tt_admin_auth') !== 'true') {
+  window.location.href = '/admin/login.html';
+}
+
+function handleLogout() {
+  sessionStorage.removeItem('tt_admin_auth');
+  sessionStorage.removeItem('tt_admin_user');
+  window.location.href = '/admin/login.html';
+}
 </script>
 </body>
 </html>
