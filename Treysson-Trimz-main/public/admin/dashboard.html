@@ -50,7 +50,7 @@ button { cursor: pointer; font-family: var(--font); border: none; background: no
 /* ── SIDEBAR ── */
 .sidebar {
   width: var(--sidebar-w);
-  min-height: 100vh;
+  height: 100vh;
   background: var(--black);
   border-right: 0.5px solid var(--border);
   display: flex;
@@ -59,6 +59,8 @@ button { cursor: pointer; font-family: var(--font); border: none; background: no
   top: 0; left: 0; bottom: 0;
   z-index: 50;
   transition: transform 0.3s;
+  overflow-y: auto;
+  overflow-x: hidden;
 }
 .sidebar-logo { padding: 24px 20px 20px; border-bottom: 0.5px solid var(--border); }
 .sidebar-logo-main { font-family: var(--font-display); font-size: 1.1rem; font-weight: 700; letter-spacing: 0.03em; }
@@ -72,7 +74,14 @@ button { cursor: pointer; font-family: var(--font); border: none; background: no
 .nav-item svg { flex-shrink: 0; opacity: 0.7; }
 .nav-item.active svg { opacity: 1; }
 .nav-badge { margin-left: auto; background: var(--gold); color: var(--black); font-size: 0.6rem; font-weight: 600; padding: 1px 6px; border-radius: 10px; }
-.sidebar-footer { margin-top: auto; padding: 16px 12px; border-top: 0.5px solid var(--border); }
+.sidebar-footer { 
+  margin-top: auto; 
+  padding: 16px 12px; 
+  border-top: 0.5px solid var(--border); 
+  position: sticky; 
+  bottom: 0; 
+  background: var(--black); 
+}
 .staff-pill { display: flex; align-items: center; gap: 10px; padding: 8px 10px; border-radius: 6px; cursor: pointer; transition: background 0.2s; }
 .staff-pill:hover { background: var(--gold-faint); }
 .staff-avatar { width: 30px; height: 30px; border-radius: 50%; background: var(--gold); color: var(--black); font-size: 0.7rem; font-weight: 600; display: flex; align-items: center; justify-content: center; flex-shrink: 0; }
