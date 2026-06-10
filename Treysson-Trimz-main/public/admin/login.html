@@ -7,178 +7,143 @@
 <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,600;0,700;1,400&family=DM+Sans:wght@300;400;500;600&display=swap" rel="stylesheet">
 <style>
 :root {
-  --gold: #C9A96E;
-  --gold-light: #E8C98A;
-  --black: #0A0806;
-  --near-black: #111009;
-  --dark: #1A1714;
-  --border: rgba(201,169,110,0.18);
-  --warm-white: #F5F0E8;
-  --muted: #7A7468;
-  --danger: #E05252;
+  --gold: #C9A96E; --gold-light: #E8C98A; --gold-dim: #7A6340;
+  --black: #0A0806; --near-black: #0f0d0a; --dark: #1a1209;
+  --border: rgba(201,169,110,0.18); --warm-white: #F5F0E8;
+  --muted: rgba(245,240,232,0.4); --danger: #E05252;
   --font-display: 'Playfair Display', Georgia, serif;
   --font: 'DM Sans', sans-serif;
 }
 *, *::before, *::after { margin: 0; padding: 0; box-sizing: border-box; }
+html, body { height: 100%; }
 body {
-  font-family: var(--font);
-  background: var(--black);
-  color: var(--warm-white);
-  min-height: 100vh;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  position: relative;
-  overflow: hidden;
+  font-family: var(--font); background: var(--black);
+  color: var(--warm-white); min-height: 100vh;
+  display: flex; align-items: center; justify-content: center;
+  position: relative; overflow: hidden;
 }
 body::before {
-  content: '';
-  position: absolute; inset: 0;
+  content: ''; position: absolute; inset: 0; pointer-events: none;
   background:
-    radial-gradient(ellipse 60% 60% at 50% 40%, rgba(201,169,110,0.06) 0%, transparent 70%),
-    repeating-linear-gradient(0deg, transparent, transparent 60px, rgba(201,169,110,0.015) 60px, rgba(201,169,110,0.015) 61px),
-    repeating-linear-gradient(90deg, transparent, transparent 60px, rgba(201,169,110,0.015) 60px, rgba(201,169,110,0.015) 61px);
-  pointer-events: none;
+    radial-gradient(ellipse 70% 60% at 50% 40%, rgba(201,169,110,0.07) 0%, transparent 70%),
+    repeating-linear-gradient(0deg, transparent, transparent 60px, rgba(201,169,110,0.012) 60px, rgba(201,169,110,0.012) 61px),
+    repeating-linear-gradient(90deg, transparent, transparent 60px, rgba(201,169,110,0.012) 60px, rgba(201,169,110,0.012) 61px);
 }
-.login-wrap {
-  width: 100%;
-  max-width: 420px;
-  padding: 24px;
-  position: relative;
-  z-index: 1;
-}
-.login-logo {
-  text-align: center;
-  margin-bottom: 40px;
-}
-.login-logo-main {
-  font-family: var(--font-display);
-  font-size: 1.8rem; font-weight: 700;
-  letter-spacing: 0.04em;
-}
-.login-logo-main span { color: var(--gold); }
-.login-logo-sub {
-  font-size: 0.6rem; letter-spacing: 0.4em;
-  text-transform: uppercase; color: var(--gold);
-  margin-top: 4px; opacity: 0.8;
-}
-.login-card {
-  background: var(--near-black);
+.login-grid {
+  display: grid; grid-template-columns: 1fr 1fr;
+  width: 100%; max-width: 820px; min-height: 520px;
   border: 0.5px solid var(--border);
-  padding: 40px 36px;
+  position: relative; z-index: 1;
+  margin: 24px;
 }
-.login-title {
-  font-family: var(--font-display);
-  font-size: 1.4rem; font-weight: 700;
-  font-style: italic; margin-bottom: 6px;
+.left-panel {
+  background: linear-gradient(160deg, #1a1209 0%, #0f0b05 100%);
+  padding: 48px 44px;
+  display: flex; flex-direction: column; justify-content: space-between;
+  border-right: 0.5px solid var(--border);
 }
-.login-sub {
-  font-size: 0.68rem; letter-spacing: 0.2em;
-  text-transform: uppercase; color: var(--gold);
-  margin-bottom: 32px;
+.right-panel {
+  background: var(--near-black);
+  padding: 48px 44px;
+  display: flex; flex-direction: column; justify-content: center;
 }
-.form-group { margin-bottom: 20px; }
-.form-label {
-  display: block; font-size: 0.6rem;
-  letter-spacing: 0.25em; text-transform: uppercase;
-  color: var(--muted); margin-bottom: 8px;
-}
-.form-input {
-  width: 100%; background: rgba(255,255,255,0.04);
-  border: 0.5px solid rgba(201,169,110,0.2);
-  color: var(--warm-white); font-family: var(--font);
-  font-size: 0.95rem; padding: 12px 16px;
-  outline: none; transition: border-color 0.3s;
-}
-.form-input:focus {
-  border-color: var(--gold);
-  background: rgba(201,169,110,0.04);
-}
+.logo-main { font-family: var(--font-display); font-size: 1.5rem; font-weight: 700; letter-spacing: 0.04em; }
+.logo-main span { color: var(--gold); }
+.logo-sub { font-size: 0.55rem; letter-spacing: 0.4em; text-transform: uppercase; color: var(--gold); margin-top: 4px; opacity: 0.7; }
+.gold-line { width: 36px; height: 0.5px; background: rgba(201,169,110,0.5); margin: 28px 0; }
+.tagline { font-family: var(--font-display); font-size: 1.8rem; font-style: italic; line-height: 1.35; margin-bottom: 14px; }
+.tagline em { color: var(--gold); }
+.panel-desc { font-size: 0.82rem; color: rgba(245,240,232,0.42); line-height: 1.8; }
+.feat { display: flex; align-items: center; gap: 10px; font-size: 0.73rem; color: rgba(245,240,232,0.45); margin-bottom: 9px; }
+.feat-dot { width: 5px; height: 5px; border-radius: 50%; background: var(--gold); flex-shrink: 0; opacity: 0.7; }
+.panel-footer { font-size: 0.6rem; color: rgba(245,240,232,0.2); letter-spacing: 0.15em; margin-top: 8px; }
+.login-title { font-family: var(--font-display); font-size: 1.5rem; font-weight: 700; font-style: italic; margin-bottom: 5px; }
+.login-sub { font-size: 0.6rem; letter-spacing: 0.28em; text-transform: uppercase; color: var(--gold); margin-bottom: 36px; }
 .error-msg {
-  font-size: 0.72rem; color: var(--danger);
-  margin-bottom: 16px; display: none;
-  padding: 10px 14px;
-  background: rgba(224,82,82,0.08);
+  font-size: 0.72rem; color: var(--danger); display: none;
+  padding: 10px 14px; margin-bottom: 18px;
+  background: rgba(224,82,82,0.07);
   border: 0.5px solid rgba(224,82,82,0.2);
 }
 .error-msg.show { display: block; }
+.form-label { display: block; font-size: 0.58rem; letter-spacing: 0.28em; text-transform: uppercase; color: var(--muted); margin-bottom: 8px; }
+.form-input {
+  width: 100%; background: #000000;
+  border: 0.5px solid rgba(201,169,110,0.5);
+  color: var(--gold); font-family: 'Playfair Display', Georgia, serif;
+  font-size: 1rem; font-weight: 600;
+  padding: 13px 16px; outline: none;
+  transition: border-color 0.3s, background 0.3s;
+  margin-bottom: 18px; letter-spacing: 0.05em;
+}
+.form-input:focus { border-color: var(--gold-light); background: #0a0806; }
+.form-input::placeholder { color: rgba(201,169,110,0.35); font-style: italic; }
 .login-btn {
-  width: 100%; background: var(--gold);
-  color: var(--black); font-family: var(--font);
-  font-size: 0.72rem; letter-spacing: 0.22em;
-  text-transform: uppercase; padding: 15px;
-  border: none; cursor: pointer;
-  transition: background 0.3s;
-  margin-top: 8px;
+  width: 100%; background: var(--gold); color: var(--black);
+  font-family: var(--font); font-size: 0.7rem; letter-spacing: 0.24em;
+  text-transform: uppercase; font-weight: 600;
+  padding: 16px; border: none; cursor: pointer;
+  transition: background 0.25s; margin-top: 6px;
 }
 .login-btn:hover { background: var(--gold-light); }
-.login-btn:disabled { opacity: 0.6; cursor: not-allowed; }
-.back-link {
-  text-align: center; margin-top: 24px;
-  font-size: 0.7rem; color: var(--muted);
+.login-btn:disabled { opacity: 0.55; cursor: not-allowed; }
+.back-link { text-align: center; margin-top: 28px; font-size: 0.68rem; color: rgba(245,240,232,0.25); }
+.back-link a { color: rgba(201,169,110,0.5); text-decoration: none; transition: color 0.2s; }
+.back-link a:hover { color: var(--gold); }
+@media (max-width: 640px) {
+  .login-grid { grid-template-columns: 1fr; margin: 0; min-height: 100vh; }
+  .left-panel { display: none; }
+  .right-panel { padding: 48px 28px; justify-content: flex-start; padding-top: 80px; }
 }
-.back-link a { color: var(--gold); text-decoration: none; transition: opacity 0.2s; }
-.back-link a:hover { opacity: 0.7; }
-.divider {
-  display: flex; align-items: center;
-  gap: 12px; margin: 24px 0;
-}
-.divider::before, .divider::after {
-  content: ''; flex: 1; height: 0.5px;
-  background: var(--border);
-}
-.divider span { font-size: 0.6rem; color: var(--muted); letter-spacing: 0.15em; text-transform: uppercase; }
 </style>
 </head>
 <body>
-<div class="login-wrap">
-  <div class="login-logo">
-    <div class="login-logo-main">TREYSSON <span>TRIMZ</span></div>
-    <div class="login-logo-sub">Admin Portal</div>
+<div class="login-grid">
+  <div class="left-panel">
+    <div>
+      <div class="logo-main">TREYSSON <span>TRIMZ</span></div>
+      <div class="logo-sub">Admin Portal</div>
+      <div class="gold-line"></div>
+      <div class="tagline">Command your<br><em>business</em><br>from here</div>
+      <p class="panel-desc">Full visibility over bookings, revenue, staff performance and loyalty — in one elegant dashboard.</p>
+    </div>
+    <div>
+      <div class="gold-line" style="margin-bottom:20px"></div>
+      <div class="feat"><div class="feat-dot"></div>Real-time booking management</div>
+      <div class="feat"><div class="feat-dot"></div>Revenue & payment tracking</div>
+      <div class="feat"><div class="feat-dot"></div>Loyalty programme control</div>
+      <div class="feat"><div class="feat-dot"></div>Staff performance reports</div>
+      <div class="gold-line" style="margin-top:24px;margin-bottom:14px"></div>
+      <div class="panel-footer">Utawala · Nairobi, Kenya</div>
+    </div>
   </div>
-  <div class="login-card">
+  <div class="right-panel">
     <div class="login-title">Welcome back</div>
     <div class="login-sub">Sign in to continue</div>
-
-    <div class="error-msg" id="errorMsg">Incorrect username or password. Please try again.</div>
-
-    <div class="form-group">
-      <label class="form-label">Username</label>
-      <input class="form-input" type="text" id="username" placeholder="admin" autocomplete="username">
-    </div>
-    <div class="form-group">
-      <label class="form-label">Password</label>
-      <input class="form-input" type="password" id="password" placeholder="••••••••" autocomplete="current-password">
-    </div>
+    <div class="error-msg" id="errorMsg">Incorrect username or password.</div>
+    <label class="form-label">Username</label>
+    <input class="form-input" type="text" id="username" placeholder="admin" autocomplete="username">
+    <label class="form-label">Password</label>
+    <input class="form-input" type="password" id="password" placeholder="••••••••" autocomplete="current-password">
     <button class="login-btn" id="loginBtn" onclick="handleLogin()">Sign In →</button>
-  </div>
-  <div class="back-link">
-    <a href="/">← Back to Treysson Trimz</a>
+    <div class="back-link"><a href="/">← Back to Treysson Trimz</a></div>
   </div>
 </div>
-
 <script>
-// Simple credential check — replace with real auth later
 const ADMINS = [
   { username: 'admin', password: 'TrimzAdmin2024' },
   { username: 'eli', password: 'Eli@Trimz' },
 ];
-
-// Check if already logged in
 if (sessionStorage.getItem('tt_admin_auth') === 'true') {
   window.location.href = '/admin/dashboard.html';
 }
-
 function handleLogin() {
   const username = document.getElementById('username').value.trim();
   const password = document.getElementById('password').value;
   const btn = document.getElementById('loginBtn');
   const err = document.getElementById('errorMsg');
-
   err.classList.remove('show');
-  btn.disabled = true;
-  btn.textContent = 'Signing in…';
-
+  btn.disabled = true; btn.textContent = 'Signing in…';
   setTimeout(() => {
     const match = ADMINS.find(a => a.username === username && a.password === password);
     if (match) {
@@ -187,16 +152,11 @@ function handleLogin() {
       window.location.href = '/admin/dashboard.html';
     } else {
       err.classList.add('show');
-      btn.disabled = false;
-      btn.textContent = 'Sign In →';
+      btn.disabled = false; btn.textContent = 'Sign In →';
     }
   }, 800);
 }
-
-// Allow Enter key
-document.addEventListener('keydown', e => {
-  if (e.key === 'Enter') handleLogin();
-});
+document.addEventListener('keydown', e => { if (e.key === 'Enter') handleLogin(); });
 </script>
 </body>
 </html>
