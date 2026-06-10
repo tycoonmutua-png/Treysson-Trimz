@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Treysson Trimz | Barbershop · Salon · Spa · Utawala-Kinka , Nairobi/title>
+<title>Treysson Trimz | Barbershop · Salon · Spa · Utawala-Kinka, Nairobi</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,600;0,700;0,900;1,400;1,700&family=Cormorant+Garamond:ital,wght@0,300;0,400;0,500;0,600;1,300;1,400&family=DM+Sans:wght@300;400;500&display=swap" rel="stylesheet">
@@ -1328,6 +1328,16 @@ dateInputs.forEach(d => d.min = today);
 
 // Init services
 renderServices('barber');
+</script>
+<div class="page-transition" id="pageTransition"></div>
+<script>
+function smoothNav(e, url) {
+  e.preventDefault();
+  const overlay = document.getElementById('pageTransition');
+  overlay.style.opacity = '1';
+  overlay.style.pointerEvents = 'all';
+  setTimeout(() => window.location.href = url, 500);
+}
 </script>
 </body>
 </html>
