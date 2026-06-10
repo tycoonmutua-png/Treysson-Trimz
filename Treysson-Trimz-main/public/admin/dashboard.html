@@ -78,8 +78,17 @@ button { cursor: pointer; font-family: var(--font); border: none; background: no
 .staff-avatar { width: 30px; height: 30px; border-radius: 50%; background: var(--gold); color: var(--black); font-size: 0.7rem; font-weight: 600; display: flex; align-items: center; justify-content: center; flex-shrink: 0; }
 .staff-name { font-size: 0.8rem; font-weight: 500; }
 .staff-role { font-size: 0.65rem; color: var(--muted); }
-.staff-logout { margin-left: auto; color: var(--muted); font-size: 0.7rem; transition: color 0.2s; }
-.staff-logout:hover { color: var(--danger); }
+.staff-logout { 
+  margin-left: auto; color: var(--danger); font-size: 0.72rem; 
+  transition: all 0.2s; cursor: pointer;
+  border: 0.5px solid rgba(224,82,82,0.3);
+  padding: 4px 10px; border-radius: 4px;
+  font-weight: 500;
+}
+.staff-logout:hover { 
+  background: rgba(224,82,82,0.15); 
+  border-color: var(--danger);
+}
 
 /* ── MAIN ── */
 .main { margin-left: var(--sidebar-w); flex: 1; display: flex; flex-direction: column; min-height: 100vh; }
