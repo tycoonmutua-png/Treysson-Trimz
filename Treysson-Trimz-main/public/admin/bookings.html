@@ -1,0 +1,522 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Bookings · Treysson Trimz Admin</title>
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,600;0,700;1,400&family=DM+Sans:wght@300;400;500;600&display=swap" rel="stylesheet">
+<style>
+:root {
+  --gold: #C9A96E; --gold-light: #E8C98A; --gold-dim: #7A6340;
+  --gold-faint: rgba(201,169,110,0.08);
+  --black: #0A0806; --near-black: #111009; --dark: #1A1714;
+  --card: #181510; --border: rgba(201,169,110,0.13);
+  --border-hover: rgba(201,169,110,0.28);
+  --warm-white: #F5F0E8; --muted: #7A7468; --muted2: #4E4A44;
+  --success: #4CAF7D; --danger: #E05252; --warning: #E0A050; --info: #5297E0;
+  --font-display: 'Playfair Display', Georgia, serif;
+  --font: 'DM Sans', sans-serif;
+  --sidebar-w: 240px; --topbar-h: 64px;
+}
+*, *::before, *::after { margin: 0; padding: 0; box-sizing: border-box; }
+html { font-size: 15px; }
+body { font-family: var(--font); background: var(--near-black); color: var(--warm-white); min-height: 100vh; display: flex; overflow-x: hidden; }
+::-webkit-scrollbar { width: 3px; } ::-webkit-scrollbar-track { background: transparent; } ::-webkit-scrollbar-thumb { background: var(--gold-dim); }
+a { color: inherit; text-decoration: none; }
+button { cursor: pointer; font-family: var(--font); border: none; background: none; color: inherit; }
+
+/* SIDEBAR */
+.sidebar { width: var(--sidebar-w); min-height: 100vh; background: var(--black); border-right: 0.5px solid var(--border); display: flex; flex-direction: column; position: fixed; top: 0; left: 0; bottom: 0; z-index: 50; overflow-y: auto; }
+.sidebar-logo { padding: 24px 20px 20px; border-bottom: 0.5px solid var(--border); }
+.sidebar-logo-main { font-family: var(--font-display); font-size: 1.1rem; font-weight: 700; }
+.sidebar-logo-main span { color: var(--gold); }
+.sidebar-logo-sub { font-size: 0.6rem; letter-spacing: 0.3em; text-transform: uppercase; color: var(--gold); margin-top: 3px; opacity: 0.8; }
+.sidebar-section { padding: 20px 12px 8px; }
+.sidebar-section-label { font-size: 0.55rem; letter-spacing: 0.35em; text-transform: uppercase; color: var(--muted2); padding: 0 8px; margin-bottom: 6px; }
+.nav-item { display: flex; align-items: center; gap: 10px; padding: 9px 12px; border-radius: 6px; font-size: 0.82rem; color: var(--muted); transition: all 0.2s; cursor: pointer; margin-bottom: 2px; }
+.nav-item:hover { background: var(--gold-faint); color: var(--warm-white); }
+.nav-item.active { background: var(--gold-faint); color: var(--gold); border-left: 2px solid var(--gold); }
+.nav-badge { margin-left: auto; background: var(--gold); color: var(--black); font-size: 0.6rem; font-weight: 600; padding: 1px 6px; border-radius: 10px; }
+.sidebar-footer { margin-top: auto; padding: 16px 12px; border-top: 0.5px solid var(--border); position: sticky; bottom: 0; background: var(--black); }
+.staff-pill { display: flex; align-items: center; gap: 10px; padding: 8px 10px; border-radius: 6px; }
+.staff-avatar { width: 30px; height: 30px; border-radius: 50%; background: var(--gold); color: var(--black); font-size: 0.7rem; font-weight: 600; display: flex; align-items: center; justify-content: center; }
+.staff-name { font-size: 0.8rem; font-weight: 500; }
+.staff-role { font-size: 0.65rem; color: var(--muted); }
+.staff-logout { margin-left: auto; color: var(--danger); font-size: 0.72rem; cursor: pointer; border: 0.5px solid rgba(224,82,82,0.3); padding: 4px 10px; border-radius: 4px; }
+.staff-logout:hover { background: rgba(224,82,82,0.15); }
+
+/* MAIN */
+.main { margin-left: var(--sidebar-w); flex: 1; display: flex; flex-direction: column; }
+.topbar { height: var(--topbar-h); background: var(--black); border-bottom: 0.5px solid var(--border); display: flex; align-items: center; padding: 0 28px; gap: 16px; position: sticky; top: 0; z-index: 40; }
+.topbar-title { font-family: var(--font-display); font-size: 1.2rem; font-weight: 700; font-style: italic; }
+.topbar-breadcrumb { font-size: 0.72rem; color: var(--muted); display: flex; align-items: center; gap: 6px; }
+.topbar-breadcrumb span { color: var(--gold); }
+.topbar-right { margin-left: auto; display: flex; align-items: center; gap: 12px; }
+.topbar-btn { padding: 7px 16px; font-size: 0.7rem; letter-spacing: 0.12em; text-transform: uppercase; border: 0.5px solid var(--border-hover); color: var(--gold); transition: all 0.2s; border-radius: 3px; }
+.topbar-btn:hover { background: var(--gold); color: var(--black); }
+.topbar-date { font-size: 0.72rem; color: var(--muted); }
+
+/* CONTENT */
+.content { padding: 28px; flex: 1; }
+
+/* VIEW TABS */
+.view-tabs { display: flex; background: var(--card); border: 0.5px solid var(--border); border-radius: 6px; overflow: hidden; margin-bottom: 24px; width: fit-content; }
+.view-tab { font-size: 0.7rem; letter-spacing: 0.12em; text-transform: uppercase; padding: 10px 24px; color: var(--muted); transition: all 0.2s; cursor: pointer; }
+.view-tab.active { background: var(--gold); color: var(--black); font-weight: 600; }
+.view-tab:hover:not(.active) { color: var(--warm-white); background: var(--gold-faint); }
+
+/* FILTERS */
+.filters-row { display: flex; gap: 12px; margin-bottom: 24px; flex-wrap: wrap; align-items: center; }
+.filter-input { background: var(--card); border: 0.5px solid var(--border); color: var(--warm-white); font-family: var(--font); font-size: 0.78rem; padding: 8px 14px; outline: none; border-radius: 3px; transition: border-color 0.2s; }
+.filter-input:focus { border-color: var(--gold); }
+.filter-input option { background: var(--dark); }
+.filter-btn { font-size: 0.68rem; letter-spacing: 0.12em; text-transform: uppercase; padding: 8px 18px; border-radius: 3px; border: 0.5px solid var(--border); color: var(--gold); transition: all 0.2s; }
+.filter-btn:hover { background: var(--gold-faint); border-color: var(--gold); }
+.filter-btn.active { background: var(--gold); color: var(--black); border-color: var(--gold); }
+
+/* STATS ROW */
+.stats-row { display: grid; grid-template-columns: repeat(4, 1fr); gap: 1px; background: var(--border); border: 0.5px solid var(--border); margin-bottom: 24px; }
+.stat-card { background: var(--card); padding: 18px 20px; }
+.stat-label { font-size: 0.6rem; letter-spacing: 0.2em; text-transform: uppercase; color: var(--muted); margin-bottom: 8px; }
+.stat-value { font-family: var(--font-display); font-size: 1.8rem; font-weight: 700; line-height: 1; }
+.stat-value.gold { color: var(--gold); }
+.stat-value.green { color: var(--success); }
+.stat-value.orange { color: var(--warning); }
+.stat-value.red { color: var(--danger); }
+
+/* TODAY TIMELINE */
+.timeline { display: flex; flex-direction: column; gap: 8px; }
+.time-slot { display: flex; gap: 16px; align-items: stretch; }
+.time-label { font-size: 0.68rem; color: var(--muted); width: 60px; flex-shrink: 0; padding-top: 14px; text-align: right; letter-spacing: 0.05em; }
+.time-line { width: 1px; background: var(--border); flex-shrink: 0; position: relative; }
+.time-line::before { content: ''; position: absolute; top: 16px; left: -3px; width: 7px; height: 7px; border-radius: 50%; background: var(--border); }
+.time-line.has-booking::before { background: var(--gold); }
+.slot-content { flex: 1; padding: 4px 0 12px; }
+.booking-card { background: var(--card); border: 0.5px solid var(--border); border-radius: 4px; padding: 14px 16px; margin-bottom: 6px; transition: background 0.2s; position: relative; overflow: hidden; }
+.booking-card::before { content: ''; position: absolute; left: 0; top: 0; bottom: 0; width: 3px; }
+.booking-card.pending::before { background: var(--warning); }
+.booking-card.confirmed::before { background: var(--info); }
+.booking-card.completed::before { background: var(--success); }
+.booking-card.cancelled::before { background: var(--danger); }
+.booking-card.no_show::before { background: var(--muted); }
+.booking-card:hover { background: var(--dark); }
+.bc-top { display: flex; align-items: center; gap: 12px; margin-bottom: 8px; }
+.bc-time { font-family: var(--font-display); font-size: 1rem; font-weight: 700; color: var(--gold); }
+.bc-ref { font-size: 0.65rem; color: var(--muted); letter-spacing: 0.1em; }
+.bc-status { margin-left: auto; }
+.bc-client { font-size: 0.85rem; font-weight: 500; margin-bottom: 3px; }
+.bc-details { font-size: 0.72rem; color: var(--muted); }
+.bc-actions { display: flex; gap: 8px; margin-top: 12px; }
+.action-btn { font-size: 0.6rem; letter-spacing: 0.12em; text-transform: uppercase; padding: 5px 12px; border-radius: 3px; border: 0.5px solid var(--border); transition: all 0.2s; }
+.action-btn.confirm { color: var(--info); border-color: rgba(82,151,224,0.3); }
+.action-btn.confirm:hover { background: rgba(82,151,224,0.1); border-color: var(--info); }
+.action-btn.complete { color: var(--success); border-color: rgba(76,175,125,0.3); }
+.action-btn.complete:hover { background: rgba(76,175,125,0.1); border-color: var(--success); }
+.action-btn.cancel { color: var(--danger); border-color: rgba(224,82,82,0.3); }
+.action-btn.cancel:hover { background: rgba(224,82,82,0.1); border-color: var(--danger); }
+.action-btn.noshow { color: var(--muted); border-color: var(--border); }
+.action-btn.noshow:hover { background: var(--gold-faint); color: var(--warm-white); }
+.empty-slot { padding: 10px 0; font-size: 0.72rem; color: var(--muted2); font-style: italic; }
+
+/* TABLE */
+.table-card { background: var(--card); border: 0.5px solid var(--border); border-radius: 4px; overflow: hidden; }
+.table-header-row { display: flex; align-items: center; justify-content: space-between; padding: 18px 20px 14px; border-bottom: 0.5px solid var(--border); }
+.table-title { font-family: var(--font-display); font-size: 1rem; font-style: italic; }
+.total-count { font-size: 0.68rem; color: var(--muted); }
+table { width: 100%; border-collapse: collapse; }
+thead th { font-size: 0.58rem; letter-spacing: 0.22em; text-transform: uppercase; color: var(--muted2); padding: 10px 14px; text-align: left; border-bottom: 0.5px solid var(--border); background: rgba(0,0,0,0.2); }
+tbody tr { border-bottom: 0.5px solid rgba(201,169,110,0.06); transition: background 0.15s; }
+tbody tr:last-child { border-bottom: none; }
+tbody tr:hover { background: var(--gold-faint); }
+tbody td { padding: 10px 14px; font-size: 0.78rem; vertical-align: middle; }
+.client-cell { display: flex; align-items: center; gap: 8px; }
+.c-avatar { width: 28px; height: 28px; border-radius: 50%; background: var(--gold-dim); color: var(--black); font-size: 0.62rem; font-weight: 600; display: flex; align-items: center; justify-content: center; flex-shrink: 0; }
+.c-name { font-size: 0.8rem; }
+.c-phone { font-size: 0.65rem; color: var(--muted); }
+.badge { display: inline-flex; align-items: center; font-size: 0.6rem; padding: 3px 8px; border-radius: 20px; font-weight: 500; }
+.badge-pending { background: rgba(224,160,80,0.15); color: var(--warning); }
+.badge-confirmed { background: rgba(82,151,224,0.15); color: var(--info); }
+.badge-completed { background: rgba(76,175,125,0.15); color: var(--success); }
+.badge-cancelled { background: rgba(224,82,82,0.15); color: var(--danger); }
+.badge-no_show { background: rgba(122,116,104,0.15); color: var(--muted); }
+.amount-gold { color: var(--gold); font-weight: 500; }
+.ref-code { font-size: 0.7rem; color: var(--gold); letter-spacing: 0.08em; font-family: monospace; }
+.tbl-actions { display: flex; gap: 6px; }
+.tbl-btn { font-size: 0.58rem; padding: 4px 10px; border-radius: 3px; border: 0.5px solid var(--border); transition: all 0.2s; }
+
+/* LOADING */
+.loading { text-align: center; padding: 60px; color: var(--muted); font-size: 0.82rem; letter-spacing: 0.1em; }
+.loading-dot { display: inline-block; width: 6px; height: 6px; border-radius: 50%; background: var(--gold); margin: 0 3px; animation: bounce 1.2s infinite; }
+.loading-dot:nth-child(2) { animation-delay: 0.2s; }
+.loading-dot:nth-child(3) { animation-delay: 0.4s; }
+@keyframes bounce { 0%,80%,100%{ transform: scale(0); } 40%{ transform: scale(1); } }
+
+/* TOAST */
+.toast { position: fixed; bottom: 28px; right: 28px; z-index: 999; background: var(--gold); color: var(--black); font-family: var(--font); font-size: 0.75rem; letter-spacing: 0.1em; padding: 14px 22px; border-radius: 3px; transform: translateY(100px); opacity: 0; transition: all 0.35s; pointer-events: none; }
+.toast.show { transform: none; opacity: 1; }
+
+/* MOBILE */
+@media (max-width: 768px) { .sidebar { transform: translateX(-240px); } .main { margin-left: 0; } .stats-row { grid-template-columns: 1fr 1fr; } }
+</style>
+</head>
+<body>
+
+<aside class="sidebar" id="sidebar">
+  <div class="sidebar-logo">
+    <div class="sidebar-logo-main">TREYSSON <span>TRIMZ</span></div>
+    <div class="sidebar-logo-sub">Admin Portal</div>
+  </div>
+  <div class="sidebar-section">
+    <div class="sidebar-section-label">Main</div>
+    <div class="nav-item" onclick="window.location='dashboard.html'">
+      <svg width="16" height="16" fill="none" stroke="currentColor" stroke-width="1.5" viewBox="0 0 24 24"><rect x="3" y="3" width="7" height="7" rx="1"/><rect x="14" y="3" width="7" height="7" rx="1"/><rect x="3" y="14" width="7" height="7" rx="1"/><rect x="14" y="14" width="7" height="7" rx="1"/></svg>
+      Dashboard
+    </div>
+    <div class="nav-item active">
+      <svg width="16" height="16" fill="none" stroke="currentColor" stroke-width="1.5" viewBox="0 0 24 24"><rect x="3" y="4" width="18" height="18" rx="2"/><path d="M16 2v4M8 2v4M3 10h18"/></svg>
+      Bookings <span class="nav-badge" id="sidebarBadge">0</span>
+    </div>
+    <div class="nav-item" onclick="window.location='cashier.html'">
+      <svg width="16" height="16" fill="none" stroke="currentColor" stroke-width="1.5" viewBox="0 0 24 24"><rect x="2" y="5" width="20" height="14" rx="2"/><path d="M2 10h20"/></svg>
+      Cashier
+    </div>
+    <div class="nav-item" onclick="window.location='loyalty.html'">
+      <svg width="16" height="16" fill="none" stroke="currentColor" stroke-width="1.5" viewBox="0 0 24 24"><path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/></svg>
+      Loyalty
+    </div>
+  </div>
+  <div class="sidebar-section">
+    <div class="sidebar-section-label">Management</div>
+    <div class="nav-item"><svg width="16" height="16" fill="none" stroke="currentColor" stroke-width="1.5" viewBox="0 0 24 24"><path d="M17 21v-2a4 4 0 00-4-4H5a4 4 0 00-4 4v2"/><circle cx="9" cy="7" r="4"/></svg>Staff</div>
+    <div class="nav-item"><svg width="16" height="16" fill="none" stroke="currentColor" stroke-width="1.5" viewBox="0 0 24 24"><path d="M14 2H6a2 2 0 00-2 2v16a2 2 0 002 2h12a2 2 0 002-2V8z"/><path d="M14 2v6h6"/></svg>Reports</div>
+  </div>
+  <div class="sidebar-footer">
+    <div class="staff-pill">
+      <div class="staff-avatar" id="sidebarAvatar">A</div>
+      <div><div class="staff-name" id="sidebarName">Admin</div><div class="staff-role">Super Admin</div></div>
+      <span class="staff-logout" onclick="handleLogout()">⎋ Logout</span>
+    </div>
+  </div>
+</aside>
+
+<div class="main">
+  <div class="topbar">
+    <div>
+      <div class="topbar-title">Bookings</div>
+      <div class="topbar-breadcrumb">Admin <span>›</span> Bookings</div>
+    </div>
+    <div class="topbar-right">
+      <div class="topbar-date" id="topbarDate"></div>
+      <button class="topbar-btn" onclick="loadData()">↻ Refresh</button>
+    </div>
+  </div>
+
+  <div class="content">
+
+    <!-- VIEW TABS -->
+    <div class="view-tabs">
+      <div class="view-tab active" onclick="switchView('today', this)">Today's Schedule</div>
+      <div class="view-tab" onclick="switchView('all', this)">All Bookings</div>
+    </div>
+
+    <!-- STATS -->
+    <div class="stats-row">
+      <div class="stat-card">
+        <div class="stat-label">Today's Bookings</div>
+        <div class="stat-value gold" id="statToday">0</div>
+      </div>
+      <div class="stat-card">
+        <div class="stat-label">Pending</div>
+        <div class="stat-value orange" id="statPending">0</div>
+      </div>
+      <div class="stat-card">
+        <div class="stat-label">Confirmed</div>
+        <div class="stat-value" style="color:var(--info)" id="statConfirmed">0</div>
+      </div>
+      <div class="stat-card">
+        <div class="stat-label">Completed Today</div>
+        <div class="stat-value green" id="statCompleted">0</div>
+      </div>
+    </div>
+
+    <!-- TODAY VIEW -->
+    <div id="todayView">
+      <div id="timelineContainer" class="timeline">
+        <div class="loading"><span class="loading-dot"></span><span class="loading-dot"></span><span class="loading-dot"></span></div>
+      </div>
+    </div>
+
+    <!-- ALL BOOKINGS VIEW -->
+    <div id="allView" style="display:none">
+      <div class="filters-row">
+        <input type="date" class="filter-input" id="filterDate" onchange="loadAllBookings()">
+        <select class="filter-input" id="filterStatus" onchange="loadAllBookings()">
+          <option value="">All Statuses</option>
+          <option value="pending">Pending</option>
+          <option value="confirmed">Confirmed</option>
+          <option value="completed">Completed</option>
+          <option value="cancelled">Cancelled</option>
+          <option value="no_show">No Show</option>
+        </select>
+        <button class="filter-btn" onclick="clearFilters()">Clear Filters</button>
+      </div>
+      <div class="table-card">
+        <div class="table-header-row">
+          <div class="table-title">All Bookings</div>
+          <div class="total-count" id="totalCount">Loading...</div>
+        </div>
+        <table>
+          <thead>
+            <tr>
+              <th>Client</th>
+              <th>Reference</th>
+              <th>Service</th>
+              <th>Barber</th>
+              <th>Date & Time</th>
+              <th>Amount</th>
+              <th>Status</th>
+              <th>Actions</th>
+            </tr>
+          </thead>
+          <tbody id="bookingsTbody">
+            <tr><td colspan="8" class="loading"><span class="loading-dot"></span><span class="loading-dot"></span><span class="loading-dot"></span></td></tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+
+  </div>
+</div>
+
+<div class="toast" id="toast"></div>
+
+<script>
+// Auth guard
+if (sessionStorage.getItem('tt_admin_auth') !== 'true') {
+  window.location.href = '/admin/login.html';
+}
+
+const user = sessionStorage.getItem('tt_admin_user') || 'Admin';
+document.getElementById('sidebarName').textContent = user;
+document.getElementById('sidebarAvatar').textContent = user[0].toUpperCase();
+document.getElementById('topbarDate').textContent = new Date().toLocaleDateString('en-KE', { weekday:'short', day:'numeric', month:'short', year:'numeric' });
+
+let currentView = 'today';
+let todayBookings = [];
+let allBookings = [];
+
+const TIMES = ['08:00','09:00','10:00','11:00','12:00','13:00','14:00','15:00','16:00','17:00','18:00','19:00','20:00'];
+
+function switchView(view, el) {
+  currentView = view;
+  document.querySelectorAll('.view-tab').forEach(t => t.classList.remove('active'));
+  el.classList.add('active');
+  document.getElementById('todayView').style.display = view === 'today' ? 'block' : 'none';
+  document.getElementById('allView').style.display = view === 'all' ? 'block' : 'none';
+  if (view === 'all') loadAllBookings();
+}
+
+async function loadData() {
+  await loadTodayBookings();
+  if (currentView === 'all') await loadAllBookings();
+}
+
+async function loadTodayBookings() {
+  try {
+    const res = await fetch('/api/bookings/today');
+    const data = await res.json();
+    todayBookings = data.data || [];
+    renderTimeline();
+    updateStats();
+  } catch (err) {
+    document.getElementById('timelineContainer').innerHTML = '<div class="loading">Failed to load bookings</div>';
+  }
+}
+
+async function loadAllBookings() {
+  const date = document.getElementById('filterDate').value;
+  const status = document.getElementById('filterStatus').value;
+  let url = '/api/bookings?limit=50';
+  if (date) url += `&date=${date}`;
+  if (status) url += `&status=${status}`;
+
+  document.getElementById('bookingsTbody').innerHTML = '<tr><td colspan="8" class="loading"><span class="loading-dot"></span><span class="loading-dot"></span><span class="loading-dot"></span></td></tr>';
+
+  try {
+    const res = await fetch(url);
+    const data = await res.json();
+    allBookings = data.data || [];
+    document.getElementById('totalCount').textContent = `${data.total || allBookings.length} bookings`;
+    renderTable();
+  } catch (err) {
+    document.getElementById('bookingsTbody').innerHTML = '<tr><td colspan="8" style="text-align:center;color:var(--muted);padding:40px">Failed to load</td></tr>';
+  }
+}
+
+function updateStats() {
+  const today = todayBookings;
+  document.getElementById('statToday').textContent = today.length;
+  document.getElementById('statPending').textContent = today.filter(b => b.status === 'pending').length;
+  document.getElementById('statConfirmed').textContent = today.filter(b => b.status === 'confirmed').length;
+  document.getElementById('statCompleted').textContent = today.filter(b => b.status === 'completed').length;
+  document.getElementById('sidebarBadge').textContent = today.filter(b => ['pending','confirmed'].includes(b.status)).length;
+}
+
+function renderTimeline() {
+  const container = document.getElementById('timelineContainer');
+  let html = '';
+
+  TIMES.forEach(time => {
+    const bookings = todayBookings.filter(b => {
+      const bt = (b.start_time || '').substring(0, 5);
+      return bt === time;
+    });
+
+    const hasBooking = bookings.length > 0;
+    const hour = parseInt(time.split(':')[0]);
+    const label = hour > 12 ? `${hour-12}:00 PM` : hour === 12 ? '12:00 PM' : `${hour}:00 AM`;
+
+    html += `<div class="time-slot">
+      <div class="time-label">${label}</div>
+      <div class="time-line ${hasBooking ? 'has-booking' : ''}"></div>
+      <div class="slot-content">`;
+
+    if (bookings.length === 0) {
+      html += `<div class="empty-slot">Available</div>`;
+    } else {
+      bookings.forEach(b => {
+        html += renderBookingCard(b);
+      });
+    }
+
+    html += `</div></div>`;
+  });
+
+  container.innerHTML = html;
+}
+
+function renderBookingCard(b) {
+  const time = (b.start_time || '').substring(0, 5);
+  const endTime = (b.end_time || '').substring(0, 5);
+  const initials = (b.customer_name || 'NA').split(' ').map(w => w[0]).join('').substring(0, 2).toUpperCase();
+  const statusBadge = getBadge(b.status);
+
+  let actions = '';
+  if (b.status === 'pending') {
+    actions += `<button class="action-btn confirm" onclick="updateStatus(${b.id}, 'confirmed')">✓ Confirm</button>`;
+  }
+  if (['pending','confirmed'].includes(b.status)) {
+    actions += `<button class="action-btn complete" onclick="updateStatus(${b.id}, 'completed')">✔ Complete</button>`;
+    actions += `<button class="action-btn cancel" onclick="updateStatus(${b.id}, 'cancelled')">✕ Cancel</button>`;
+    actions += `<button class="action-btn noshow" onclick="updateStatus(${b.id}, 'no_show')">No Show</button>`;
+  }
+
+  return `<div class="booking-card ${b.status}" id="booking-${b.id}">
+    <div class="bc-top">
+      <div class="bc-time">${time}${endTime ? ' – ' + endTime : ''}</div>
+      <div class="bc-ref">${b.reference_code || ''}</div>
+      <div class="bc-status">${statusBadge}</div>
+    </div>
+    <div class="bc-client">${b.customer_name || 'Unknown'}</div>
+    <div class="bc-details">
+      ${b.customer_phone || ''} 
+      ${b.service_name ? '· ' + b.service_name : ''} 
+      ${b.barber_name ? '· ' + b.barber_name : '· Any barber'}
+      · KES ${parseFloat(b.price || 0).toLocaleString()}
+    </div>
+    ${actions ? `<div class="bc-actions">${actions}</div>` : ''}
+  </div>`;
+}
+
+function renderTable() {
+  if (!allBookings.length) {
+    document.getElementById('bookingsTbody').innerHTML = '<tr><td colspan="8" style="text-align:center;color:var(--muted);padding:40px">No bookings found</td></tr>';
+    return;
+  }
+
+  document.getElementById('bookingsTbody').innerHTML = allBookings.map(b => {
+    const initials = (b.customer_name || 'NA').split(' ').map(w => w[0]).join('').substring(0, 2).toUpperCase();
+    const date = b.booking_date ? new Date(b.booking_date).toLocaleDateString('en-KE', { day:'numeric', month:'short', year:'numeric' }) : '';
+    const time = (b.start_time || '').substring(0, 5);
+
+    let actions = '';
+    if (b.status === 'pending') actions += `<button class="tbl-btn action-btn confirm" onclick="updateStatus(${b.id}, 'confirmed')">Confirm</button>`;
+    if (['pending','confirmed'].includes(b.status)) {
+      actions += `<button class="tbl-btn action-btn complete" onclick="updateStatus(${b.id}, 'completed')">Complete</button>`;
+      actions += `<button class="tbl-btn action-btn cancel" onclick="updateStatus(${b.id}, 'cancelled')">Cancel</button>`;
+    }
+
+    return `<tr>
+      <td><div class="client-cell">
+        <div class="c-avatar">${initials}</div>
+        <div><div class="c-name">${b.customer_name || ''}</div><div class="c-phone">${b.customer_phone || ''}</div></div>
+      </div></td>
+      <td><span class="ref-code">${b.reference_code || ''}</span></td>
+      <td>${b.service_name || ''}</td>
+      <td>${b.barber_name || '—'}</td>
+      <td>${date} ${time}</td>
+      <td class="amount-gold">KES ${parseFloat(b.price || 0).toLocaleString()}</td>
+      <td>${getBadge(b.status)}</td>
+      <td><div class="tbl-actions">${actions}</div></td>
+    </tr>`;
+  }).join('');
+}
+
+function getBadge(status) {
+  const map = {
+    pending: '<span class="badge badge-pending">Pending</span>',
+    confirmed: '<span class="badge badge-confirmed">Confirmed</span>',
+    completed: '<span class="badge badge-completed">Completed</span>',
+    cancelled: '<span class="badge badge-cancelled">Cancelled</span>',
+    no_show: '<span class="badge badge-no_show">No Show</span>',
+  };
+  return map[status] || `<span class="badge">${status}</span>`;
+}
+
+async function updateStatus(id, status) {
+  try {
+    const res = await fetch(`/api/bookings/${id}/status`, {
+      method: 'PATCH',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ status })
+    });
+    const data = await res.json();
+    if (data.success) {
+      showToast(`✓ Booking ${status} — slot is now ${['completed','cancelled','no_show'].includes(status) ? 'open' : 'updated'}`);
+      await loadData();
+    } else {
+      showToast('Failed: ' + data.message);
+    }
+  } catch (err) {
+    showToast('Error updating booking');
+  }
+}
+
+function clearFilters() {
+  document.getElementById('filterDate').value = '';
+  document.getElementById('filterStatus').value = '';
+  loadAllBookings();
+}
+
+let toastTimer;
+function showToast(msg) {
+  const t = document.getElementById('toast');
+  t.textContent = msg;
+  t.classList.add('show');
+  clearTimeout(toastTimer);
+  toastTimer = setTimeout(() => t.classList.remove('show'), 3500);
+}
+
+function handleLogout() {
+  sessionStorage.removeItem('tt_admin_auth');
+  sessionStorage.removeItem('tt_admin_user');
+  window.location.href = '/admin/login.html';
+}
+
+// Init
+loadData();
+// Auto-refresh every 60 seconds
+setInterval(loadData, 60000);
+</script>
+</body>
+</html>
