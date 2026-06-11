@@ -1394,7 +1394,7 @@ function showPaymentModal(booking, name, phone, service, date, time) {
   document.getElementById('modalDate').textContent = date + (time ? ' at ' + time : '');
   document.getElementById('modalAmount').textContent = 'KES ' + amount;
   document.getElementById('modalRef4').textContent = 'KES ' + amount;
-  document.getElementById('waLink').href = booking.customerWALink || `https://wa.me/254725780011?text=${waText}`;
+  document.getElementById('waLink').href = booking.customerWALink || `https://wa.me/254113146508?text=${waText}`;
   if (booking.adminWALink) window.open(booking.adminWALink, '_blank');
 }
 
