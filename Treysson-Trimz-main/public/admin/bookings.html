@@ -193,7 +193,7 @@ tbody td { padding: 10px 14px; font-size: 0.78rem; vertical-align: middle; }
   <div class="sidebar-footer">
     <div class="staff-pill">
       <div class="staff-avatar" id="sidebarAvatar">A</div>
-      <div><div class="staff-name" id="sidebarName">Admin</div><div class="staff-role">Super Admin</div></div>
+      <div><div class="staff-name" id="sidebarName">Anthony</div><div class="staff-role">Anthony</div></div>
       <span class="staff-logout" onclick="handleLogout()">⎋ Logout</span>
     </div>
   </div>
@@ -297,7 +297,8 @@ if (sessionStorage.getItem('tt_admin_auth') !== 'true') {
 }
 
 const user = sessionStorage.getItem('tt_admin_user') || 'Admin';
-document.getElementById('sidebarName').textContent = user;
+const displayName = user.charAt(0).toUpperCase() + user.slice(1);
+document.getElementById('sidebarName').textContent = displayName;
 document.getElementById('sidebarAvatar').textContent = user[0].toUpperCase();
 document.getElementById('topbarDate').textContent = new Date().toLocaleDateString('en-KE', { weekday:'short', day:'numeric', month:'short', year:'numeric' });
 
