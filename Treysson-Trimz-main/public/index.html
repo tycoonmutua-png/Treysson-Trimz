@@ -922,11 +922,11 @@ Reach Us @TreyssonTrimz_utawala on all social media platforms.
       <div class="form-row">
         <div class="form-group">
           <label class="form-label">First Name</label>
-          <input class="form-input" type="text" placeholder="Anthony">
+          <input class="form-input" type="text" placeholder="Anthony" id="firstName">
         </div>
         <div class="form-group">
           <label class="form-label">Last Name</label>
-          <input class="form-input" type="text" placeholder="Kiio">
+          <input class="form-input" type="text" placeholder="Kiio" id="lastName">
         </div>
       </div>
       <div class="form-row">
@@ -959,7 +959,7 @@ Reach Us @TreyssonTrimz_utawala on all social media platforms.
       <div class="form-row">
         <div class="form-group">
           <label class="form-label">Preferred Date</label>
-          <input class="form-input" type="date">
+      <input class="form-input" type="date" id="bookingDate">
         </div>
         <div class="form-group">
           <label class="form-label">Preferred Time</label>
@@ -1315,13 +1315,13 @@ function showTestimonial(idx, dot) {
 
 async function submitBooking() {
   // ── Validation ──
-  const firstName = document.querySelector('input[placeholder="Anthony"]').value.trim();
-  const lastName  = document.querySelector('input[placeholder="Kiio"]').value.trim();
+  const firstName = document.getElementById('firstName').value.trim();
+  const lastName  = document.getElementById('lastName').value.trim();
   const phone     = document.querySelector('input[type="tel"]').value.trim();
   const email     = document.querySelector('input[type="email"]').value.trim();
   const division  = document.getElementById('divisionSelect').value;
   const service   = document.getElementById('serviceSelect').value;
-  const date      = document.querySelector('input[type="date"]').value;
+  const date = document.getElementById('bookingDate').value;
   const time      = document.querySelector('#timeSelect').value;
   const notes     = document.querySelector('.form-textarea').value.trim();
   const payMethod = document.querySelector('.pay-opt.active')?.textContent?.trim() || 'M-Pesa';
