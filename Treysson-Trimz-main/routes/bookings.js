@@ -93,7 +93,8 @@ router.get('/:id', async (req, res) => {
 router.post('/', async (req, res) => {
   const client = await pool.connect();
   try {
-    const { service_id, barber_id, date, start_time, customer_name, customer_phone, customer_email, notes } = req.body;
+    const { service_id, barber_id, date, booking_date, start_time, customer_name, customer_phone, customer_email, notes } = req.body;
+const bookingDate = date || booking_date;
 
     // Get service info
     const { rows: svcRows } = await client.query(
@@ -114,8 +115,8 @@ router.post('/', async (req, res) => {
       : `SELECT id FROM bookings WHERE booking_date=$1 AND status IN ('pending','confirmed')
          AND start_time < $2::time AND end_time > $3::time`;
     const conflictParams = barber_id
-      ? [barber_id, date, end_time, start_time]
-      : [date, end_time, start_time];
+      ? [barber_id, bookingDate, end_time, start_time]
+      : [bookingDate, end_time, start_time];
 
     const { rows: conflicts } = await client.query(conflictQuery, conflictParams);
     if (conflicts.length) {
@@ -132,10 +133,28 @@ router.post('/', async (req, res) => {
        VALUES ($1,$2,$3,$4,$5,$6,$7,$8,$9,$10,$11)
        RETURNING *`,
       [refCode, customer_name, customer_phone, customer_email||null,
-       service_id, barber_id||null, date, start_time, end_time, service.price, notes||null]
+       service_id, barber_id||null, bookingDate, start_time, end_time, service.price, notes||null]
     );
 
-    res.status(201).json({ success: true, data: { ...rows[0], service_name: service.name }, message: 'Booking confirmed!' });
+    const booking = { ...rows[0], service_name: service.name };
+
+// Send notifications
+try {
+  const { notifyBookingCreated } = require('../middleware/notifications');
+  const links = await notifyBookingCreated(booking);
+  res.status(201).json({
+    success: true,
+    data: { ...booking, ...links },
+    message: 'Booking confirmed!'
+  });
+} catch (notifErr) {
+  console.error('Notification error:', notifErr.message);
+  res.status(201).json({
+    success: true,
+    data: booking,
+    message: 'Booking confirmed!'
+  });
+}
   } catch (err) {
     res.status(400).json({ success: false, message: err.message });
   } finally { client.release(); }
@@ -161,6 +180,41 @@ router.delete('/:id', async (req, res) => {
   try {
     await pool.query(`DELETE FROM bookings WHERE id=$1`, [req.params.id]);
     res.json({ success: true, message: 'Booking deleted' });
+  } catch (err) {
+    res.status(500).json({ success: false, message: err.message });
+  }
+});
+// POST confirm payment with M-Pesa code
+router.post('/confirm-payment', async (req, res) => {
+  try {
+    const { reference_code, mpesa_code } = req.body;
+    if (!reference_code || !mpesa_code) {
+      return res.status(400).json({ success: false, message: 'Reference and M-Pesa code required' });
+    }
+
+    // Save mpesa code to booking notes
+    const { rows } = await pool.query(
+      `UPDATE bookings SET 
+        status = 'confirmed',
+        notes = COALESCE(notes || ' | ', '') || $1
+       WHERE UPPER(reference_code) = UPPER($2) 
+       RETURNING *`,
+      [`M-Pesa: ${mpesa_code}`, reference_code]
+    );
+
+    if (!rows.length) {
+      return res.status(404).json({ success: false, message: 'Booking not found' });
+    }
+
+    // Notify admin
+    try {
+      const { sendSMS } = require('../middleware/notifications');
+      await sendSMS(process.env.ADMIN_PHONE,
+        `PAYMENT RECEIVED - Treysson Trimz\nRef: ${reference_code}\nM-Pesa: ${mpesa_code}\nPlease verify and confirm.`
+      );
+    } catch (e) { console.error('SMS error:', e.message); }
+
+    res.json({ success: true, message: 'Payment confirmed!' });
   } catch (err) {
     res.status(500).json({ success: false, message: err.message });
   }

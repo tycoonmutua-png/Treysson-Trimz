@@ -1379,22 +1379,64 @@ function showError(msg) {
   setTimeout(() => err.style.display = 'none', 4000);
 }
 
+let currentBookingRef = '';
+
 function showPaymentModal(booking, name, phone, service, date, time) {
-  const ref = booking.reference_code || 'TT-' + Math.floor(10000 + Math.random() * 90000);
+  currentBookingRef = booking.reference_code || 'TT-' + Math.floor(10000 + Math.random() * 90000);
   const amount = booking.price || '---';
   const waText = encodeURIComponent(
-    `Hello Treysson Trimz! 🙏\n\nI just made a booking:\n• Name: ${name}\n• Service: ${service}\n• Date: ${date}\n• Time: ${time}\n• Ref: ${ref}\n\nI'll pay via KCB Paybill.`
+    `Hello Treysson Trimz! 🙏\n\nI just made a booking:\n• Name: ${name}\n• Service: ${service}\n• Date: ${date}\n• Time: ${time}\n• Ref: ${currentBookingRef}\n\nI'll pay via KCB Paybill.`
   );
-
   document.getElementById('paymentModal').style.display = 'flex';
-  document.getElementById('modalRef').textContent = ref;
+  document.getElementById('modalRef').textContent = currentBookingRef;
   document.getElementById('modalName').textContent = name;
   document.getElementById('modalService').textContent = service;
   document.getElementById('modalDate').textContent = date + (time ? ' at ' + time : '');
   document.getElementById('modalAmount').textContent = 'KES ' + amount;
-  document.getElementById('waLink').href = booking.customerWALink || `https://wa.me/254700000000?text=${waText}`;
-// Open admin WA too
-if (booking.adminWALink) window.open(booking.adminWALink, '_blank');
+  document.getElementById('modalRef4').textContent = 'KES ' + amount;
+  document.getElementById('waLink').href = booking.customerWALink || `https://wa.me/254725780011?text=${waText}`;
+  if (booking.adminWALink) window.open(booking.adminWALink, '_blank');
+}
+
+async function confirmPayment() {
+  const code = document.getElementById('mpesaCode').value.trim().toUpperCase();
+  const btn = document.getElementById('confirmPayBtn');
+
+  if (!code || code.length < 8) {
+    document.getElementById('mpesaCode').style.borderColor = '#E05252';
+    document.getElementById('mpesaCode').placeholder = 'Please enter a valid code!';
+    return;
+  }
+
+  btn.disabled = true;
+  btn.textContent = 'Confirming…';
+
+  try {
+    await fetch('/api/bookings/confirm-payment', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({
+        reference_code: currentBookingRef,
+        mpesa_code: code
+      })
+    });
+
+    btn.textContent = '✓ Payment Received!';
+    btn.style.background = '#4CAF7D';
+
+    setTimeout(() => {
+      closeModal();
+      // Show success toast
+      const toast = document.getElementById('toast');
+      toast.textContent = '✓ Booking confirmed! We\'ll see you soon.';
+      toast.classList.add('show');
+      setTimeout(() => toast.classList.remove('show'), 5000);
+    }, 1500);
+
+  } catch (err) {
+    btn.disabled = false;
+    btn.textContent = '✓ Confirm Payment';
+  }
 }
 
 function closeModal() {
@@ -1423,7 +1465,29 @@ renderServices('barber');
 <!-- PAYMENT MODAL -->
 <div id="paymentModal" style="display:none;position:fixed;inset:0;z-index:999;background:rgba(10,8,6,0.92);align-items:center;justify-content:center;padding:24px;">
   <div style="background:#111009;border:0.5px solid rgba(201,169,110,0.25);max-width:480px;width:100%;padding:40px 36px;position:relative;">
-    <button onclick="closeModal()" style="position:absolute;top:16px;right:16px;color:#C9A96E;font-size:1.2rem;cursor:pointer;background:none;border:none;">✕</button>
+    <div style="margin-bottom:12px;">
+  <div style="font-size:0.58rem;letter-spacing:0.25em;text-transform:uppercase;color:#7A7468;margin-bottom:8px;">M-Pesa Transaction Code</div>
+  <input id="mpesaCode" type="text" placeholder="e.g. RGH7K2XXXX" 
+    style="width:100%;background:#000;border:0.5px solid rgba(201,169,110,0.4);color:#C9A96E;
+    font-family:'Playfair Display',serif;font-size:1rem;padding:12px 16px;outline:none;
+    letter-spacing:0.1em;text-transform:uppercase;"
+    oninput="this.value=this.value.toUpperCase()">
+  <div style="font-size:0.65rem;color:rgba(245,240,232,0.3);margin-top:6px;">
+    Enter the M-Pesa code from your payment confirmation SMS
+  </div>
+</div>
+<button onclick="confirmPayment()" id="confirmPayBtn"
+  style="width:100%;background:#C9A96E;color:#0A0806;padding:14px;
+  font-family:'DM Sans',sans-serif;font-size:0.7rem;letter-spacing:0.18em;
+  text-transform:uppercase;cursor:pointer;border:none;font-weight:600;margin-bottom:10px;">
+  ✓ Confirm Payment
+</button>
+<button onclick="closeModal()" 
+  style="width:100%;border:0.5px solid rgba(201,169,110,0.2);color:#7A7468;padding:10px;
+  font-family:'DM Sans',sans-serif;font-size:0.65rem;letter-spacing:0.15em;
+  text-transform:uppercase;cursor:pointer;background:none;">
+  I'll Pay Later
+</button>
     <div style="font-family:'Playfair Display',serif;font-size:1.4rem;font-style:italic;margin-bottom:4px;">Booking Confirmed! 🎉</div>
     <div style="font-size:0.6rem;letter-spacing:0.3em;text-transform:uppercase;color:#C9A96E;margin-bottom:28px;">Complete your payment to confirm your slot</div>
     <div style="background:rgba(201,169,110,0.05);border:0.5px solid rgba(201,169,110,0.15);padding:16px 20px;margin-bottom:24px;">
