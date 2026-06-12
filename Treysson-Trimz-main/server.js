@@ -12,6 +12,7 @@ app.use(express.urlencoded({ extended: true }));
 app.use(express.static(path.join(__dirname, 'public')));
 
 // ─── API Routes ───────────────────────────────────────────────────────────────
+app.use('/api/auth', require('./routes/auth'));
 app.use('/api/services',  require('./routes/services'));
 app.use('/api/barbers',   require('./routes/barbers'));
 app.use('/api/bookings',  require('./routes/bookings'));
