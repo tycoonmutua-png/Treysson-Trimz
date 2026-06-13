@@ -298,26 +298,26 @@ tbody td { padding: 10px 12px; font-size: 0.78rem; vertical-align: middle; }
       <svg width="16" height="16" fill="none" stroke="currentColor" stroke-width="1.5" viewBox="0 0 24 24"><rect x="3" y="3" width="7" height="7" rx="1"/><rect x="14" y="3" width="7" height="7" rx="1"/><rect x="3" y="14" width="7" height="7" rx="1"/><rect x="14" y="14" width="7" height="7" rx="1"/></svg>
       Dashboard
     </div>
-    <div class="nav-item" onclick="window.location='bookings.html'">
+    <div class="nav-item" onclick="window.location='/admin/bookings.html'">
       <svg width="16" height="16" fill="none" stroke="currentColor" stroke-width="1.5" viewBox="0 0 24 24"><rect x="3" y="4" width="18" height="18" rx="2"/><path d="M16 2v4M8 2v4M3 10h18"/></svg>
       Bookings <span class="nav-badge">4</span>
     </div>
-    <div class="nav-item" onclick="window.location='cashier.html'">
+    <div class="nav-item" onclick="window.location='/admin/cashier.html'"
       <svg width="16" height="16" fill="none" stroke="currentColor" stroke-width="1.5" viewBox="0 0 24 24"><rect x="2" y="5" width="20" height="14" rx="2"/><path d="M2 10h20"/></svg>
       Cashier
     </div>
-    <div class="nav-item" onclick="window.location='loyalty.html'">
+    <div class="nav-item" onclick="window.location='/admin/loyalty.html'"
       <svg width="16" height="16" fill="none" stroke="currentColor" stroke-width="1.5" viewBox="0 0 24 24"><path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/></svg>
       Loyalty <span class="nav-badge">2</span>
     </div>
   </div>
   <div class="sidebar-section">
     <div class="sidebar-section-label">Management</div>
-    <div class="nav-item" onclick="window.location='inventory.html'">
+    <div class="nav-item" onclick="window.location='/admin/inventory.html'"
       <svg width="16" height="16" fill="none" stroke="currentColor" stroke-width="1.5" viewBox="0 0 24 24"><path d="M21 16V8a2 2 0 00-1-1.73l-7-4a2 2 0 00-2 0l-7 4A2 2 0 003 8v8a2 2 0 001 1.73l7 4a2 2 0 002 0l7-4A2 2 0 0021 16z"/></svg>
       Inventory
     </div>
-    <div class="nav-item" onclick="window.location='staff.html'">
+    <div class="nav-item" onclick="window.location='/admin/staff.html'"
       <svg width="16" height="16" fill="none" stroke="currentColor" stroke-width="1.5" viewBox="0 0 24 24"><path d="M17 21v-2a4 4 0 00-4-4H5a4 4 0 00-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 00-3-3.87M16 3.13a4 4 0 010 7.75"/></svg>
       Staff
     </div>
@@ -347,8 +347,8 @@ tbody td { padding: 10px 12px; font-size: 0.78rem; vertical-align: middle; }
   </div>
   <div class="sidebar-footer">
     <div class="staff-pill">
-      <div class="staff-avatar">A</div>
-      <div><div class="staff-name">Anthony</div><div class="staff-role">Admin</div></div>
+      <div class="staff-avatar" id="sidebarAvatar">A</div>
+     <div><div class="staff-name" id="sidebarName">Admin</div><div class="staff-role" id="sidebarRole">Admin</div></div>
       <span class="staff-logout" title="Logout" onclick="handleLogout()">⎋ Logout</span>
     </div>
   </div>
@@ -623,9 +623,16 @@ tbody td { padding: 10px 12px; font-size: 0.78rem; vertical-align: middle; }
 
 <script>
   // Auth guard — redirect to login if not authenticated
-if (sessionStorage.getItem('tt_admin_auth') !== 'true') {
-  window.location.href = '/admin/login.html';
-}
+const ttToken = localStorage.getItem('tt_token');
+const ttUser = JSON.parse(localStorage.getItem('tt_user') || '{}');
+if (!ttToken) { window.location.href = '/admin/login.html'; }
+
+const sidebarName = ttUser.name || 'Admin';
+const sidebarRole = ttUser.role || 'admin';
+document.getElementById('sidebarAvatar').textContent = sidebarName[0].toUpperCase();
+document.getElementById('sidebarName').textContent = sidebarName;
+document.getElementById('sidebarRole').textContent = sidebarRole.replace('_', ' ');
+
 // ── DATA ──
 const TRANSACTIONS = [
   { client:'James M.', phone:'0712 xxx xxx', service:'Classic Fade', staff:'Eli', amount:900, pay:'M-Pesa', status:'paid' },
@@ -803,13 +810,12 @@ setTimeout(buildStaff, 0);
 setTimeout(buildLoyalty, 0);
 
 // Auth guard
-if (sessionStorage.getItem('tt_admin_auth') !== 'true') {
-  window.location.href = '/admin/login.html';
-}
+if (!localStorage.getItem('tt_token')) { window.location.href = '/admin/login.html'; }
 
 function handleLogout() {
-  sessionStorage.removeItem('tt_admin_auth');
-  sessionStorage.removeItem('tt_admin_user');
+  localStorage.removeItem('tt_token');
+  localStorage.removeItem('tt_user');
+  sessionStorage.clear();
   window.location.href = '/admin/login.html';
 }
 </script>
